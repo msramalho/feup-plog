@@ -1,0 +1,1 @@
+/* This file contains all the predicates required for the game logic to be implemented (allowed moves, ...)*/
