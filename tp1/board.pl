@@ -28,26 +28,57 @@ availablePiecesToPlace([
     ['W', 3]
 ]).
 
-replace(New, Old, [Old | Resto], [New | Resto]).
-replace(New, Old, [Same | Resto1 ], [Same | Resto2 ]):-
-	Same \= Old,
-	replace(New, Old, Resto1, Resto2).
+%https://stackoverflow.com/questions/41454755/how-can-i-replace-an-element-of-a-list-using-an-index-in-prolog
+replaceAt([_|T],0,E,[E|T]).
+replaceAt([H|T],P,E,[H|R]) :-
+    P > 0, NP is P-1, replaceAt(T,NP,E,R).
 
 
-replace([Find|T], Find, Replace, [Replace|T]).
-replace([Head|T1], Find, Replace, []):-
-    replace(T, Find, Replace, Result).
+piecesToDistribute(['D', 'R', 'I', 'D']).
 
-getRandomBoard(P):-
+nextPosition([], 0, 0, []):-write('end of next position'),nl.
+nextPosition(Positions, Index, X, Y):-
+    nth0(0, Positions, CoordinatesX),
+    nth0(1, Positions, CoordinatesY),
+    nth0(Index, CoordinatesX, X),
+    nth0(Index, CoordinatesY, Y),
+    write('X: '), write(X), nl,
+    write('Y: '), write(Y), nl.
+
+fillBoard([], _, _, _, _).
+fillBoard(Board, Positions, Index, Pieces, FinalBoard):-
+    nextPosition(Positions, Index, X, Y),           %get the x and y for the next valid position at index
+    length(Pieces, Len),                            %get the number of pieces left to distribute
+    random(0, Len, PieceIndex),                     %choose a random piece from the lists
+    translate(PieceIndex, PieceChar),               %get the char corresponding to the random piece
+    NewBoard = Board,
+    nth0(X, NewBoard, LineToChange),                %get the Xth line of the board
+    replaceAt(LineToChange, Y, PieceChar, NewLine), %replace the cell for the new piece
+    replaceAt(NewBoard, X, NewLine, FinalBoard),    %replace the line in the board for the new one (check id necessary, because nht0 may return a reference and not a copy)
+    NewIndex is Index + 1,
+
+    NewPieces = Pieces,
+    nth0(PieceIndex, NewPieces, _, RemovedPieces), %remove the selected piece from the pieces
+    write('Index is done: '), write(Index), nl,
+    fillBoard(FinalBoard, Positions, NewIndex, RemovedPieces, FinalBoard).
+
+
+
+getRandomBoard(NewBoard):-
     getValidPositions(Positions),
-    availablePiecesToPlace(Pieces),
+    piecesToDistribute(Pieces),
+    emptyBoard(E),
+    fillBoard(E, Positions, 0, Pieces, NewBoard).
+    /*,
+
+    nextPosition(Positions, X, Y, NewPositions),
+    Positions = NewPositions,
     length(Pieces, L),
     random(0, L, Novo),
     translate(Novo, Val),
     write('Novo is: '),
     write(Val),
-
-    P is Pieces.
+    P = Pieces.*/
 
 translate(0, 'D'). %Black
 translate(1, 'R'). %Red
