@@ -50,11 +50,24 @@ BRG - stack com G em baixo, R por cima de G, B por cima de
 
 */
 
+/*
+
+Some usefull functions:
+
+	atom_concat(+Atom1,+Atom2,-Atom12)
+
+*/
+
+list2Chars([L|_],C):-
+	translate(L,C).
+
 getPos(X, Y, Ret):-
 		boardExample(B),
 		nth0(X, B, A),
 		nth0(Y, A, Ret),
-		write(Ret).
+		
+		list2Chars(Ret, Ret1),
+		write(Ret1).
 
 displayBoard :-
 	write('Player1'), nl,
