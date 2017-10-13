@@ -1,7 +1,7 @@
 :- use_module(library(random)).
 :- use_module(library(lists)).
 
-/*The board is a matrix of 13 lines and 9 lines, not all are used */
+/*The board is a matrix of 13 lines and 9 columns, not all are used */
 emptyBoard([
     [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
     [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
@@ -34,7 +34,7 @@ replaceAt([H|T],P,E,[H|R]) :-
     P > 0, NP is P-1, replaceAt(T,NP,E,R).
 
 
-piecesToDistribute(['D', 'R', 'I', 'D']).
+piecesToDistribute([['D'], ['R'], ['I'], ['D']]).
 
 nextPosition([], 0, 0, []):-write('end of next position'),nl.
 nextPosition(Positions, Index, X, Y):-
@@ -45,22 +45,20 @@ nextPosition(Positions, Index, X, Y):-
     write('X: '), write(X), nl,
     write('Y: '), write(Y), nl.
 
-fillBoard([], _, _, _, _).
+fillBoard(Board, _, _, [], Board).
 fillBoard(Board, Positions, Index, Pieces, FinalBoard):-
     nextPosition(Positions, Index, X, Y),           %get the x and y for the next valid position at index
     length(Pieces, Len),                            %get the number of pieces left to distribute
     random(0, Len, PieceIndex),                     %choose a random piece from the lists
-    translate(PieceIndex, PieceChar),               %get the char corresponding to the random piece
+    nth0(PieceIndex, Pieces, PieceChar, RemovedPieces),%chose and remove piece from pieces
     NewBoard = Board,
     nth0(X, NewBoard, LineToChange),                %get the Xth line of the board
     replaceAt(LineToChange, Y, PieceChar, NewLine), %replace the cell for the new piece
-    replaceAt(NewBoard, X, NewLine, FinalBoard),    %replace the line in the board for the new one (check id necessary, because nht0 may return a reference and not a copy)
+    replaceAt(NewBoard, X, NewLine, TempFinalBoard),    %replace the line in the board for the new one (check id necessary, because nht0 may return a reference and not a copy)
     NewIndex is Index + 1,
-
-    NewPieces = Pieces,
-    nth0(PieceIndex, NewPieces, _, RemovedPieces), %remove the selected piece from the pieces
+    FinalBoard = TempFinalBoard,
     write('Index is done: '), write(Index), nl,
-    fillBoard(FinalBoard, Positions, NewIndex, RemovedPieces, FinalBoard).
+    fillBoard(TempFinalBoard, Positions, NewIndex, RemovedPieces, FinalBoard).
 
 
 

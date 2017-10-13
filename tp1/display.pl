@@ -31,12 +31,12 @@ Player2 - I,G.
 Now playing: Player1.
 
 
-GRB - stack com G em baixo, R por cima de G, B por cima de
+BRG - stack com G em baixo, R por cima de G, B por cima de
 
     0    1     2     3     4     5     6     7     8
- 0                |  R  |  G  |  W  | GRB |
- 1                |     |     |     |     |
- 2                |     |     |     |     |     |
+ 0          |     |  R  |     |     | GRB |
+ 1          |     |     |     |     |     |
+ 2          |     |     |     |     |     |     |
  3          |     |     |     |     |     |     |
  4          |     |     |     |     |     |     |
  5          |     |     |     |     |     |     |
