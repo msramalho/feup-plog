@@ -49,3 +49,15 @@ BRG - stack com G em baixo, R por cima de G, B por cima de
 12                |     |     |     |     |
 
 */
+
+getPos(X, Y, Ret):-
+		boardExample(B),
+		nth0(X, B, A),
+		nth0(Y, A, Ret),
+		write(Ret).
+
+displayBoard :-
+	write('Player1'), nl,
+	write('Player2'), nl,
+	write('Now playing: P1'), nl,
+	getPos(5,5,Ret).
