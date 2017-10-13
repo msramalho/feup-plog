@@ -67,20 +67,11 @@ getRandomBoard(NewBoard):-
     piecesToDistribute(Pieces),
     emptyBoard(E),
     fillBoard(E, Positions, 0, Pieces, NewBoard).
-    /*,
 
-    nextPosition(Positions, X, Y, NewPositions),
-    Positions = NewPositions,
-    length(Pieces, L),
-    random(0, L, Novo),
-    translate(Novo, Val),
-    write('Novo is: '),
-    write(Val),
-    P = Pieces.*/
-
-translate(0, 'D'). %Black
-translate(1, 'R'). %Red
-translate(2, 'I'). %Ivory
-translate(3, 'G'). %Green
-translate(4, 'B'). %Blue
-translate(5, 'W'). %WildColor
+translate(empty, '').
+translate(black, 'D').
+translate(red, 'R').
+translate(ivory, 'I').
+translate(green, 'G').
+translate(blue, 'B').
+translate(wild, 'W').
