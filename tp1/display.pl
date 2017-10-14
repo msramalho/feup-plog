@@ -58,8 +58,15 @@ Some usefull functions:
 
 */
 
-list2Chars([L|_],C):-
-	translate(L,C).
+list2Chars([H|T],C, Cf):-
+	translate(H, Text),
+	atom_concat(C, Text, Cf),
+	list2Chars([T], C, Cf).
+	
+
+list2Chars([H|T],Cf):-
+	translate(H, C),
+	(T\=[]->	list2Chars([T], C, Cf);true).
 
 getPos(X, Y, Ret):-
 		boardExample(B),
