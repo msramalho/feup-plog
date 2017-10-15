@@ -3,8 +3,24 @@
 :- include('board.pl').
 :- include('examples.pl').
 
+testBoard([
+    [[empty], [empty], [empty], [empty], [empty], [empty], [red], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [black, ivory, blue], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [blue, black, red, green], [empty], [empty]],
+    [[empty], [empty], [empty], [ivory], [empty], [red], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [green, red, blue, ivory], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [red], [empty], [ivory], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [blue], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [green], [empty], [empty], [empty], [empty], [empty]],
+    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]]
+]).
+
 test:-
-    emptyBoard(B),
+    testBoard(B),
     P1 = [red, green],
     P2 = [ivory, empty],
     Playing = player1,
