@@ -68,7 +68,7 @@ getRandomBoard(NewBoard):-
     emptyBoard(E),
     fillBoard(E, Positions, 0, Pieces, NewBoard).
 
-translate(empty, '').
+translate(empty, ' ').
 translate(black, 'D').
 translate(red, 'R').
 translate(ivory, 'I').
