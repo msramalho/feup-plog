@@ -1,83 +1,49 @@
 /* This file implements the predicates required for displaying the board */
+:- use_module(library(lists)).
 
-/*
-Color  code     countInGame    countOffGame
-Black:  D           8               1
-Red:    R           8               1
-Ivory:  I           8               1
-Green:  G           8               1
-Blue:   B           8               1
-Wild:   W           3               0
+concatenateList([], Result, Result).
+concatenateList([Color|NextColors], Initial, Final):-
+	translate(Color, Value),
+	atom_concat(Initial, Value, Result),
+	concatenateList(NextColors, Result, Final).
 
 
-Examples: delete afterwards
-      0    1     2     3     4     5     6     7     8
- 0            |     |     |     |     |     |
- 1            |     |     |     |     |     |
- 2            |     |     |     |     |     |
- 3            |     |     |     |     |     |
- 4      |     |     |     |     |     |     |     |
- 5      |     |     |     |     |     |     |     |
- 6 |    |     |     |     |     |     |     |     |     |
- 7      |     |     |     |     |     |     |     |
- 8      |     |     |     |     |     |     |     |
- 9      |     |     |     |     |     |     |     |
-10            |     |     |     |     |     |
-11            |     |     |     |     |     |
-12            |     |     |     |     |     |
--------------------------------------------------------
-Player1 - R,B.
-Player2 - I,G.
-Now playing: Player1.
+displayNextCell([], _, _).
+displayNextCell([Colors|Rest], LineIndex, CellIndex):-
+	isValid(LineIndex, CellIndex),
+	write('|'),
+	concatenateList(Colors, '', Concated),
+	format('~|~t~s~t~5+', Concated),
+	write('|'),
+	NewCellIndex is CellIndex + 1,
+	displayNextCell(Rest, LineIndex, NewCellIndex).
+
+displayNextCell([_|Rest], LineIndex, CellIndex):-
+	write('|     |'),
+	NewCellIndex is CellIndex + 1,
+	displayNextCell(Rest, LineIndex, NewCellIndex).
+
+displayLineIndex(LineIndex):-
+	LineIndex < 10,
+	write(' '),
+	write(LineIndex).
+displayLineIndex(LineIndex):-
+	write(LineIndex).
+
+displayLine([], _).
+displayLine([Line|Rest], LineIndex):-
+	displayLineIndex(LineIndex), write(' '),
+	displayNextCell(Line, LineIndex, 0),nl,
+	NewLineIndex is LineIndex + 1,
+	displayLine(Rest, NewLineIndex).
 
 
-BRG - stack com G em baixo, R por cima de G, B por cima de
-
-    0    1     2     3     4     5     6     7     8
- 0          |     |  R  |     |     | GRB |
- 1          |     |     |     |     |     |
- 2          |     |     |     |     |     |     |
- 3          |     |     |     |     |     |     |
- 4          |     |     |     |     |     |     |
- 5          |     |     |     |     |     |     |
- 6    |     |     |     |DRBWI|     |     |     |     |
- 7          |     |     |     |     |     |     |
- 8          |     |     |     |     |     |     |
- 9          |     |     |     |     |     |     |
-10                |     |     |     |     |
-11                |     |     |     |     |
-12                |     |     |     |     |
-
-*/
-
-/*
-
-Some usefull functions:
-
-	atom_concat(+Atom1,+Atom2,-Atom12)
-
-*/
-
-list2Chars([H|T],C, Cf):-
-	translate(H, Text),
-	atom_concat(C, Text, Cf),
-	list2Chars([T], C, Cf).
+displayBoard(Board, P1pieces, P2pieces, NowPlaying):-
+	displayLine(Board, 0),
+	write('-------------------------------------------------------'),
+	format('\nPlayer1: ~s, ~s', P1pieces),
+	format('\nPlayer2: ~s, ~s', P2pieces),
+	format('\nNow playing: ~s~3n', NowPlaying).
 
 
-list2Chars([H|T],Cf):-
-	translate(H, C),
-	(T\=[]->	list2Chars([T], C, Cf);true).
 
-getPos(X, Y, Ret):-
-		boardExample(B),
-		nth0(X, B, A),
-		nth0(Y, A, Ret),
-
-		list2Chars(Ret, Ret1),
-		write(Ret1).
-
-displayBoard :-
-	write('Player1'), nl,
-	write('Player2'), nl,
-	write('Now playing: P1'), nl,
-	getPos(5,5,Ret).
