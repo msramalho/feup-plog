@@ -2,28 +2,6 @@
 
 /* Which board cells can be used (since it is not a board of squares) */
 
-/*
-validCells([
-    [0, 0, 1, 0, 1, 0, 1, 0, 0],
-    [0, 0, 1, 0, 1, 0, 1, 0, 0],
-    [0, 0, 1, 0, 1, 0, 1, 0, 0],
-
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-
-    [1, 0, 1, 0, 1, 0, 1, 0, 1],
-
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1, 0],
-
-    [0, 0, 1, 0, 1, 0, 1, 0, 0],
-    [0, 0, 1, 0, 1, 0, 1, 0, 0],
-    [0, 0, 1, 0, 1, 0, 1, 0, 0]
-]).
-Mapping the valid cells like so into the predicate isValid(X,Y).
-*/
 /*[0, 0, 1, 0, 1, 0, 1, 0, 0]*/
 /* first line of matrix */
 isValid(0, 2).
@@ -93,6 +71,4 @@ isValid(12, 6).
 
 /* convert the isValid predicate into a list of two lists containg the x and the y values of isValid*/
 getValidPositions(Result):-
-    findall(X, isValid(X,Y), L1),
-    findall(Y, isValid(X,Y), L2),
-    Result = [L1, L2].
+    findall(X-Y, isValid(X,Y), Result).
