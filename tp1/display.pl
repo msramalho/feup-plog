@@ -39,8 +39,11 @@ displayLine([Line|Rest], LineIndex):-
 
 
 displayBoard(Board, P1pieces, P2pieces, NowPlaying):-
+	write('\33\[2J'),
+	write('      0      1      2      3      4      5      6      7      8\n'),
+	%format('~+~t~d~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~d~t~7+~t~n', [0, 1, 2, 3, 4, 5, 6, 7, 8]),
 	displayLine(Board, 0),
-	write('-------------------------------------------------------'),
+	format('~66c', "-"),
 	format('\nPlayer1: ~s, ~s', P1pieces),
 	format('\nPlayer2: ~s, ~s', P2pieces),
 	format('\nNow playing: ~s~3n', NowPlaying).
