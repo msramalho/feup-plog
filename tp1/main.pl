@@ -2,6 +2,7 @@
 :- include('display.pl').
 :- include('board.pl').
 :- include('examples.pl').
+:- include('interface.pl').
 
 testBoard([
     [[empty], [empty], [empty], [empty], [empty], [empty], [red], [empty], [empty]],
