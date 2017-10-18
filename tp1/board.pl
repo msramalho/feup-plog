@@ -50,8 +50,7 @@ getRandomBoard(NewBoard):-
     getValidPositions(Positions),
     piecesToDistribute(Pieces),
     emptyBoard(E),
-    fillBoard(E, Positions, Pieces, NewBoard),
-    displayBoard(NewBoard, [empty,empty], [empty,empty], player1).
+    fillBoard(E, Positions, Pieces, NewBoard).
 
 translate(empty, ' ').
 translate(black, 'D').
