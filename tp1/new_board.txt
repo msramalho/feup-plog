@@ -1,0 +1,26 @@
+      0       1     2      3      4      5      6      7      8
+ 0                  R             R             R                
+                      \ \     / /   \ \    / /                
+ 1                         R             R                       
+                      / /     \ \   / /     \ \              
+ 2                IRGBW           R             R          
+                / /   \ \     / /   \ \    / /     \ \        
+ 3           R             R             R             R         
+                \ \   / /     \ \   / /     \ \    / /       
+ 4                  R             R             R                 
+                / /   \ \     / /   \ \    / /     \ \        
+ 5           R             R             R             R         
+        / /     \ \   / /     \ \   / /     \ \    / /    \ \
+ 6    R           IRGBW         IRGBW          IRGBW           R  
+        \ \     / /   \ \     / /   \ \    / /     \ \     / /
+ 7         IRGBW         IRGBW         IRGBW         IRGBW       
+                \ \   / /     \ \   / /    \ \    / /
+ 8                IRGBW         IRGBW         IRGBW                
+                / /   \ \     / /   \ \    / /     \ \        
+ 9           R             R             R             R         
+                \ \   / /     \ \   / /     \ \    / /       
+10                  R             R             R                
+                      \ \     / /   \ \    / /                
+11                         R             R                       
+                      / /     \ \   / /     \ \              
+12                  R             R             R                
