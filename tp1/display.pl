@@ -32,7 +32,9 @@ displayLineIndex(LineIndex):-
 
 displayLine([], _).
 displayLine([Line|Rest], LineIndex):-
-	displayLineIndex(LineIndex), write(' '),
+	numberToString(LineIndex, LineString),	%convert the lineIndex to a string
+	format('~2s ', LineString),				%print the index with the right padding
+
 	displayNextCell(Line, LineIndex, 0),nl,
 	NewLineIndex is LineIndex + 1,
 	displayLine(Rest, NewLineIndex).
@@ -40,8 +42,7 @@ displayLine([Line|Rest], LineIndex):-
 
 displayBoard(Board, P1pieces, P2pieces, NowPlaying):-
 	write('\33\[2J'),
-	write('      0      1      2      3      4      5      6      7      8\n'),
-	%format('~+~t~d~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~t~d~t~7+~d~t~7+~t~n', [0, 1, 2, 3, 4, 5, 6, 7, 8]),
+	write('      0    1    2    3    4    5    6    7    8\n'),
 	displayLine(Board, 0),
 	format('~66c', "-"),
 	format('\nPlayer1: ~s, ~s', P1pieces),
