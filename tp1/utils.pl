@@ -17,3 +17,9 @@ listToString([H|T], Temp, Final):-
 numberToString(Number, String):-
 	number_chars(Number, TempList),
 	listToString(TempList, String).
+
+writeString(_, 0).
+writeString(String, Count):-
+    write(String),
+    NewCount is Count - 1,
+    writeString(String, NewCount).
