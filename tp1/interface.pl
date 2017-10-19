@@ -5,9 +5,9 @@ wlrc:-put_code(9496). % write lower right corner └
 wlf:-put_code(9500). % write left fork ├
 wrf:-put_code(9508). % write right fork ┤
 wvd:-put_code(9474). % write vertical dash│
-%write dash
-wd:-put_code(9472).
-wd(0).
+
+wd:-put_code(9472). % write horizontal dash ─
+wd(0):-wd.
 wd(N):-wd, N1 is N-1, wd(N1).
 
 % write dashed separator line
@@ -23,7 +23,7 @@ wel(Len, Content):-
 
 displayMenu:-
 	write('\33\[2J'),
-	wulc, wd(40), wurc, nl,
+	wulc, wd(39), wurc, nl,
 	wel('30'),
 	wel('30', 'LYNGK GAME'),
 	wel('30'),
@@ -33,5 +33,5 @@ displayMenu:-
 	wel('30', '2: See operations'),
 	wel('30', '3: Quit'),
 	wel('30'), wel('30'),wel('30'),
-	wllc, wd(40), wlrc.
+	wllc, wd(39), wlrc.
 

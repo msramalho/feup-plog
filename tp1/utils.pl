@@ -8,6 +8,7 @@ setRandomSeed:-
 
 listToString(List, Result):-
 	listToString(List, '', Result).
+
 listToString([], Final, Final).
 listToString([H|T], Temp, Final):-
 	atom_concat(Temp, H, NewRes),
