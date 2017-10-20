@@ -47,29 +47,37 @@ stateIgnoreInvalidCell([Cell|Rest], LineIndex, CellIndex):-%receive all the inva
 	NewCellIndex is CellIndex + 1,
 	stateIgnoreInvalidCell(Rest, LineIndex, NewCellIndex).
 
+displaySlashesStart([], _, _).
+displaySlashesStart(_, LineIndex, CellIndex):-
+    isValid(LineIndex, CellIndex),
+    write('     ').
+displaySlashesStart([_|Rest], LineIndex, CellIndex):-
+    NewCellIndex is CellIndex + 1,
+    displaySlashesStart(Rest, LineIndex, NewCellIndex),
+    write('     ').
+
+%minimum between two numbers
+minBetween(X, Y, Result):- X < Y, X = Result.
+minBetween(X, Y, Result):- Y = Result.
 
 %alternate the kind of slashes according to even and odd lines
-displaySlashes(LineIndex, CountValid):-
-    0 is LineIndex mod 2, %even lines
-    writeString('\\    /     ', CountValid).
+displaySlashes(LineIndex, CountValidCurrent, CountValidNext):-
+    minBetween(CountValidCurrent, CountValidNext, Min),
+    Min =:= CountValidCurrent,
+    writeString('/    \\    ', CountValidCurrent).
 
-displaySlashes(LineIndex, CountValid):- %odd lines
-    writeString('/    \\     ', CountValid).
-
-displaySlashesStart([], _, _).
-displaySlashesStart([_|Rest], LineIndex, CellIndex):-
-    isValid(LineIndex, CellIndex), !.
-displaySlashesStart([_|Rest], LineIndex, CellIndex):-
-    NewLineIndex is LineIndex + 1,
-    displaySlashesStart(Rest, NewLineIndex, CellIndex),
-    write('     ').
+displaySlashes(LineIndex, CountValidCurrent, CountValidNext):- %odd lines
+    writeString('\\    /    ', CountValidNext).
 
 %handle the display of a line with slashes
 displaySlashesLine(LineIndex):-
+    findall(X, isValid(LineIndex, X), L1),
+    length(L1, CountValidCurrent),
     NewLineIndex is LineIndex + 1,
-    findall(X, isValid(NewLineIndex, X), L),
-    length(L, CountValid),
-    displaySlashes(LineIndex, CountValid).
+    findall(X, isValid(NewLineIndex, X), L2),
+    length(L2, CountValidNext),
+    %format('(~d, ~d)', [CountValidCurrent, CountValidNext]),
+    displaySlashes(LineIndex, CountValidCurrent, CountValidNext).
 
 
 %displays a line of the board and calls itself recursively
@@ -78,6 +86,7 @@ displayLine([Line|Rest], LineIndex):-
 	numberToString(LineIndex, LineString),	%convert the lineIndex to a string
 	format('~2s  ', LineString),				%print the index with the right padding
 	stateIgnoreInvalidCell(Line, LineIndex, 0), nl,
+    write('   '),
     displaySlashesStart(Line, LineIndex, 0),
     displaySlashesLine(LineIndex), nl,
 	NewLineIndex is LineIndex + 1,
