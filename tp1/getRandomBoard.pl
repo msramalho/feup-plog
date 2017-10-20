@@ -51,13 +51,3 @@ getRandomBoard(NewBoard):-
     piecesToDistribute(Pieces),
     emptyBoard(E),
     fillBoard(E, Positions, Pieces, NewBoard).
-
-translate(empty, ' ').
-translate(black, 'D').
-translate(red, 'R').
-translate(ivory, 'I').
-translate(green, 'G').
-translate(blue, 'B').
-translate(wild, 'W').
-translate(player1, 'Player1').
-translate(player2, 'Player2').

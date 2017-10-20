@@ -103,7 +103,7 @@ displayBoard(Board, P1pieces, P2pieces, NowPlaying):-
 	wd(66),
 	format('\nPlayer1: ~s, ~s', P1pieces),
 	format('\nPlayer2: ~s, ~s', P2pieces),
-	format('\nNow playing: ~s~3n', NowPlaying).
+	format('\nNow playing: ~s~3n', NowPlaying), nl.
 
 
 
