@@ -1,5 +1,6 @@
 :- use_module(library(system)).
 :- use_module(library(random)).
+:- use_module(library(lists)).
 
 setRandomSeed:-
 	now(Time), S is Time mod 30269,
@@ -23,3 +24,8 @@ writeString(String, Count):-
     write(String),
     NewCount is Count - 1,
     writeString(String, NewCount).
+
+%fails if MemberToTest is not in List
+memberOf(MemberToTest, [MemberToTest | _]).
+memberOf(MemberToTest, [_ | Tail]):-
+    memberOf(MemberToTest, Tail).

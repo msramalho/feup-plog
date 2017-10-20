@@ -13,7 +13,7 @@ concatenateList([Color|NextColors], Initial, Final):-
 writeBetweenValid(LineIndex, CellIndex):-
     isValid(LineIndex, CellIndex),
     wd(5).
-writeBetweenValid(LineIndex, CellIndex):-
+writeBetweenValid(_, _):-
     write('     ').
 
 %final state of the state machine, enters it after first appearance of a valid cell
@@ -31,7 +31,7 @@ stateReceiveValidCell([PotentialLastColor|Rest], LineIndex, CellIndex):-
     format('~|~t~s~t~5+', Concatenated),
 	NewCellIndex is CellIndex + 1,
 	stateReceiveValidCell(Rest, LineIndex, NewCellIndex).
-stateReceiveValidCell([PotentialLastColor|Rest], LineIndex, CellIndex):-
+stateReceiveValidCell([_|Rest], LineIndex, CellIndex):-
     write('     '),
 	NewCellIndex is CellIndex + 1,
 	stateReceiveValidCell(Rest, LineIndex, NewCellIndex).
@@ -42,7 +42,7 @@ stateIgnoreInvalidCell(Cells, LineIndex, CellIndex):-%leave state if a valid is 
 	isValid(LineIndex, CellIndex),
 	stateReceiveValidCell(Cells, LineIndex, CellIndex).
 
-stateIgnoreInvalidCell([Cell|Rest], LineIndex, CellIndex):-%receive all the invalid
+stateIgnoreInvalidCell([_|Rest], LineIndex, CellIndex):-%receive all the invalid
     write('     '),
 	NewCellIndex is CellIndex + 1,
 	stateIgnoreInvalidCell(Rest, LineIndex, NewCellIndex).
@@ -50,7 +50,11 @@ stateIgnoreInvalidCell([Cell|Rest], LineIndex, CellIndex):-%receive all the inva
 displaySlashesStart([], _, _).
 displaySlashesStart(_, LineIndex, CellIndex):-
     isValid(LineIndex, CellIndex),
+    List = [0, 3, 6, 7, 9, 10],
+    memberOf(LineIndex, List),
     write('     ').
+displaySlashesStart(_, LineIndex, CellIndex):-
+    isValid(LineIndex, CellIndex).
 displaySlashesStart([_|Rest], LineIndex, CellIndex):-
     NewCellIndex is CellIndex + 1,
     displaySlashesStart(Rest, LineIndex, NewCellIndex),
@@ -58,15 +62,15 @@ displaySlashesStart([_|Rest], LineIndex, CellIndex):-
 
 %minimum between two numbers
 minBetween(X, Y, Result):- X < Y, X = Result.
-minBetween(X, Y, Result):- Y = Result.
+minBetween(_, Y, Result):- Y = Result.
 
 %alternate the kind of slashes according to even and odd lines
-displaySlashes(LineIndex, CountValidCurrent, CountValidNext):-
+displaySlashes(_, CountValidCurrent, CountValidNext):-
     minBetween(CountValidCurrent, CountValidNext, Min),
     Min =:= CountValidCurrent,
     writeString('/    \\    ', CountValidCurrent).
 
-displaySlashes(LineIndex, CountValidCurrent, CountValidNext):- %odd lines
+displaySlashes(_, _, CountValidNext):- %odd lines
     writeString('\\    /    ', CountValidNext).
 
 %handle the display of a line with slashes
@@ -76,7 +80,6 @@ displaySlashesLine(LineIndex):-
     NewLineIndex is LineIndex + 1,
     findall(X, isValid(NewLineIndex, X), L2),
     length(L2, CountValidNext),
-    %format('(~d, ~d)', [CountValidCurrent, CountValidNext]),
     displaySlashes(LineIndex, CountValidCurrent, CountValidNext).
 
 
@@ -95,7 +98,7 @@ displayLine([Line|Rest], LineIndex):-
 %clears the screen and ouputs the board and the game state
 displayBoard(Board, P1pieces, P2pieces, NowPlaying):-
 	write('\33\[2J'),
-	write('      0    1    2    3    4    5    6    7    8\n'),
+	write('      0    1    2    3    4    5    6    7    8\n\n'),
 	displayLine(Board, 0),
 	wd(66),
 	format('\nPlayer1: ~s, ~s', P1pieces),
