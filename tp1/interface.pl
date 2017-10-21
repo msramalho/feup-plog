@@ -29,11 +29,30 @@ displayMenu:-
 	wel('30'),
 	wsl(39),
 	wel('30'), wel('30'),wel('30'),
-	wel('30', '1: Start Game'),
-	wel('30', '2: See operations'),
+	wel('30', '1: Human Vs Human'),
+	wel('30', '2: Human Vs Bot'),
 	wel('30', '3: Quit'),
+	wel('30', '4: Instructions'),
 	wel('30'), wel('30'),wel('30'),
 	wllc, wd(39), wlrc, nl.
+
+displayInstructions:-
+	write('\33\[2J'),
+	wulc, wd(67), wurc, nl,
+	wel('51'),
+	wel('51', 'Instructions'),
+	wel('51'),
+	wsl(67),
+	wel('51'), wel('51'),wel('51'),
+	wel('51', 'move Xfrom Yfrom Xto Yto'),
+	wel('51', 'claim color'),
+	wel('51', 'lyngk Xfrom Yfrom Xto1 Yto1 ... XtoN YtoN'),
+	wel('51'), wel('51'),wel('51'),
+	wel('51', 'Enter to go back'),
+	wel('51'), wel('51'),wel('51'),
+	wllc, wd(67), wlrc, nl,
+    waitForEnter,
+    init.
 
 
 
@@ -64,7 +83,9 @@ translate(blue, 'B').
 translate(wild, 'W').
 translate(player1, 'Player1').
 translate(player2, 'Player2').
+translate(bot, 'BOT').
 
 menuTranslate(humanVhuman, 49). % 49 maps to "1"
 menuTranslate(humanVbot, 50). % 50 maps to "2"
 menuTranslate(quit, 51). % 51 maps to "3"
+menuTranslate(instructions, 52). % 52 maps to "4"
