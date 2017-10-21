@@ -65,7 +65,27 @@ getGameType(GameType):-
     write('Wrong game type, try again:\n'),
     getGameType(GameType).
 
+waitForInstruction:-
+    read_line("move"),
+    write('moving from (Xfrom-Yfrom:Xto-Yto.):'),
+    read(Xf-Yf:Xt-Yt),
+    format('from ~d,~d to ~d,~d', [Xf, Yf, Xt, Yt]).
+    %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
+
+waitForInstruction:-
+    read_line(Instruction),
+    Instruction = '3'.
+
+waitForInstruction:-
+    write('instruction not recognized\n'),
+    waitForInstruction.
+
+%where everything begins
 init:-
     displayMenu,
     getGameType(GameType),
-    startGame(GameType).
+    startGame(GameType),
+    getRandomBoard(Board),
+    assert(board(Board)),   %save the board state
+    write('The Game is on\n'),
+    waitForInstruction.
