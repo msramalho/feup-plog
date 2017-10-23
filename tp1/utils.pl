@@ -2,10 +2,12 @@
 :- use_module(library(random)).
 :- use_module(library(lists)).
 
+
 setRandomSeed:-
 	now(Time), S is Time mod 30269,
 	getrand(random(X, Y, Z, _)),
 	setrand(random(S, X, Y, Z)), !.
+:-setRandomSeed. %set a random seed
 
 listToString(List, Result):-
 	listToString(List, '', Result).

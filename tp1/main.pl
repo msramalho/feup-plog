@@ -12,7 +12,6 @@
 
 :-setRandomSeed. %set a random seed
 
-
 % volatile and dynamic predicates declaration
 :- volatile
     board/1,        % the current board state
