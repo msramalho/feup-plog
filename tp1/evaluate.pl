@@ -72,3 +72,15 @@ isValid(12, 6).
 /* convert the isValid predicate into a list of two lists containg the x and the y values of isValid*/
 getValidPositions(Result):-
     findall(X-Y, isValid(X,Y), Result).
+
+isMoveValid(Xf, Yf, Xt, Yt):-
+    checkValidMove(Xf, Yf),
+    checkValidMove(Xt, Yt).
+
+% check if cell is valid (x, y) and print error if not
+checkValidMove(X, Y):-isValid(X, Y).
+checkValidMove(X, Y):-format('Cell(~c, ~c) is not a valid cell in the board\n', [X, Y]).
+
+checkClaimableColor(Color):-
+    toClaim(ColorsToClaim),
+    player(CurrentPlayer).

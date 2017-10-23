@@ -6,7 +6,7 @@
 :- include('evaluate.pl').
 :- include('interface.pl').
 
-:- include('tests.pl').
+%:- include('tests.pl').
 
 :-setRandomSeed. %set a random seed
 
@@ -16,19 +16,17 @@
     board/1,        % the current board state
     player/1,       % the current player
     nextPlayer/1,   % the next player
-    p1Colors/1,     % a list of the colors claimed by player1
-    p2Colors/1,     % a list of the colors claimed by player2
-    p1Stacks/1,     % a list of the stacks collected by player1
-    p2Stacks/1.     % a list of the stacks collected by player2
+    toClaim/1,      % which colors are yet to claim
+    getColors/2,    % a list of the colors claimed by the selected player getColors(player, Colors)
+    getStacks/2.    % a list of the stacks collected by the selected player getStacks(player, Stacks)
 
 :- dynamic
     board/1,
     player/1,
     nextPlayer/1,
-    p1Colors/1,
-    p2Colors/1,
-    p1Stacks/1,
-    p2Stacks/1.
+    toClaim/1,
+    getColors/2,
+    getStacks/2.
 
 %make bot start first or human start first, 50% chance
 randomizeBotPlay:-
@@ -65,19 +63,36 @@ getGameType(GameType):-
     write('Wrong game type, try again:\n'),
     getGameType(GameType).
 
+%wait for instruction and enter
 waitForInstruction:-
-    read_line("move"),
+    write('Enter your instruction (move, claim, quit)\n'),
+    read_line(Instruction),
+    parseInstruction(Instruction).
+
+%expecting a move instruction
+parseInstruction(Instruction):-
+    Instruction = "move",
     write('moving from (Xfrom-Yfrom:Xto-Yto.):'),
     read(Xf-Yf:Xt-Yt),
-    format('from ~d,~d to ~d,~d', [Xf, Yf, Xt, Yt]).
+    format('from ~d,~d to ~d,~d', [Xf, Yf, Xt, Yt]),
+    checkValidMove(Xf, Yf), checkValidMove(Xt, Yt), %check the values represent valid cells
+    write('stop').
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
-waitForInstruction:-
-    read_line(Instruction),
-    Instruction = '3'.
+%expecting a claim instruction
+parseInstruction(Instruction):-
+    Instruction = "claim",
+    write('which color would you like to claim?\n'),
+    read(Color),
+    checkClaimableColor(Color).
+    %execute claim Color
 
-waitForInstruction:-
-    write('instruction not recognized\n'),
+parseInstruction(Instruction):-
+    Instruction = "quit",
+    abort.
+
+parseInstruction(_):-
+    write('instruction not recognized, try again...\n'),
     waitForInstruction.
 
 %where everything begins
@@ -86,6 +101,16 @@ init:-
     getGameType(GameType),
     startGame(GameType),
     getRandomBoard(Board),
+    player(CurrentPlayer),
+    nextPlayer(NextPlayer),
+    assert(toClaim(claimableColors)), % load the colors that can be claimed
     assert(board(Board)),   %save the board state
-    write('The Game is on\n'),
+    assert(getColors(CurrentPlayer, [empty, empty])),
+    assert(getColors(NextPlayer, [empty, empty])),
+    assert(getStacks(CurrentPlayer, [])),
+    assert(getStacks(NextPlayer, [])),
+    !,
+    displayBoard,
+    write('BOARD HAS BEEN DISPLAYD\n'),
     waitForInstruction.
+

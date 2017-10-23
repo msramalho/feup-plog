@@ -96,14 +96,21 @@ displayLine([Line|Rest], LineIndex):-
 	displayLine(Rest, NewLineIndex).
 
 %clears the screen and ouputs the board and the game state
-displayBoard(Board, P1pieces, P2pieces, NowPlaying):-
+displayBoard:-
 	write('\33\[2J'),
 	write('      0    1    2    3    4    5    6    7    8\n\n'),
+    board(Board),
 	displayLine(Board, 0),
 	wd(66),
-	format('\nPlayer1: ~s, ~s', P1pieces),
-	format('\nPlayer2: ~s, ~s', P2pieces),
-	format('\nNow playing: ~s~3n', NowPlaying), nl.
+    nl, !,
+    player(CurrentPlayer),
+    nextPlayer(NextPlayer),
+    getColors(CurrentPlayer, CColors),
+    getColors(NextPlayer, NColors),
+
+	format('\nPlayer1: ~s, ~s', CColors),
+	format('\nPlayer2: ~s, ~s', NColors),
+	format('\nNow playing: ~s~3n', CurrentPlayer), nl.
 
 
 

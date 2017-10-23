@@ -44,13 +44,12 @@ displayInstructions:-
 	wel('51'),
 	wsl(67),
 	wel('51'), wel('51'),wel('51'),
-	wel('51', 'Choose on of the following options:'),
-	wel('51', 'move, claim, lyngk'),
+	wel('51', 'Choose one of the following options:'),
+	wel('51', 'move, claim'),
 	wel('51', 'and then press enter'), wel('51'),
 	wel('51', 'for move specify:'),
 	wel('51', 'Xfrom-Yfrom:Xto-Yto'), wel('51'),
 	wel('51', 'claim color'),
-	wel('51', 'lyngk Xfrom-Yfrom Xto1-Yto1 ... XtoN-YtoN'),
 	wel('51'), wel('51'),wel('51'),
 	wel('51', 'Enter to go back'),
 	wel('51'), wel('51'),wel('51'),
@@ -93,3 +92,5 @@ menuTranslate(humanVhuman, 49). % 49 maps to "1"
 menuTranslate(humanVbot, 50). % 50 maps to "2"
 menuTranslate(quit, 51). % 51 maps to "3"
 menuTranslate(instructions, 52). % 52 maps to "4"
+
+claimableColors([black, red, ivory, green, blue]).
