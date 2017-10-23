@@ -92,28 +92,3 @@ menuTranslate(humanVhuman, 49). % 49 maps to "1"
 menuTranslate(humanVbot, 50). % 50 maps to "2"
 menuTranslate(quit, 51). % 51 maps to "3"
 menuTranslate(instructions, 52). % 52 maps to "4"
-
-%colors transaltion
-translateColor("black", black).
-translateColor("D", black).
-translateColor("d", black).
-
-translateColor("red", red).
-translateColor("R", red).
-translateColor("r", red).
-
-translateColor("ivory", ivory).
-translateColor("I", ivory).
-translateColor("i", ivory).
-
-translateColor("green", green).
-translateColor("G", green).
-translateColor("g", green).
-
-translateColor("blue", blue).
-translateColor("B", blue).
-translateColor("b", blue).
-
-
-
-claimableColors([black, red, ivory, green, blue]).%this will be redacted and asserted

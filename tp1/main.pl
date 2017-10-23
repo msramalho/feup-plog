@@ -4,6 +4,8 @@
 :- include('displayBoard.pl').
 
 :- include('evaluate.pl').
+:- include('claim.pl').
+:- include('move.pl').
 :- include('interface.pl').
 
 %:- include('tests.pl').
@@ -80,28 +82,28 @@ parseInstruction(Instruction):-
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
 %expecting a claim instruction
-parseInstruction(Instruction):-
+parseInstruction(Instruction):-%instruction was claim and has not claimed any piece
     Instruction = "claim",
     not(hasClaimed),
     repeat,
         claimColor,
     !,
-    nextPlay.
-%expecting a claim instruction
-parseInstruction(Instruction):-
+    nextTurn.
+parseInstruction(Instruction):-%claim but already claimed a piece in this turn
     Instruction = "claim",
     write('You can only claim one color per turn\n'), !,  fail.
 
-
+%expecting a quit instruction
 parseInstruction(Instruction):-
     Instruction = "quit",
     abort.
 
+%unexpected instruction
 parseInstruction(_):-
     write('Instruction not recognized, try again.\n'), fail.
 
 %display board and wait for instruction
-nextPlay:-
+nextTurn:-
     write('displaying board\n'),
     displayBoard,
     repeat,
@@ -116,23 +118,22 @@ isBotPlaying.
 
 % inverts the two players
 invertPlayers:-
+    nextPlayerHasMoves, %only invert if the next player has valid moves
     player(CurrentPlayer),
     nextPlayer(NextPlayer),
     retract(player(_)),
     retract(nextPlayer(_)),
     assert(player(NextPlayer)),
     assert(nextPlayer(CurrentPlayer)).
+invertPlayers.%if next player has no valid move, keep the players
 
 %checks the board state, changes the players and starts the nextPlay
 endTurn:-
     evaluateBoard,
-    write('evaluateBoard checked\n'),
     invertPlayers,
-    write('players inverted\n'),
     isBotPlaying,
-    write('bot is not playing\n'),
     abolish(hasClaimed/0), % clear the hasClaimed flag
-    nextPlay.
+    nextTurn.
 
 %empties the database
 clearInit:-
@@ -150,8 +151,10 @@ init:-
     getGameType(GameType),
     startGame(GameType),
     getRandomBoard(Board),
+
     player(CurrentPlayer),
     nextPlayer(NextPlayer),
+
     claimableColors(C),
     assert(toClaim(C)),     % load the colors that can be claimed
     assert(board(Board)),   % save the board state
