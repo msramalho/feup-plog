@@ -10,7 +10,6 @@
 
 %:- include('tests.pl').
 
-:-setRandomSeed. %set a random seed
 
 % volatile and dynamic predicates declaration
 :- volatile
@@ -44,7 +43,7 @@ randomizeBotPlay:-
     write('Bot goes first...\n').
 
 %game type (User x User | User x Bot)
-startGame(GameType):-GameType = quit, abort. %abort
+startGame(GameType):-GameType = quit, exit. %abort
 startGame(GameType):-GameType = instructions, displayInstructions. %abort
 startGame(GameType):- %intialize both players. The real players should randomly choose their turn
     GameType = humanVhuman,
@@ -95,7 +94,7 @@ parseInstruction(Instruction):-%claim but already claimed a piece in this turn
 %expecting a quit instruction
 parseInstruction(Instruction):-
     Instruction = "quit",
-    abort.
+    exit.
 
 %unexpected instruction
 parseInstruction(_):-
@@ -126,7 +125,7 @@ invertPlayers:-
     assert(nextPlayer(CurrentPlayer)).
 invertPlayers.%if next player has no valid move, keep the players
 
-%checks the board state, changes the players and starts the nextPlay
+%checks the board state, changes the players and starts the nextTurn
 endTurn:-
     evaluateBoard,
     invertPlayers,
@@ -134,6 +133,8 @@ endTurn:-
     abolish(hasClaimed/0), % clear the hasClaimed flag
     nextTurn.
 
+%empties the database and stops the program
+exit:-clearInit, abort.
 %empties the database
 clearInit:-
     abolish(board/1),
@@ -162,5 +163,5 @@ init:-
     assert(getStacks(CurrentPlayer, [])),
     assert(getStacks(NextPlayer, [])),
     !,
-    nextPlay,
+    nextTurn,
     clearInit.
