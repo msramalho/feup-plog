@@ -27,11 +27,6 @@ writeString(String, Count):-
     NewCount is Count - 1,
     writeString(String, NewCount).
 
-%fails if MemberToTest is not in List
-memberOf(_, [_ | _]).
-memberOf(MemberToTest, [_ | Tail]):-
-    memberOf(MemberToTest, Tail).
-
 %not implementation
 not(X):-X, !, fail.
 not(_).

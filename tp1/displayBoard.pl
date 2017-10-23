@@ -51,7 +51,7 @@ displaySlashesStart([], _, _).
 displaySlashesStart(_, LineIndex, CellIndex):-
     isValid(LineIndex, CellIndex),
     List = [0, 3, 6, 7, 9, 10],
-    memberOf(LineIndex, List),
+    nth0(_, List, LineIndex),
     write('     ').
 displaySlashesStart(_, LineIndex, CellIndex):-
     isValid(LineIndex, CellIndex).
