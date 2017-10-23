@@ -27,6 +27,12 @@ writeString(String, Count):-
     NewCount is Count - 1,
     writeString(String, NewCount).
 
+getBoardTopColor(X, Y, TopColor):-
+    board(B),
+    nth0(X, B, Line), %get the line
+    nth0(Y, Line, [TopColor|_]). %get the cell and the head which is the top color
+
+
 %not implementation
 not(X):-X, !, fail.
 not(_).

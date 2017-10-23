@@ -77,16 +77,6 @@ isMoveValid(Xf, Yf, Xt, Yt):-
     checkValidMove(Xf, Yf),
     checkValidMove(Xt, Yt).
 
-% check if cell is valid (x, y) and print error if not
-checkValidMove(X, Y):-isValid(X, Y), !.
-checkValidMove(X, Y):-format('Cell(~p, ~p) is not a valid cell in the board\n', [X, Y]), fail.
-
-getMoveCoordinates(Xf, Yf, Xt, Yt):-
-    write('choose start and end coordinates in the following format "Xfrom-Yfrom:Xto-Yto."\n'),
-    read(Xf-Yf:Xt-Yt),
-    format('from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]),
-    checkValidMove(Xf, Yf),
-    checkValidMove(Xt, Yt).
 
 
 %check if the board is in a final state, probably use validMove and find_all
