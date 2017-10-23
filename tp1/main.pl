@@ -19,6 +19,7 @@
     toClaim/1,      % which colors are yet to claim
     getColors/2,    % a list of the colors claimed by the selected player getColors(player, Colors)
     getStacks/2.    % a list of the stacks collected by the selected player getStacks(player, Stacks)
+    hasClaimed/0.   % a flag to indicate wheter the current player has claimed a color in this turn
 
 :- dynamic
     board/1,
@@ -26,7 +27,8 @@
     nextPlayer/1,
     toClaim/1,
     getColors/2,
-    getStacks/2.
+    getStacks/2,
+    hasClaimed/0.
 
 %make bot start first or human start first, 50% chance
 randomizeBotPlay:-
@@ -80,10 +82,16 @@ parseInstruction(Instruction):-
 %expecting a claim instruction
 parseInstruction(Instruction):-
     Instruction = "claim",
-    write('which color would you like to claim?\n'),
-    read(Color),
-    checkClaimableColor(Color).
-    %execute claim Color
+    not(hasClaimed),
+    repeat,
+        claimColor,
+    !,
+    nextPlay.
+%expecting a claim instruction
+parseInstruction(Instruction):-
+    Instruction = "claim",
+    write('You can only claim one color per turn\n'), !,  fail.
+
 
 parseInstruction(Instruction):-
     Instruction = "quit",
@@ -91,6 +99,50 @@ parseInstruction(Instruction):-
 
 parseInstruction(_):-
     write('Instruction not recognized, try again.\n'), fail.
+
+%display board and wait for instruction
+nextPlay:-
+    write('displaying board\n'),
+    displayBoard,
+    repeat,
+        waitForInstruction,
+    !.
+
+%check the bot should play
+isBotPlaying:-
+    player(bot),!, %the next player is the bot
+    playBot.
+isBotPlaying.
+
+% inverts the two players
+invertPlayers:-
+    player(CurrentPlayer),
+    nextPlayer(NextPlayer),
+    retract(player(_)),
+    retract(nextPlayer(_)),
+    assert(player(NextPlayer)),
+    assert(nextPlayer(CurrentPlayer)).
+
+%checks the board state, changes the players and starts the nextPlay
+endTurn:-
+    evaluateBoard,
+    write('evaluateBoard checked\n'),
+    invertPlayers,
+    write('players inverted\n'),
+    isBotPlaying,
+    write('bot is not playing\n'),
+    abolish(hasClaimed/0), % clear the hasClaimed flag
+    nextPlay.
+
+%empties the database
+clearInit:-
+    abolish(board/1),
+    abolish(player/1),
+    abolish(nextPlayer/1),
+    abolish(toClaim/1),
+    abolish(getColors/2),
+    abolish(getStacks/2),
+    abolish(hasClaimed/0).
 
 %where everything begins
 init:-
@@ -100,14 +152,13 @@ init:-
     getRandomBoard(Board),
     player(CurrentPlayer),
     nextPlayer(NextPlayer),
-    assert(toClaim(claimableColors)), % load the colors that can be claimed
-    assert(board(Board)),   %save the board state
-    assert(getColors(CurrentPlayer, [empty, empty])),
-    assert(getColors(NextPlayer, [empty, empty])),
+    claimableColors(C),
+    assert(toClaim(C)),     % load the colors that can be claimed
+    assert(board(Board)),   % save the board state
+    assert(getColors(CurrentPlayer, [])),
+    assert(getColors(NextPlayer, [])),
     assert(getStacks(CurrentPlayer, [])),
     assert(getStacks(NextPlayer, [])),
     !,
-    displayBoard,
-    repeat,
-        waitForInstruction.
-
+    nextPlay,
+    clearInit.

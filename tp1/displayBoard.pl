@@ -95,6 +95,10 @@ displayLine([Line|Rest], LineIndex):-
 	NewLineIndex is LineIndex + 1,
 	displayLine(Rest, NewLineIndex).
 
+displayPlayerStats(Player):-
+    getColors(Player, Colors),
+	format('~s\n    colors:', Player), write(Colors).
+
 %clears the screen and ouputs the board and the game state
 displayBoard:-
 	write('\33\[2J'),
@@ -103,14 +107,17 @@ displayBoard:-
 	displayLine(Board, 0),
 	wd(66),
     nl, !,
-    player(CurrentPlayer),
-    nextPlayer(NextPlayer),
-    getColors(CurrentPlayer, CColors),
-    getColors(NextPlayer, NColors),
 
-	format('\nPlayer1: ~s, ~s', CColors),
-	format('\nPlayer2: ~s, ~s', NColors),
-	format('\nNow playing: ~s~3n', CurrentPlayer), nl.
+    player(CurrentPlayer),
+	write('\nNow playing:'),
+    displayPlayerStats(CurrentPlayer),
+
+    nextPlayer(NextPlayer),
+	write('\nNext up:'),
+    displayPlayerStats(NextPlayer),
+
+    toClaim(C),
+	write('\nAvailable Colors:'), write(C), nl, nl, nl.
 
 
 

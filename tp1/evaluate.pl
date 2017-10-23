@@ -81,13 +81,49 @@ isMoveValid(Xf, Yf, Xt, Yt):-
 checkValidMove(X, Y):-isValid(X, Y), !.
 checkValidMove(X, Y):-format('Cell(~p, ~p) is not a valid cell in the board\n', [X, Y]), fail.
 
-checkClaimableColor(Color):-
-    toClaim(ColorsToClaim),
-    player(CurrentPlayer).
-
 getMoveCoordinates(Xf, Yf, Xt, Yt):-
     write('choose start and end coordinates in the following format "Xfrom-Yfrom:Xto-Yto."\n'),
     read(Xf-Yf:Xt-Yt),
     format('from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]),
     checkValidMove(Xf, Yf),
     checkValidMove(Xt, Yt).
+
+updateClaimedColor(Translated):-
+    toClaim(ToClaim), %load the colors left for claiming
+	write('\nAvailable Colors:'), write(ToClaim), nl,
+    nth0(_, ToClaim, Translated, NewToClaim),%if the chosen color is inside ToClaim
+    retract(toClaim(_)),
+    assert(toClaim(NewToClaim)), %updated available colors
+    player(CurrentPlayer).%get the current player
+updateClaimedColor(_):-%if update fails then it's because:
+    write('This color is no longer available\n'), fail.
+
+readValidColor(Translated):-
+    write('Which color would you like to claim?\n'),
+    read_line(Color),
+    translateColor(Color, Translated),
+    updateClaimedColor(Translated).
+readValidColor(_):-%if readValid fails it's because:
+    write('Invalid color name.\n'), fail.
+
+claimColor:-
+    player(CurrentPlayer),%load the current player
+    getColors(CurrentPlayer, ChosenColors), %get this player's colors
+    length(ChosenColors, Len), %get the length of this player's colors
+    Len < 2, !, %if the length is less than 2, then read color else go to other option for claimColor
+    repeat,%repeatedly read color
+        readValidColor(Translated),
+    !,
+    append([ChosenColors, [Translated]], Result),
+    write('new colors for '), write(CurrentPlayer), write(' are: '), write(Result),nl,
+    retract(getColors(CurrentPlayer, _)),
+    assert(getColors(CurrentPlayer, Result)),
+    assert(hasClaimed).%set the flag hasClaimed to true
+    %displayBoard.
+
+claimColor:-
+    write('You can only claim two colors\n').
+
+%check if the board is in a final state, probably use validMove and find_all
+evaluateBoard:-
+    write('----TODO: evaluate board state\n').
