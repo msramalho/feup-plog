@@ -72,11 +72,9 @@ waitForInstruction:-
 %expecting a move instruction
 parseInstruction(Instruction):-
     Instruction = "move",
-    write('moving from (Xfrom-Yfrom:Xto-Yto.):'),
-    read(Xf-Yf:Xt-Yt),
-    format('from ~d,~d to ~d,~d', [Xf, Yf, Xt, Yt]),
-    checkValidMove(Xf, Yf), checkValidMove(Xt, Yt), %check the values represent valid cells
-    write('stop').
+    repeat,
+        getMoveCoordinates(Xf, Yf, Xt, Yt),
+    write('got coordinates').
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
 %expecting a claim instruction
@@ -92,8 +90,7 @@ parseInstruction(Instruction):-
     abort.
 
 parseInstruction(_):-
-    write('instruction not recognized, try again...\n'),
-    waitForInstruction.
+    write('Instruction not recognized, try again.\n'), fail.
 
 %where everything begins
 init:-
@@ -111,6 +108,6 @@ init:-
     assert(getStacks(NextPlayer, [])),
     !,
     displayBoard,
-    write('BOARD HAS BEEN DISPLAYD\n'),
-    waitForInstruction.
+    repeat,
+        waitForInstruction.
 
