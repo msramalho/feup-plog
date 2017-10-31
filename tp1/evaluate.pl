@@ -77,7 +77,9 @@ isMoveValid(Xf, Yf, Xt, Yt):-
     checkValidMove(Xf, Yf),
     checkValidMove(Xt, Yt).
 
-
+/* inBoard(X, Y):-
+    X > -1, X < 9,
+    Y > -1, Y < 13. */
 
 %check if the board is in a final state, probably use validMove and find_all
 evaluateBoard:-
