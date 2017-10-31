@@ -18,11 +18,6 @@ emptyBoard([
     [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]]
 ]).
 
-%https://stackoverflow.com/questions/41454755/how-can-i-replace-an-element-of-a-list-using-an-index-in-prolog
-replaceAt([_|T],0,E,[E|T]).
-replaceAt([H|T],P,E,[H|R]) :-
-    P > 0, NP is P-1, replaceAt(T,NP,E,R).
-
 
 % a list of all the pieces that enter the board at the beginning 8 of each and 3 of wild
 piecesToDistribute([
@@ -40,10 +35,8 @@ fillBoard(Board, [Position|OtherPositions], Pieces, FinalBoard):-
     X-Y = Position,
     %format('(~d,~d)', [X, Y]),
     random_select(Piece, Pieces, NewPieces),
-    nth0(X, Board, Line),
     NewCell = [Piece],
-    replaceAt(Line, Y, NewCell, NewLine), %replace the cell for the new piece
-    replaceAt(Board, X, NewLine, NewBoard),
+    replaceBoardStack(Board, X, Y, NewCell, NewBoard), %replace the cell for the new piece
     fillBoard(NewBoard, OtherPositions, NewPieces, FinalBoard).
 
 
