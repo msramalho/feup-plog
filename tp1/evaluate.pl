@@ -90,8 +90,14 @@ nextPlayerHasMoves:-
     write('----TODO: nextPlayerHasMoves not implemented\n').
 
 
-%fails if X and Y's top color is not a neutral piece
+%fails if X and Y's top color is not a neutral stack
 isStackNeutral(X, Y):-
-    getBoardTopColor(X, Y, Piece), %single NEUTRAl piece
+    getBoardTopColor(X, Y, Piece),
     toClaim(NeutralPieces),
-    nth0(_, NeutralPieces, Piece). %if this is a neutral piece
+    nth0(_, NeutralPieces, Piece). %if this is a neutral stack
+%fails if X and Y's top color does not belong to the current player
+isStackOfPlayer(X, Y):-
+    player(CurentPlayer),
+    getBoardTopColor(X, Y, Piece),
+    getColors(CurentPlayer, ClaimedColors),
+    nth0(_, ClaimedColors, Piece). %if this is the player's stack

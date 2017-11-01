@@ -113,17 +113,30 @@ moveRecursive(_, _, _, _):- write('not able to move recursively'), nl, !, fail.
 
 %the default case, from and to are the same
 checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
-%try to go from the beginning until the end
+%try to go from the beginning until the end, only in the same lines
 checkValidMove(Xf, Yf, Xt, Yt):-
-    moveRecursive(Xf, Yf, Xt, Yt), %test all the 6 move directions recursively
+    moveRecursive(Xf, Yf, Xt, Yt), %test all the 6 move directions depth only search
     executeMove(Xf, Yf, Xt, Yt).
-
-%is True if Xt, Yt is empty or if they are of the same color (LYNGK) rule
+%try to go from the beginning until the end, using the lyngk rule if needed
+checkValidMove(Xf, Yf, Xt, Yt):-
+    isStackOfPlayer(Xf, Yf), %if it belongs to the current player -> can use LYNGK rule
+    moveLyngk(Xf, Yf, Xt, Yt),
+    executeMove(Xf, Yf, Xt, Yt).
+/* TODO: uncomment and make this work
+moveLyngk(Xf, Yf, Xt, Yt):-
+    moveRecursive(Xf, Yf, Xt, Yt). %test all the 6 move directions depth only search
+moveLyngk(Xf, Yf, Xt, Yt):-
+    moveRecursiveLyngk(Xf, Yf, Xt, Yt). %test all the 6 move directions in any order
+ */
+%is True if Xt, Yt is empty
 assertMoveTo(Xf, Yf, Xt, Yt):- % if empty
     getBoardStack(Xt, Yt, Stack),
     length(Stack, 0).
-    %Stack = [].
-assertMoveTo(Xf, Yf, Xt, Yt):- % if same color - LYNGK rule
+
+%is True if Xt, Yt is empty or if they are of the same color (LYNGK) rule
+assertMoveToLynkg(Xf, Yf, Xt, Yt):-
+    assertMoveTo(Xf, Yf, Xt, Yt).
+assertMoveToLynkg(Xf, Yf, Xt, Yt):- % if same color - LYNGK rule
     getBoardTopColor(Xf, Yf, C1),
     getBoardTopColor(Xt, Yt, C1). %same color can go through, RULE E-4
 
