@@ -77,7 +77,7 @@ parseInstruction(Instruction):-
     repeat,
         move(Xf, Yf, Xt, Yt),
     !,
-    nextTurn.
+    endTurn. %after a move the next player plays
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
 %expecting a claim instruction
@@ -87,7 +87,7 @@ parseInstruction(Instruction):-%instruction was claim and has not claimed any pi
     repeat,
         claimColor,
     !,
-    nextTurn.
+    nextTurn. % the players can move after a claim
 parseInstruction(Instruction):-%claim but already claimed a piece in this turn
     Instruction = "claim",
     write('You can only claim one color per turn\n'), !,  fail.
@@ -103,7 +103,6 @@ parseInstruction(_):-
 
 %display board and wait for instruction
 nextTurn:-
-    write('displaying board\n'),
     displayBoard,
     repeat,
         waitForInstruction,
