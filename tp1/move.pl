@@ -3,6 +3,10 @@
 checkValidCell(X, Y):-isValid(X, Y), !.
 checkValidCell(X, Y):-format('Cell(~p, ~p) is not a valid cell in the board\n', [X, Y]), fail.
 
+%fails if stack is empty
+checkStackNotEmpty(X, Y):-
+    getBoardStackHeight(X, Y, Len),
+    Len >= 0.
 
 getMoveableColorsByPlayer(Player, MoveableColors):-
     getColors(Player, ClaimedColors),
@@ -17,7 +21,7 @@ checkBelongsToPlayer(X, Y):-
     getMoveableColorsByPlayer(CurrentPlayer, MoveableColors),%merge the two lists to get the colors the player can move
     nth0(_, MoveableColors, TopColor). %if the TopColor is one of the colors the player can move
 checkBelongsToPlayer(_,_):-
-    write('You cannot play this stack because of its top color\n'), fail.
+    write('You cannot play this stack because of its top color\n'), !, fail.
 
 
 %check if the first stack can go on top of the second
@@ -27,13 +31,37 @@ checkStacksPile(Xf, Yf, Xt, Yt):-
     Sum is H1 + H2,
     !,
     Sum =< 5. %only allow them to be piled if the height does not exceed 5
-
 checkStacksPile(_,_,_,_):-
     write('You cannot pile those two stacks, max height is 5\n'), fail.
 
 trySelect(Find, Initial, Final):-
-    select(Find, Initial, Final),%remove wild pieces, because this can be more than one
+    select(Find, Initial, Final). %remove wild pieces, because this can be more than one
 trySelect(_, S, S).
+
+/* %check if a neutral single piece is being moved to a valid place RULE E-6
+checkSingleNeutralRule(Xf, Yf, Xt, Yt):-
+    getBoardStackHeight(Xf, Yf, 1), %single piece
+    isStackNeutral(Xf, Yf), % test if this stack is neutral
+    !, %cut, meaning that if the board height is one then it must respect the following:
+    checkSingleNeutralRuleSecondStack(Xt, Yt). %only True if the destination is a single piece too
+checkSingleNeutralRule(_, _, _, _). % True if the stack is higher than one
+
+checkSingleNeutralRuleSecondStack(Xt, Yt):-
+    getBoardStackHeight(Xt, Yt, 1). %only True if the destination is a single piece too
+checkSingleNeutralRuleSecondStack(_, _):-
+    write('A Single Neutral Piece can only move onto single pieces'), nl, !, fail. */
+
+%check if the player is trying to move a neutral stack to a higher one RULE E-6, RULE E-7
+checkNeutralStackJumpTo(Xf, Yf, Xt, Yt):-
+    isStackNeutral(Xf, Yf),
+    !, %if it is neutral it must respect this rule
+    getBoardStackHeight(Xf, Yf, H1), !,
+    getBoardStackHeight(Xt, Yt, H2), !,
+    H1 >= H2.
+checkNeutralStackJumpTo(_, _, _, _):-
+    write('A Neutral Stack (or piece) cannot jump on top of a larger one')
+
+
 
 %check if the stacks have duplicate colors -> cannot be piled if so, fails if no wild
 checkDuplicateColors(Xf, Yf, Xt, Yt):-
@@ -44,11 +72,11 @@ checkDuplicateColors(Xf, Yf, Xt, Yt):-
     remove_dups(AppendedNoWild, Pruned),%make sure there is only one of each color
     length(AppendedNoWild, LenOriginal),
     length(Pruned, LenPruned),
-    !,
-    LenOriginal = LenPruned.%if not equal than there were duplicates
+    LenOriginal = LenPruned, !, %if not equal than there were duplicates
+    write('Not Duplicate!'), nl.
 
 checkDuplicateColors(_,_,_,_):-
-    write('You cannot pile because they would have duplicate colors\n'), fail.
+    write('You cannot pile because they would have duplicate colors\n'), !, fail.
 
 
 %prompt for valid X and Y coordinates for origin and destination
@@ -57,28 +85,31 @@ move(Xf, Yf, Xt, Yt):-
     read(Xf-Yf:Xt-Yt),
     checkValidCell(Xf, Yf),
     checkValidCell(Xt, Yt),
-    checkBelongsToPlayer(Xf, Yf),
-    checkStacksPile(Xf, Yf, Xt, Yt),
-    checkDuplicateColors(Xf, Yf, Xt, Yt),
+    checkStackNotEmpty(Xt, Yt), !, % RULE E-3
+    checkBelongsToPlayer(Xf, Yf), !, % RULE E-1, RULE E-2
+    checkStacksPile(Xf, Yf, Xt, Yt), !, % RULE E-5
+    %checkSingleNeutralRule(Xf, Yf, Xt, Yt), !, % RULE E-6
+    checkNeutralStackJumpTo(Xf, Yf, Xt, Yt), !, % RULE E-6, RULE E-7
+    checkDuplicateColors(Xf, Yf, Xt, Yt), % RULE E-5
     checkValidMove(Xf, Yf, Xt, Yt).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%checkValidMove/4: check if can go from Xf, Yf, Xt, Yt
 
 %checks if F and T are equal cells
-isSameCell(Xf, Yf, Xt, Yt):-
-    Xf =:= Xt,
-    Xt =:= Yt.
+isSameCell(X, Y, X, Y).
+
 %the default case, from and to are the same
 checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
 
 %attempts to move recursively in one of the 6 directions
 moveRecursive(Xf, Yf, Xt, Yt):-moveL_Recursive(Xf, Yf, Xt, Yt). % test move left
-/* moveRecursive(Xf, Yf, Xt, Yt):-moveR_Recursive(Xf, Yf, Xt, Yt). % test move right
+moveRecursive(Xf, Yf, Xt, Yt):-moveR_Recursive(Xf, Yf, Xt, Yt). % test move right
 moveRecursive(Xf, Yf, Xt, Yt):-moveUL_Recursive(Xf, Yf, Xt, Yt). % test move up and left
 moveRecursive(Xf, Yf, Xt, Yt):-moveUR_Recursive(Xf, Yf, Xt, Yt). % test move up and right
-moveRecursive(Xf, Yf, Xt, Yt):-moveDL_Recursive(Xf, Yf, Xt, Yt).% test move down and left
-moveRecursive(Xf, Yf, Xt, Yt):-moveDR_Recursive(Xf, Yf, Xt, Yt). */
+moveRecursive(Xf, Yf, Xt, Yt):-moveDL_Recursive(Xf, Yf, Xt, Yt). % test move down and left
+moveRecursive(Xf, Yf, Xt, Yt):-moveDR_Recursive(Xf, Yf, Xt, Yt). % test move down and right
+moveRecursive(_, _, _, _):- write('not able to move recursively'), nl, !, fail.
 
 %try to go from the beginning until the end
 checkValidMove(Xf, Yf, Xt, Yt):-
@@ -88,21 +119,81 @@ checkValidMove(Xf, Yf, Xt, Yt):-
 %is True if Xt, Yt is empty or if they are of the same color (LYNGK) rule
 assertMoveTo(Xf, Yf, Xt, Yt):- % if empty
     getBoardStack(Xt, Yt, Stack),
-    Stack = [].
+    length(Stack, 0).
+    %Stack = [].
 assertMoveTo(Xf, Yf, Xt, Yt):- % if same color - LYNGK rule
     getBoardTopColor(Xf, Yf, C1),
-    getBoardTopColor(Xt, Yt, C2),
-    C1 = C2. %same color can go through
+    getBoardTopColor(Xt, Yt, C1). %same color can go through, RULE E-4
 
-%-----------------moveL_Recursive
-moveL_Recursive(Xf, Y, Xt, Y):-%reched the end
-    NewXf is Xf - 2,
-    isSameCell(NewXf, Y, Xt, Y).
-moveL_Recursive(Xf, Y, Xt, Y):-%did not reach the ed
-    T_NewXf is Xf - 2,
-    isValid(T_NewXf, Y), % must be inside the board range, else does not env try
-    assertMoveTo(T_NewXf, Y, Xt, Y),
-    moveL_Recursive(T_NewXf, Y, Xt, Y, NewXf, Y).%go until the next
+%----------------------------------------MOVE RECURSIVE Start
+%-----------------move LEFT Recursive
+moveL_Recursive(X, Yf, X, Yt):-%reched the end
+    NewYf is Yf - 2,
+    isSameCell(X, NewYf, X, Yt).%reached the destination
+moveL_Recursive(X, Yf, X, Yt):-%did not reach the end
+    NewYf is Yf - 2,
+    isValid(X, NewYf), % must be inside the board range, else does not env try
+    assertMoveTo(X, Yf, X, NewYf),
+    moveL_Recursive(X, NewYf, X, Yt).%go until the next
+
+%-----------------move RIGHT Recursive
+moveR_Recursive(X, Yf, X, Yt):-%reched the end
+    NewYf is Yf + 2,
+    isSameCell(X, NewYf, X, Yt).%reached the destination
+moveR_Recursive(X, Yf, X, Yt):-%did not reach the end
+    NewYf is Yf + 2,
+    isValid(X, NewYf), % must be inside the board range, else does not env try
+    assertMoveTo(X, Yf, X, NewYf),
+    moveR_Recursive(X, NewYf, X, Yf).%go until the next
+
+%-----------------move UP and LEFT Recursive
+moveUL_Recursive(Xf, Yf, Xt, Yt):-%reched the end
+    NewXf is Xf - 1,
+    NewYf is Yf - 1,
+    isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
+moveUL_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
+    NewXf is Xf - 1,
+    NewYf is Yf - 1,
+    isValid(NewXf, NewYf), % must be inside the board range, else does not env try
+    assertMoveTo(Xf, Yf, NewXf, NewYf),
+    moveUL_Recursive(NewXf, NewYf, Xt, Yt).%go until the next
+
+%-----------------move UP and RIGHT Recursive
+moveUR_Recursive(Xf, Yf, Xt, Yt):-%reched the end
+    NewXf is Xf - 1,
+    NewYf is Yf + 1,
+    isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
+moveUR_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
+    NewXf is Xf - 1,
+    NewYf is Yf + 1,
+    isValid(NewXf, NewYf), % must be inside the board range, else does not env try
+    assertMoveTo(Xf, Yf, NewXf, NewYf),
+    moveUR_Recursive(NewXf, NewYf, Xt, Yt).%go until the next
+
+%-----------------move DOWN and LEFT Recursive
+moveDL_Recursive(Xf, Yf, Xt, Yt):-%reched the end
+    NewXf is Xf + 1,
+    NewYf is Yf - 1,
+    isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
+moveDL_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
+    NewXf is Xf + 1,
+    NewYf is Yf - 1,
+    isValid(NewXf, NewYf), % must be inside the board range, else does not env try
+    assertMoveTo(Xf, Yf, NewXf, NewYf),
+    moveDL_Recursive(NewXf, NewYf, Xt, Yt).%go until the next
+
+%-----------------move DOWN and RIGHT Recursive
+moveDR_Recursive(Xf, Yf, Xt, Yt):-%reched the end
+    NewXf is Xf + 1,
+    NewYf is Yf + 1,
+    isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
+moveDR_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
+    NewXf is Xf + 1,
+    NewYf is Yf + 1,
+    isValid(NewXf, NewYf), % must be inside the board range, else does not env try
+    assertMoveTo(Xf, Yf, NewXf, NewYf),
+    moveDR_Recursive(NewXf, NewYf, Xt, Yt).%go until the next
+%----------------------------------------MOVE RECURSIVE END
 
 
 
@@ -110,8 +201,9 @@ executeMove(Xf, Yf, Xt, Yt):-
     board(B),
     getBoardStack(Xf, Yf, StackTop),
     getBoardStack(Xt, Yt, StackBottom),
-    append([StackTop, StackBottom], Stack),
-    replaceBoardStack(B, Xt, Yt, Stack, NewBoard),
+    append([StackTop, StackBottom], Stack), % RULE E-2
+    replaceBoardStack(B, Xt, Yt, Stack, B2),
+    replaceBoardStack(B2, Xf, Yf, [], NewBoard),
     retract(board(_)),
     assert(board(NewBoard)).
 

@@ -88,3 +88,10 @@ evaluateBoard:-
 %check if the next player has at least one valid move
 nextPlayerHasMoves:-
     write('----TODO: nextPlayerHasMoves not implemented\n').
+
+
+%fails if X and Y's top color is not a neutral piece
+isStackNeutral(X, Y):-
+    getBoardTopColor(X, Y, Piece), %single NEUTRAl piece
+    toClaim(NeutralPieces),
+    nth0(_, NeutralPieces, Piece). %if this is a neutral piece

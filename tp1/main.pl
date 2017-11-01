@@ -77,7 +77,6 @@ parseInstruction(Instruction):-
     repeat,
         move(Xf, Yf, Xt, Yt),
     !,
-    write('moved'),
     nextTurn.
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
