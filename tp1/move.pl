@@ -102,9 +102,6 @@ move(Xf, Yf, Xt, Yt):-
 %checks if F and T are equal cells
 isSameCell(X, Y, X, Y).
 
-%the default case, from and to are the same
-checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
-
 %attempts to move recursively in one of the 6 directions
 moveRecursive(Xf, Yf, Xt, Yt):-moveL_Recursive(Xf, Yf, Xt, Yt). % test move left
 moveRecursive(Xf, Yf, Xt, Yt):-moveR_Recursive(Xf, Yf, Xt, Yt). % test move right
@@ -114,6 +111,8 @@ moveRecursive(Xf, Yf, Xt, Yt):-moveDL_Recursive(Xf, Yf, Xt, Yt). % test move dow
 moveRecursive(Xf, Yf, Xt, Yt):-moveDR_Recursive(Xf, Yf, Xt, Yt). % test move down and right
 moveRecursive(_, _, _, _):- write('not able to move recursively'), nl, !, fail.
 
+%the default case, from and to are the same
+checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
 %try to go from the beginning until the end
 checkValidMove(Xf, Yf, Xt, Yt):-
     moveRecursive(Xf, Yf, Xt, Yt), %test all the 6 move directions recursively
