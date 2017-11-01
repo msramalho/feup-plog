@@ -55,12 +55,15 @@ checkSingleNeutralRuleSecondStack(_, _):-
 checkNeutralStackJumpTo(Xf, Yf, Xt, Yt):-
     isStackNeutral(Xf, Yf),
     !, %if it is neutral it must respect this rule
-    getBoardStackHeight(Xf, Yf, H1), !,
-    getBoardStackHeight(Xt, Yt, H2), !,
-    H1 >= H2.
-checkNeutralStackJumpTo(_, _, _, _):-
-    write('A Neutral Stack (or piece) cannot jump on top of a larger one')
+    checkHeightIsSmaller(Xf, Yf, Xt, Yt).
+checkNeutralStackJumpTo(_, _, _, _).%non neutral pieces do not need to obey this rule
 
+checkHeightIsSmaller(Xf, Yf, Xt, Yt):-
+    getBoardStackHeight(Xf, Yf, H1),
+    getBoardStackHeight(Xt, Yt, H2),
+    H1 >= H2.
+checkHeightIsSmaller(_, _, _, _):-
+    write('A Neutral Stack (or piece) cannot jump on top of a larger one'), nl, !, fail.
 
 
 %check if the stacks have duplicate colors -> cannot be piled if so, fails if no wild
@@ -87,7 +90,7 @@ move(Xf, Yf, Xt, Yt):-
     checkValidCell(Xt, Yt),
     checkStackNotEmpty(Xt, Yt), !, % RULE E-3
     checkBelongsToPlayer(Xf, Yf), !, % RULE E-1, RULE E-2
-    checkStacksPile(Xf, Yf, Xt, Yt), !, % RULE E-5
+    checkStacksPile(Xf, Yf, Xt, Yt), !, % RULE E-5, RULE E-8
     %checkSingleNeutralRule(Xf, Yf, Xt, Yt), !, % RULE E-6
     checkNeutralStackJumpTo(Xf, Yf, Xt, Yt), !, % RULE E-6, RULE E-7
     checkDuplicateColors(Xf, Yf, Xt, Yt), % RULE E-5
