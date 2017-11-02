@@ -73,17 +73,39 @@ isValid(12, 6).
 getValidPositions(Result):-
     findall(X-Y, isValid(X,Y), Result).
 
-isMoveValid(Xf, Yf, Xt, Yt):-
-    checkValidMove(Xf, Yf),
-    checkValidMove(Xt, Yt).
 
-/* inBoard(X, Y):-
-    X > -1, X < 9,
-    Y > -1, Y < 13. */
+%iterate over a list of X-Y-Color and give those to the correct player
+moveStackToPLayer([]).
+moveStackToPLayer([X-Y-Stack|T]):-
+    Stack = [TopColor|_],
+    getPlayerFromColor(TopColor, Player), %if this fails the color does not belong to any
+    !,
+    %update the player's stacks with the new one
+    getStacks(Player, PLayerStacks),
+    append([PLayerStacks, [Stack]], NewStacks),
+    retract(getStacks(Player, _)),
+    assert(getStacks(Player, NewStacks)),
+    %remove the stack from the board
+    board(B),
+    replaceBoardStack(B, X, Y, [], NewBoard),
+    retract(board(_)),
+    assert(board(NewBoard)),
+    moveStackToPLayer(T).
+%simply call itself again ignoring this one, to get here it means this stack is an obstacle (belongs to no one)
+moveStackToPLayer([_|T]):-
+    moveStackToPLayer(T).
+
+removeClaimedStacksWithFive:-
+    findall(X-Y-Stack, (getBoardStackHeight(X, Y, 5), getBoardStack(X, Y, Stack)), L), %get all the blocks with height 5
+    remove_dups(L, Pruned), %remove duplicates
+    moveStackToPLayer(Pruned).
+
 
 %check if the board is in a final state, probably use validMove and find_all
 evaluateBoard:-
+    removeClaimedStacksWithFive,
     write('----TODO: evaluate board state\n').
+
 
 %check if the next player has at least one valid move
 nextPlayerHasMoves:-

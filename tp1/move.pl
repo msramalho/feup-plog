@@ -237,7 +237,7 @@ moveDR_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
 %----------------------------------------MOVE RECURSIVE LYNGK START
 %add a pair of coordinates to the path
 addToPath(X-Y, Path, NewPath):-
-    append([X-Y, Path], NewPath).
+    append([[X-Y], Path], NewPath).
 %fail if the coordinates are in the pair
 notInPath(X-Y, Path):-
     nth0(_, Path,  X-Y), !, fail.

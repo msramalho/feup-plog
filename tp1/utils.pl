@@ -46,7 +46,7 @@ getBoardTopColor(X, Y, TopColor):-
 
 getBoardStack(X, Y, Stack):-
     board(B),
-    nth0(X, B, Line), %get the line
+    nth0(X, B, Line),  %get the line
     nth0(Y, Line, Stack). %get the Stack
 
 %get the stack height (getBoardStackHeight/4 sets the last as the Stack)
@@ -54,6 +54,22 @@ getBoardStackHeight(X, Y, Height):-getBoardStackHeight(X, Y, Height, _).
 getBoardStackHeight(X, Y, Height, Stack):-
     getBoardStack(X, Y, Stack),
     length(Stack, Height).
+
+%get the player that owns this color, fails if none:
+getPlayerFromColor(Color, _Player):-
+    toClaim(ToClaim),
+    nth0(_, ToClaim, Color), %if the color is not claimed, fails
+    !, fail.
+%assuming then, that this color is claimed, it belongs to player1, player2 or bot
+%testing player1
+getPlayerFromColor(Color, Player):-testPlayerOwnsColor(player1, Color, Player).
+getPlayerFromColor(Color, Player):-testPlayerOwnsColor(player2, Color, Player).
+getPlayerFromColor(Color, Player):-testPlayerOwnsColor(bot, Color, Player).
+
+testPlayerOwnsColor(Player, Color, Player):-
+    getColors(Player, Colors),
+    nth0(_, Colors, Color), %if the color belongs to player 1
+    !.
 
 %not implementation
 not(X):-X, !, fail.

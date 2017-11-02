@@ -43,19 +43,16 @@ randomizeBotPlay:-
     write('Bot goes first...\n').
 
 %game type (User x User | User x Bot)
-startGame(GameType):-GameType = quit, exit. %abort
-startGame(GameType):-GameType = instructions, displayInstructions. %abort
-startGame(GameType):- %intialize both players. The real players should randomly choose their turn
-    GameType = humanVhuman,
+startGame(quit):-exit. %abort
+startGame(instructions):-displayInstructions. %abort
+startGame(humanVhuman):- %intialize both players. The real players should randomly choose their turn
     assert(player(player1)),
     assert(nextPlayer(player2)),
     write('Human Vs Human Selected\n').
 
-startGame(GameType):- % initialize the player and the nextPlayer randomly, the bot may be first
-    GameType = humanVbot,
+startGame(humanVbot):- % initialize the player and the nextPlayer randomly, the bot may be first
     write('Human Vs Bot Selected\n'),
     randomizeBotPlay.
-
 
 %try to read a valid game type (1(humanVhuman), 2(humanVbot) or 3 (quit))
 getGameType(GameType):-
@@ -72,29 +69,24 @@ waitForInstruction:-
     parseInstruction(Instruction).
 
 %expecting a move instruction
-parseInstruction(Instruction):-
-    Instruction = "move",
+parseInstruction("move"):-
     repeat,
         move,
     !.%, endTurn. %after a move the next player plays
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
 %expecting a claim instruction
-parseInstruction(Instruction):-%instruction was claim and has not claimed any piece
-    Instruction = "claim",
+parseInstruction("claim"):-%instruction was claim and has not claimed any piece
     hasClaimed(false),
     repeat,
         claimColor,
     !,
     nextTurn. % the players can move after a claim
-parseInstruction(Instruction):-%claim but already claimed a piece in this turn
-    Instruction = "claim",
+parseInstruction("claim"):-%claim but already claimed a piece in this turn
     write('You can only claim one color per turn\n'), !,  fail.
 
 %expecting a quit instruction
-parseInstruction(Instruction):-
-    Instruction = "quit",
-    exit.
+parseInstruction("quit"):-exit.
 
 %unexpected instruction
 parseInstruction(_):-
@@ -102,6 +94,7 @@ parseInstruction(_):-
 
 %display board and wait for instruction
 nextTurn:-
+    evaluateBoard,
     displayBoard,
     repeat,
         waitForInstruction,
