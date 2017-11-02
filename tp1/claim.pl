@@ -1,7 +1,6 @@
 
 updateClaimedColor(Translated):-
     toClaim(ToClaim), %load the colors left for claiming
-	write('\nAvailable Colors:'), write(ToClaim), nl,
     nth0(_, ToClaim, Translated, NewToClaim),%if the chosen color is inside ToClaim
     retract(toClaim(_)),
     assert(toClaim(NewToClaim)). %updated available colors
@@ -28,8 +27,8 @@ claimColor:-
     write('new colors for '), write(CurrentPlayer), write(' are: '), write(Result),nl,
     retract(getColors(CurrentPlayer, _)),
     assert(getColors(CurrentPlayer, Result)),
-    assert(hasClaimed).%set the flag hasClaimed to true
-    %displayBoard.
+    retract(hasClaimed(false)),
+    assert(hasClaimed(true)).%set the flag hasClaimed to true
 
 claimColor:-
     write('You can only claim two colors\n').

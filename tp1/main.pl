@@ -19,7 +19,7 @@
     toClaim/1,      % which colors are yet to claim
     getColors/2,    % a list of the colors claimed by the selected player getColors(player, Colors)
     getStacks/2.    % a list of the stacks collected by the selected player getStacks(player, Stacks)
-    hasClaimed/0.   % a flag to indicate wheter the current player has claimed a color in this turn
+    hasClaimed/1.   % a flag to indicate wheter the current player has claimed a color in this turn
 
 :- dynamic
     board/1,
@@ -28,7 +28,7 @@
     toClaim/1,
     getColors/2,
     getStacks/2,
-    hasClaimed/0.
+    hasClaimed/1.
 
 %make bot start first or human start first, 50% chance
 randomizeBotPlay:-
@@ -75,15 +75,14 @@ waitForInstruction:-
 parseInstruction(Instruction):-
     Instruction = "move",
     repeat,
-        move(Xf, Yf, Xt, Yt),
-    !,
-    endTurn. %after a move the next player plays
+        move,
+    !.%, endTurn. %after a move the next player plays
     %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
 
 %expecting a claim instruction
 parseInstruction(Instruction):-%instruction was claim and has not claimed any piece
     Instruction = "claim",
-    not(hasClaimed),
+    hasClaimed(false),
     repeat,
         claimColor,
     !,
@@ -127,10 +126,11 @@ invertPlayers.%if next player has no valid move, keep the players
 
 %checks the board state, changes the players and starts the nextTurn
 endTurn:-
-    evaluateBoard,
-    invertPlayers,
-    isBotPlaying,
-    abolish(hasClaimed/0), % clear the hasClaimed flag
+    evaluateBoard, !,
+    invertPlayers, !,
+    isBotPlaying, !,
+    retract(hasClaimed(_)), % clear the hasClaimed flag.
+    assert(hasClaimed(false)),
     nextTurn.
 
 %empties the database and stops the program
@@ -143,10 +143,12 @@ clearInit:-
     abolish(toClaim/1),
     abolish(getColors/2),
     abolish(getStacks/2),
-    abolish(hasClaimed/0).
+    abolish(hasClaimed/1),
+    assert(hasClaimed(false)).
 
 %where everything begins
 init:-
+    clearInit,
     displayMenu,
     getGameType(GameType),
     startGame(GameType),
