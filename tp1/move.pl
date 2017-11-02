@@ -105,22 +105,16 @@ moveRecursive(_, _, _, _):- write('direct move is not valid'), nl, !, fail.
 
 %attempts to move recursively in one of the 6 directions, searching in depth only
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveL_RecursiveLyngk'), nl,
     moveL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveR_RecursiveLyngk'), nl,
    moveR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move right
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveUL_RecursiveLyngk'), nl,
    moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move up and left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveUR_RecursiveLyngk'), nl,
    moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move up and right
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveDL_RecursiveLyngk'), nl,
    moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move down and left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveDR_RecursiveLyngk'), nl,
    moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move down and right
 moveRecursiveLyngk(_, _, _, _, _):- write('unnable to execute LYNGK move'), nl, !, fail.
 
