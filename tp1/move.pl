@@ -8,8 +8,9 @@ checkStackNotEmpty(X, Y):-
     getBoardStackHeight(X, Y, Len),
     Len >= 0.
 
-getMoveableColorsByPlayer(Player, MoveableColors):-
-    getColors(Player, ClaimedColors),
+getMoveableColorsByPlayer(MoveableColors):-
+    player(CurrentPlayer),
+    getColors(CurrentPlayer, ClaimedColors),
     toClaim(ToClaim),
     append([ClaimedColors, ToClaim], MoveableColors).%return all the colors the Player can move
 
@@ -17,8 +18,7 @@ getMoveableColorsByPlayer(Player, MoveableColors):-
 checkBelongsToPlayer(X, Y):-
     getBoardTopColor(X, Y, TopColor),
     TopColor \= wild,
-    player(CurrentPlayer),
-    getMoveableColorsByPlayer(CurrentPlayer, MoveableColors), %merge the two lists to get the colors the player can move
+    getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
     nth0(_, MoveableColors, TopColor). %if the TopColor is one of the colors the player can move
 checkBelongsToPlayer(_,_):-
     write('You cannot play this stack because of its top color\n'), !, fail.
