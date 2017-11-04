@@ -138,7 +138,7 @@ checkValidMove(Xf, Yf, Xt, Yt):-
 moveLyngk(Xf, Yf, Xt, Yt):-
     moveRecursive(Xf, Yf, Xt, Yt). %test all the 6 move directions depth only search
 moveLyngk(Xf, Yf, Xt, Yt):-
-    moveRecursiveLyngk(Xf, Yf, Xt, Yt, []). %test all the 6 move directions in any order
+    moveRecursiveLyngk(Xf, Yf, Xt, Yt, [Xf-Yf]). %test all the 6 move directions in any order
 
 
 %is True if Xt, Yt is empty
