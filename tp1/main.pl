@@ -72,33 +72,22 @@ waitForInstruction:-
 parseInstruction("move"):-
     repeat,
         move,
-    !.%, endTurn. %after a move the next player plays
-    %format('Moving from ~d,~d to ~d,~d\n', [Xf, Yf, Xt, Yt]).
+    !.
 
 %expecting a claim instruction
 parseInstruction("claim"):-%instruction was claim and has not claimed any piece
     hasClaimed(false),
     repeat,
         claimColor,
-    !,
-    nextTurn. % the players can move after a claim
+    !, fail. % the players can move after a claim
 parseInstruction("claim"):-%claim but already claimed a piece in this turn
     write('You can only claim one color per turn\n'), !,  fail.
 
-%expecting a quit instruction
-parseInstruction("quit"):-exit.
-
+%ignore empty input->newline
+parseInstruction([]):- !, fail.
 %unexpected instruction
 parseInstruction(_):-
     write('Instruction not recognized, try again.\n'), fail.
-
-%display board and wait for instruction
-nextTurn:-
-    evaluateBoard,
-    displayBoard,
-    repeat,
-        waitForInstruction,
-    !.
 
 %check the bot should play
 isBotPlaying:-
@@ -116,6 +105,14 @@ invertPlayers:-
     assert(player(NextPlayer)),
     assert(nextPlayer(CurrentPlayer)).
 invertPlayers.%if next player has no valid move, keep the players
+
+%display board and wait for instruction
+nextTurn:-
+    evaluateBoard,
+    displayBoard,
+    repeat,
+        waitForInstruction,
+    !, endTurn.
 
 %checks the board state, changes the players and starts the nextTurn
 endTurn:-

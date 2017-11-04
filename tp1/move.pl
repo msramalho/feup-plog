@@ -68,7 +68,7 @@ checkDuplicateColors(_,_,_,_):-
     write('You cannot pile because they would have duplicate colors\n'), !, fail.
 
 %after the user inputs, check if it is to abort or to process
-processMove(q, _, _, _):-!, nextTurn. %quit if Xf is q
+processMove(q, _, _, _). %quit if Xf is q
 processMove(Xf, Yf, Xt, Yt):-%process move otherwise
     checkValidCell(Xf, Yf),
     checkValidCell(Xt, Yt),
@@ -77,19 +77,15 @@ processMove(Xf, Yf, Xt, Yt):-%process move otherwise
     checkStacksPile(Xf, Yf, Xt, Yt), !, % RULE E-5, RULE E-8
     checkNeutralStackJumpTo(Xf, Yf, Xt, Yt), !, % RULE E-6, RULE E-7
     checkDuplicateColors(Xf, Yf, Xt, Yt), !,  % RULE E-5
-    checkValidMove(Xf, Yf, Xt, Yt), !,
-    %when everything is done, cut and move on
-    endTurn.
+    checkValidMove(Xf, Yf, Xt, Yt), !.
 
 
 %prompt for valid X and Y coordinates for origin and destination
 move:-
     write('Choose cells FROM and TO using the following format "Xfrom-Yfrom:Xto-Yto." make Xfrom=q to quit\n'),
     read(Xf-Yf:Xt-Yt), !,
-    processMove(Xf, Yf, Xt, Yt).
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%checkValidMove/4: check if can go from Xf, Yf, Xt, Yt
+    processMove(Xf, Yf, Xt, Yt),
+    read_line([]).
 
 %checks if F and T are equal cells
 isSameCell(X, Y, X, Y).
@@ -105,18 +101,24 @@ moveRecursive(_, _, _, _):- write('direct move is not valid'), nl, !, fail.
 
 %attempts to move recursively in one of the 6 directions, searching in depth only
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
+    write('moveL_RecursiveLyngk'), nl,
     moveL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
+    write('moveR_RecursiveLyngk'), nl,
    moveR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move right
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
+    write('moveUL_RecursiveLyngk'), nl,
    moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move up and left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
+    write('moveUR_RecursiveLyngk'), nl,
    moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move up and right
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
+    write('moveDL_RecursiveLyngk'), nl,
    moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move down and left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
+    write('moveDR_RecursiveLyngk'), nl,
    moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move down and right
-moveRecursiveLyngk(_, _, _, _, _):- write('unnable to execute LYNGK move'), nl, !, fail.
+moveRecursiveLyngk(_, _, _, _, _):- write('unable to execute LYNGK move'), nl, !, fail.
 
 %the default case, from and to are the same
 checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
