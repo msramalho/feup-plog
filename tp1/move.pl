@@ -100,25 +100,13 @@ moveRecursive(Xf, Yf, Xt, Yt):-moveDR_Recursive(Xf, Yf, Xt, Yt). % test move dow
 moveRecursive(_, _, _, _):- write('direct move is not valid'), nl, !, fail.
 
 %attempts to move recursively in one of the 6 directions, searching in depth only
-moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveL_RecursiveLyngk'), nl,
-    moveL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move left
-moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveR_RecursiveLyngk'), nl,
-   moveR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move right
-moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveUL_RecursiveLyngk'), nl,
-   moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move up and left
-moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveUR_RecursiveLyngk'), nl,
-   moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move up and right
-moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveDL_RecursiveLyngk'), nl,
-   moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move down and left
-moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path):-
-    write('moveDR_RecursiveLyngk'), nl,
-   moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path). % test move down and right
-moveRecursiveLyngk(_, _, _, _, _):- write('unable to execute LYNGK move'), nl, !, fail.
+moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move left
+moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move right
+moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move up and left
+moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move up and right
+moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move down and left
+moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move down and right
+moveRecursiveLyngk(_, _, _, _, _, _):- write('unable to execute LYNGK move'), nl, !, fail.
 
 %the default case, from and to are the same
 checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
@@ -138,7 +126,8 @@ checkValidMove(Xf, Yf, Xt, Yt):-
 moveLyngk(Xf, Yf, Xt, Yt):-
     moveRecursive(Xf, Yf, Xt, Yt). %test all the 6 move directions depth only search
 moveLyngk(Xf, Yf, Xt, Yt):-
-    moveRecursiveLyngk(Xf, Yf, Xt, Yt, [Xf-Yf]). %test all the 6 move directions in any order
+    getBoardTopColor(Xf, Yf, LyngkColor), %load the lyngk color to use
+    moveRecursiveLyngk(Xf, Yf, Xt, Yt, [Xf-Yf], LyngkColor). %test all the 6 move directions in any order
 
 
 %is True if Xt, Yt is empty
@@ -147,13 +136,10 @@ assertMoveTo(Xt, Yt):- % if empty
     length(Stack, 0).
 
 %is True if Xt, Yt is empty or if they are of the same color (LYNGK) rule
-assertMoveToLynkg(_, _, Xt, Yt):-
+assertMoveToLynkg(Xt, Yt, _):-
     assertMoveTo(Xt, Yt).
-assertMoveToLynkg(Xf, Yf, Xt, Yt):- % if same color - LYNGK rule
-    getBoardTopColor(Xf, Yf, C1),
-    getBoardTopColor(Xt, Yt, C1). %same color can go through, RULE E-4
-
-
+assertMoveToLynkg(Xt, Yt, LyngkColor):- % if same color - LYNGK rule
+    getBoardTopColor(Xt, Yt, LyngkColor). %same color can go through, RULE E-4
 
 
 %----------------------------------------MOVE RECURSIVE START
@@ -233,90 +219,91 @@ moveDR_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
 %----------------------------------------MOVE RECURSIVE LYNGK START
 %add a pair of coordinates to the path
 addToPath(X-Y, Path, NewPath):-
+    write('adding to path: '), write(X-Y), nl, % DEBUG
     append([[X-Y], Path], NewPath).
 %fail if the coordinates are in the pair
 notInPath(X-Y, Path):-
     nth0(_, Path,  X-Y), !, fail.
 notInPath(_, _).
 %-----------------move LEFT Recursive
-moveL_RecursiveLyngk(X, Yf, X, Yt, _):-%reached the end LYNGK
+moveL_RecursiveLyngk(X, Yf, X, Yt, _, _):-%reached the end LYNGK
     NewYf is Yf - 2,
     isSameCell(X, NewYf, X, Yt).%reached the destination
-moveL_RecursiveLyngk(X, Yf, X, Yt, Path):-%did not reach the end
+moveL_RecursiveLyngk(X, Yf, X, Yt, Path, LyngkColor):-%did not reach the end
     NewYf is Yf - 2,
     isValid(X, NewYf), % must be inside the board range, else does not even try
     notInPath(X-NewYf, Path), % cannot already be in the path (avoid loops)
-    assertMoveToLynkg(X, Yf, X, NewYf),
+    assertMoveToLynkg(X, NewYf, LyngkColor),
     addToPath(X-NewYf, Path, NewPath), % add to the path so as to avoid circular paths
-    moveRecursiveLyngk(X, NewYf, X, Yt, NewPath).%go until the next
+    moveRecursiveLyngk(X, NewYf, X, Yt, NewPath, LyngkColor).%go until the next
 
 %-----------------move RIGHT Recursive LYNGK
-moveR_RecursiveLyngk(X, Yf, X, Yt, _):-%reached the end
+moveR_RecursiveLyngk(X, Yf, X, Yt, _, _):-%reached the end
     NewYf is Yf + 2,
     isSameCell(X, NewYf, X, Yt).%reached the destination
-moveR_RecursiveLyngk(X, Yf, X, Yt, Path):-%did not reach the end
+moveR_RecursiveLyngk(X, Yf, X, Yt, Path, LyngkColor):-%did not reach the end
     NewYf is Yf + 2,
     isValid(X, NewYf), % must be inside the board range, else does not even try
     notInPath(X-NewYf, Path), % cannot already be in the path (avoid loops)
-    assertMoveToLynkg(X, Yf, X, NewYf),
+    assertMoveToLynkg(X, NewYf, LyngkColor),
     addToPath(X-NewYf, Path, NewPath), % add to the path so as to avoid circular paths
-    moveRecursiveLyngk(X, NewYf, X, Yt, NewPath).%go until the next
+    moveRecursiveLyngk(X, NewYf, X, Yt, NewPath, LyngkColor).%go until the next
 
 %-----------------move UP and LEFT Recursive LYNGK
-moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, _):-%reached the end
+moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, _, _):-%reached the end
     NewXf is Xf - 1,
     NewYf is Yf - 1,
     isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
-moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path):-%did not reach the end
+moveUL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-%did not reach the end
     NewXf is Xf - 1,
     NewYf is Yf - 1,
     isValid(NewXf, NewYf), % must be inside the board range, else does not even try
     notInPath(NewXf-NewYf, Path), % cannot already be in the path (avoid loops)
-    assertMoveToLynkg(Xf, Yf, NewXf, NewYf),
+    assertMoveToLynkg(NewXf, NewYf, LyngkColor),
     addToPath(NewXf-NewYf, Path, NewPath), % add to the path so as to avoid circular paths
-    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath).%go until the next
+    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath, LyngkColor).%go until the next
 
 %-----------------move UP and RIGHT Recursive LYNGK
-moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, _):-%reached the end
+moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, _, _):-%reached the end
     NewXf is Xf - 1,
     NewYf is Yf + 1,
     isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
-moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path):-%did not reach the end
+moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-%did not reach the end
     NewXf is Xf - 1,
     NewYf is Yf + 1,
     isValid(NewXf, NewYf), % must be inside the board range, else does not even try
     notInPath(NewXf-NewYf, Path), % cannot already be in the path (avoid loops)
-    assertMoveToLynkg(Xf, Yf, NewXf, NewYf),
+    assertMoveToLynkg(NewXf, NewYf, LyngkColor),
     addToPath(NewXf-NewYf, Path, NewPath), % add to the path so as to avoid circular paths
-    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath).%go until the next
+    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath, LyngkColor).%go until the next
 
 %-----------------move DOWN and LEFT Recursive LYNGK
-moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, _):-%reached the end
+moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, _, _):-%reached the end
     NewXf is Xf + 1,
     NewYf is Yf - 1,
     isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
-moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path):-%did not reach the end
+moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-%did not reach the end
     NewXf is Xf + 1,
     NewYf is Yf - 1,
     isValid(NewXf, NewYf), % must be inside the board range, else does not even try
     notInPath(NewXf-NewYf, Path), % cannot already be in the path (avoid loops)
-    assertMoveToLynkg(Xf, Yf, NewXf, NewYf),
+    assertMoveToLynkg(NewXf, NewYf, LyngkColor),
     addToPath(NewXf-NewYf, Path, NewPath), % add to the path so as to avoid circular paths
-    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath).%go until the next
+    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath, LyngkColor).%go until the next
 
 %-----------------move DOWN and RIGHT Recursive LYNGK
-moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, _):-%reached the end
+moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, _, _):-%reached the end
     NewXf is Xf + 1,
     NewYf is Yf + 1,
     isSameCell(NewXf, NewYf, Xt, Yt).%reached the destination
-moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path):-%did not reach the end
+moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-%did not reach the end
     NewXf is Xf + 1,
     NewYf is Yf + 1,
     isValid(NewXf, NewYf), % must be inside the board range, else does not even try
     notInPath(NewXf-NewYf, Path), % cannot already be in the path (avoid loops)
-    assertMoveToLynkg(Xf, Yf, NewXf, NewYf),
+    assertMoveToLynkg(NewXf, NewYf, LyngkColor),
     addToPath(NewXf-NewYf, Path, NewPath), % add to the path so as to avoid circular paths
-    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath).%go until the next
+    moveRecursiveLyngk(NewXf, NewYf, Xt, Yt, NewPath, LyngkColor).%go until the next
 %----------------------------------------MOVE RECURSIVE LYNGK END
 
 
