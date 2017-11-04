@@ -16,9 +16,9 @@ getMoveableColorsByPlayer(Player, MoveableColors):-
 %check if there is a stack in a cell and, if so, if that stack belongs or can be played by the current player (assumes isValid(X, Y))
 checkBelongsToPlayer(X, Y):-
     getBoardTopColor(X, Y, TopColor),
-    TopColor \= wild,!,
+    TopColor \= wild,
     player(CurrentPlayer),
-    getMoveableColorsByPlayer(CurrentPlayer, MoveableColors),%merge the two lists to get the colors the player can move
+    getMoveableColorsByPlayer(CurrentPlayer, MoveableColors), %merge the two lists to get the colors the player can move
     nth0(_, MoveableColors, TopColor). %if the TopColor is one of the colors the player can move
 checkBelongsToPlayer(_,_):-
     write('You cannot play this stack because of its top color\n'), !, fail.
