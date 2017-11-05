@@ -1,30 +1,38 @@
 %Assertion functions to get all the possible moves
 
-isStackMoveValid(_, [], _, _, []).
-isStackMoveValid(MoveableColors, [X-Y, T], Xt, Yt, NewResult):-
+isStackMoveValid(_, [], []).
+isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
     findall(X-Y-Xt-Yt, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
-    isMoveValid(MoveableColors, X, Y, Xt, Yt),
-    isStackMoveValid(MoveableColors, T, Xt, Yt, Result),
-    append([Result, AllMoves], NewResult).
+    remove_dups(AllMoves, AllMovesPruned),
+    isStackMoveValid(MoveableColors, T, Result),
+    append([Result, AllMovesPruned], NewResult).
 
 %get all the stacks a given stack can be moved to
 isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
+    belongsToPlayer(Xf, Yf),
+    isValid(Xt, Yt),
+    checkStackNotEmpty(Xt, Yt),
     checkValidMove(Xf, Yf, Xt, Yt),
     isColorInStackPlayable(Xf, Yf, MoveableColors),
-    canPileStacks(Xf, Yf, Xt, Yt),
-    isNeutralStackJumpTo(Xf, Yf, Xt, Yt),
-    hasDuplicateColors(Xf, Yf, Xt, Yt).
+    hasNoDuplicateColors(Xf, Yf, Xt, Yt),
+    canPileStacks(Xf, Yf, Xt, Yt).
+    /*,
+    isNeutralStackJumpTo(Xf, Yf, Xt, Yt).*/
 
 
 
 %get all the moves the currentPlayer can do
-getPlayerMoves(Moves):-
+getPlayerMoves(AllMoves):-
     getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
     findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
+    %trace,
+    %Moves2 = [0-2, 0-4, 0-6],
     write('player can play:'), write(Moves), nl,
     %findall(Xf-Yf-Xt-Yt, isMoveValid(MoveableColors, Xf, Yf, Xt, Yt), AllMoves),
-    isStackMoveValid(MoveableColors, Moves, _, _, AllMoves),
-    write('all possible moves are:'), write(AllMoves), nl.
+    isStackMoveValid(MoveableColors, Moves, AllMoves),
+    remove_dups(AllMoves, AllMovesPruned),
+    %notrace,
+    write('all possible moves are:'), write(AllMovesPruned), nl.
 
 
 
@@ -36,7 +44,7 @@ checkValidCell(X, Y):-format('Cell(~p, ~p) is not a valid cell in the board\n', 
 %fails if stack is empty
 checkStackNotEmpty(X, Y):-
     getBoardStackHeight(X, Y, Len),
-    Len >= 0.
+    Len > 0.
 
 %get all the colors a player can move
 getMoveableColorsByPlayer(MoveableColors):-
@@ -96,7 +104,7 @@ checkHeightIsSmaller(Xf, Yf, Xt, Yt):-isHeighSmaller(Xf, Yf, Xt, Yt).
 checkHeightIsSmaller(_, _, _, _):-write('A Neutral Stack (or piece) cannot jump on top of a larger one'), nl, !, fail.
 
 
-hasDuplicateColors(Xf, Yf, Xt, Yt):-
+hasNoDuplicateColors(Xf, Yf, Xt, Yt):-
     getBoardStack(Xf, Yf, Stack1),
     getBoardStack(Xt, Yt, Stack2),
     append([Stack1, Stack2], AppendedStacks),
@@ -105,7 +113,7 @@ hasDuplicateColors(Xf, Yf, Xt, Yt):-
     length(AppendedNoWild, LenOriginal),
     length(Pruned, LenOriginal). %if not equal than there were duplicates
 %check if the stacks have duplicate colors -> cannot be piled if so, fails if no wild
-checkDuplicateColors(Xf, Yf, Xt, Yt):-hasDuplicateColors(Xf, Yf, Xt, Yt).
+checkDuplicateColors(Xf, Yf, Xt, Yt):-hasNoDuplicateColors(Xf, Yf, Xt, Yt).
 checkDuplicateColors(_,_,_,_):-write('You cannot pile because they would have duplicate colors\n'), !, fail.
 
 %after the user inputs, check if it is to abort or to process
