@@ -101,7 +101,7 @@ removeClaimedStacksWithFive:-
     moveStackToPLayer(Pruned).
 
 
-%check if the board is in a final state, probably use validMove and find_all
+%check if the board is in a final state, probably use validMove and findall
 evaluateBoard:-
     removeClaimedStacksWithFive,
     write('----TODO: evaluate board state\n').
@@ -109,6 +109,7 @@ evaluateBoard:-
 
 %check if the next player has at least one valid move
 nextPlayerHasMoves:-
+    %TODO: find_all(X-Y, (processMove(X, Y, )))
     write('----TODO: nextPlayerHasMoves not implemented\n').
 
 
