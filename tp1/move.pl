@@ -1,3 +1,33 @@
+%Assertion functions to get all the possible moves
+
+isStackMoveValid(_, [], _, _, []).
+isStackMoveValid(MoveableColors, [X-Y, T], Xt, Yt, NewResult):-
+    findall(X-Y-Xt-Yt, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
+    isMoveValid(MoveableColors, X, Y, Xt, Yt),
+    isStackMoveValid(MoveableColors, T, Xt, Yt, Result),
+    append([Result, AllMoves], NewResult).
+
+%get all the stacks a given stack can be moved to
+isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
+    checkValidMove(Xf, Yf, Xt, Yt),
+    isColorInStackPlayable(Xf, Yf, MoveableColors),
+    canPileStacks(Xf, Yf, Xt, Yt),
+    isNeutralStackJumpTo(Xf, Yf, Xt, Yt),
+    hasDuplicateColors(Xf, Yf, Xt, Yt).
+
+
+
+%get all the moves the currentPlayer can do
+getPlayerMoves(Moves):-
+    getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
+    findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
+    write('player can play:'), write(Moves), nl,
+    %findall(Xf-Yf-Xt-Yt, isMoveValid(MoveableColors, Xf, Yf, Xt, Yt), AllMoves),
+    isStackMoveValid(MoveableColors, Moves, _, _, AllMoves),
+    write('all possible moves are:'), write(AllMoves), nl.
+
+
+
 
 % check if cell is valid (x, y) and print error if not
 checkValidCell(X, Y):-isValid(X, Y), !.
@@ -8,35 +38,48 @@ checkStackNotEmpty(X, Y):-
     getBoardStackHeight(X, Y, Len),
     Len >= 0.
 
+%get all the colors a player can move
 getMoveableColorsByPlayer(MoveableColors):-
     player(CurrentPlayer),
     getColors(CurrentPlayer, ClaimedColors),
     toClaim(ToClaim),
     append([ClaimedColors, ToClaim], MoveableColors).%return all the colors the Player can move
 
-%check if there is a stack in a cell and, if so, if that stack belongs or can be played by the current player (assumes isValid(X, Y))
-checkBelongsToPlayer(X, Y):-
+%useful to avoid calling getMoveableColorsByPlayer
+isColorInStackPlayable(X, Y, AllowedColors):-
     getBoardTopColor(X, Y, TopColor),
-    TopColor \= wild,
+    nth0(_, AllowedColors, TopColor). %if the TopColor is one of the colors the player can move
+
+
+%check if a position belongs to a player, does not load the moveable colors
+belongsToPlayer(X, Y):-
     getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
-    nth0(_, MoveableColors, TopColor). %if the TopColor is one of the colors the player can move
-checkBelongsToPlayer(_,_):-
-    write('You cannot play this stack because of its top color\n'), !, fail.
+    isColorInStackPlayable(X, Y, MoveableColors).
+
+%check if there is a stack in a cell and, if so, if that stack belongs or can be played by the current player (assumes isValid(X, Y))
+checkBelongsToPlayer(X, Y):-belongsToPlayer(X, Y).
+checkBelongsToPlayer(_,_):-write('You cannot play this stack because of its top color\n'), !, fail.
 
 
-%check if the first stack can go on top of the second
-checkStacksPile(Xf, Yf, Xt, Yt):-
+canPileStacks(Xf, Yf, Xt, Yt):-
     getBoardStackHeight(Xf, Yf, H1),
     getBoardStackHeight(Xt, Yt, H2),
     Sum is H1 + H2,
-    !,
     Sum =< 5. %only allow them to be piled if the height does not exceed 5
-checkStacksPile(_,_,_,_):-
-    write('You cannot pile those two stacks, max height is 5\n'), fail.
+%check if the first stack can go on top of the second
+checkStacksPile(Xf, Yf, Xt, Yt):-canPileStacks(Xf, Yf, Xt, Yt), !.
+checkStacksPile(_,_,_,_):-write('You cannot pile those two stacks, max height is 5\n'), fail.
 
 trySelect(Find, Initial, Final):-
     select(Find, Initial, Final). %remove wild pieces, because this can be more than one
 trySelect(_, S, S).
+
+%same as checkNeutralStackJumpTo but does not print
+isNeutralStackJumpTo(Xf, Yf, Xt, Yt):-
+    isStackNeutral(Xf, Yf),
+    !, %if it is neutral it must respect this rule
+    isHeighSmaller(Xf, Yf, Xt, Yt).
+isNeutralStackJumpTo(_, _, _, _).%non neutral pieces do not need to obey this rule
 
 %check if the player is trying to move a neutral stack to a higher one RULE E-6, RULE E-7
 checkNeutralStackJumpTo(Xf, Yf, Xt, Yt):-
@@ -45,27 +88,25 @@ checkNeutralStackJumpTo(Xf, Yf, Xt, Yt):-
     checkHeightIsSmaller(Xf, Yf, Xt, Yt).
 checkNeutralStackJumpTo(_, _, _, _).%non neutral pieces do not need to obey this rule
 
-checkHeightIsSmaller(Xf, Yf, Xt, Yt):-
+isHeighSmaller(Xf, Yf, Xt, Yt):-
     getBoardStackHeight(Xf, Yf, H1),
     getBoardStackHeight(Xt, Yt, H2),
     H1 >= H2.
-checkHeightIsSmaller(_, _, _, _):-
-    write('A Neutral Stack (or piece) cannot jump on top of a larger one'), nl, !, fail.
+checkHeightIsSmaller(Xf, Yf, Xt, Yt):-isHeighSmaller(Xf, Yf, Xt, Yt).
+checkHeightIsSmaller(_, _, _, _):-write('A Neutral Stack (or piece) cannot jump on top of a larger one'), nl, !, fail.
 
 
-%check if the stacks have duplicate colors -> cannot be piled if so, fails if no wild
-checkDuplicateColors(Xf, Yf, Xt, Yt):-
+hasDuplicateColors(Xf, Yf, Xt, Yt):-
     getBoardStack(Xf, Yf, Stack1),
     getBoardStack(Xt, Yt, Stack2),
     append([Stack1, Stack2], AppendedStacks),
     trySelect(wild, AppendedStacks, AppendedNoWild), %remove wild pieces, because this can be more than one
     remove_dups(AppendedNoWild, Pruned), %make sure there is only one of each color
     length(AppendedNoWild, LenOriginal),
-    length(Pruned, LenPruned),
-    LenOriginal = LenPruned. %if not equal than there were duplicates
-
-checkDuplicateColors(_,_,_,_):-
-    write('You cannot pile because they would have duplicate colors\n'), !, fail.
+    length(Pruned, LenOriginal). %if not equal than there were duplicates
+%check if the stacks have duplicate colors -> cannot be piled if so, fails if no wild
+checkDuplicateColors(Xf, Yf, Xt, Yt):-hasDuplicateColors(Xf, Yf, Xt, Yt).
+checkDuplicateColors(_,_,_,_):-write('You cannot pile because they would have duplicate colors\n'), !, fail.
 
 %after the user inputs, check if it is to abort or to process
 processMove(q, _, _, _). %quit if Xf is q
@@ -77,7 +118,8 @@ processMove(Xf, Yf, Xt, Yt):-%process move otherwise
     checkStacksPile(Xf, Yf, Xt, Yt), !, % RULE E-5, RULE E-8
     checkNeutralStackJumpTo(Xf, Yf, Xt, Yt), !, % RULE E-6, RULE E-7
     checkDuplicateColors(Xf, Yf, Xt, Yt), !,  % RULE E-5
-    checkValidMove(Xf, Yf, Xt, Yt), !.
+    checkValidMove(Xf, Yf, Xt, Yt),
+    executeMove(Xf, Yf, Xt, Yt).
 
 
 %prompt for valid X and Y coordinates for origin and destination
@@ -97,7 +139,9 @@ moveRecursive(Xf, Yf, Xt, Yt):-moveUL_Recursive(Xf, Yf, Xt, Yt). % test move up 
 moveRecursive(Xf, Yf, Xt, Yt):-moveUR_Recursive(Xf, Yf, Xt, Yt). % test move up and right
 moveRecursive(Xf, Yf, Xt, Yt):-moveDL_Recursive(Xf, Yf, Xt, Yt). % test move down and left
 moveRecursive(Xf, Yf, Xt, Yt):-moveDR_Recursive(Xf, Yf, Xt, Yt). % test move down and right
-moveRecursive(_, _, _, _):- write('direct move is not valid'), nl, !, fail.
+moveRecursive(_, _, _, _):-
+    %write('direct move is not valid'), nl,
+    !, fail.
 
 %attempts to move recursively in one of the 6 directions, searching in depth only
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move left
@@ -106,21 +150,19 @@ moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveUL_RecursiveLyngk(Xf, 
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveUR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move up and right
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveDL_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move down and left
 moveRecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor):-moveDR_RecursiveLyngk(Xf, Yf, Xt, Yt, Path, LyngkColor). % test move down and right
-moveRecursiveLyngk(_, _, _, _, _, _):- write('unable to execute LYNGK move'), nl, !, fail.
+moveRecursiveLyngk(_, _, _, _, _, _):-
+    %write('unable to execute LYNGK move'), nl,
+    !, fail.
 
-%the default case, from and to are the same
-checkValidMove(Xf, Yf, Xt, Yt):-isSameCell(Xf, Yf, Xt, Yt).
 %try to go from the beginning until the end, using the lyngk rule if needed
 checkValidMove(Xf, Yf, Xt, Yt):-
     isStackOfPlayer(Xf, Yf), !,  %if it belongs to the current player -> can use LYNGK rule
-    write('The Stack Belongs to the player'), nl,
-    moveLyngk(Xf, Yf, Xt, Yt),
-    executeMove(Xf, Yf, Xt, Yt).
+    %write('The Stack Belongs to the player'), nl,
+    moveLyngk(Xf, Yf, Xt, Yt).
 %try to go from the beginning until the end, only in the same lines
 checkValidMove(Xf, Yf, Xt, Yt):-
-    write('The Stack Does NOT Belong to the player'), !, nl,
-    moveRecursive(Xf, Yf, Xt, Yt), %test all the 6 move directions depth only search
-    executeMove(Xf, Yf, Xt, Yt).
+    %write('The Stack Does NOT Belong to the player'), !, nl,
+    moveRecursive(Xf, Yf, Xt, Yt). %test all the 6 move directions depth only search
 
  %try to move recursively depth only and then try LYNGK move if the first fails
 moveLyngk(Xf, Yf, Xt, Yt):-
@@ -139,6 +181,7 @@ assertMoveTo(Xt, Yt):- % if empty
 assertMoveToLynkg(Xt, Yt, _):-
     assertMoveTo(Xt, Yt).
 assertMoveToLynkg(Xt, Yt, LyngkColor):- % if same color - LYNGK rule
+    write('finding color: '), write(LyngkColor), nl,
     getBoardTopColor(Xt, Yt, LyngkColor). %same color can go through, RULE E-4
 
 
