@@ -157,8 +157,8 @@ init:-
     assert(game(G)),
     assert(toClaim(G, C)),     % load the colors that can be claimed
     assert(board(G, Board)),   % save the board initial state
-    assert(getColors(CurrentPlayer, [])),
-    assert(getColors(NextPlayer, [])),
+    assert(getColors(G, CurrentPlayer, [])),
+    assert(getColors(G, NextPlayer, [])),
     assert(getStacks(CurrentPlayer, [])),
     assert(getStacks(NextPlayer, [])),
     !,

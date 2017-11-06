@@ -24,8 +24,7 @@ claimColor:-
     !,
     append([ChosenColors, [Translated]], Result),
     write('new colors for '), write(CurrentPlayer), write(' are: '), write(Result),nl,
-    retract(getColors(CurrentPlayer, _)),
-    assert(getColors(CurrentPlayer, Result)),
+    saveGetColors(CurrentPlayer, Result),
     retract(hasClaimed(false)),
     assert(hasClaimed(true)).%set the flag hasClaimed to true
 

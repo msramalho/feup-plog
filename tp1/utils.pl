@@ -111,3 +111,11 @@ saveToClaim(Colors):-
     retract(toClaim(_, _)),
     game(G),
     assert(toClaim(G, Colors)).
+% get colors database helpers
+getColors(Player, Colors):-
+    game(G),
+    getColors(G, Player, Colors).
+saveGetColors(Player, Colors):-
+    retract(getColors(_, _, _)),
+    game(G),
+    assert(getColors(G, Player, Colors)).
