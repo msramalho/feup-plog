@@ -83,8 +83,7 @@ moveStackToPLayer([X-Y-Stack|T]):-
     %update the player's stacks with the new one
     getStacks(Player, PLayerStacks),
     append([PLayerStacks, [Stack]], NewStacks),
-    retract(getStacks(Player, _)),
-    assert(getStacks(Player, NewStacks)),
+    saveGetStacks(Player, NewStacks),
     %remove the stack from the board
     board(B),
     replaceBoardStack(B, X, Y, [], NewBoard),

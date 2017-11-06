@@ -52,7 +52,7 @@ startGame(quit):-exit. %abort
 startGame(instructions):-displayInstructions. %abort
 startGame(humanVhuman):- %intialize both players. The real players should randomly choose their turn
     game(G),
-    assert(player(player1)),
+    assert(player(G, player1)),
     assert(nextPlayer(G, player2)),
     write('Human Vs Human Selected\n').
 
@@ -139,7 +139,8 @@ clearInit:-
     abolish(getColors/3),
     abolish(getStacks/3),
     abolish(hasClaimed/2),
-    assert(hasClaimed(false)).
+    assert(hasClaimed(false)),
+    assert(game(original)).
 
 %where everything begins
 init:-
@@ -153,8 +154,7 @@ init:-
     nextPlayer(NextPlayer),
 
     claimableColors(C),
-    G = original, %the original game
-    assert(game(G)),
+    game(G), % the original game
     assert(toClaim(G, C)),     % load the colors that can be claimed
     assert(board(G, Board)),   % save the board initial state
     assert(getColors(G, CurrentPlayer, [])),
