@@ -9,13 +9,12 @@ isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
 
 %get all the stacks a given stack can be moved to
 isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
-    belongsToPlayer(Xf, Yf),
+    once(isColorInStackPlayable(Xf, Yf, MoveableColors)),
     isValid(Xt, Yt),
-    checkStackNotEmpty(Xt, Yt),
-    checkValidMove(Xf, Yf, Xt, Yt),
-    isColorInStackPlayable(Xf, Yf, MoveableColors),
-    hasNoDuplicateColors(Xf, Yf, Xt, Yt),
-    canPileStacks(Xf, Yf, Xt, Yt).
+    once(checkStackNotEmpty(Xt, Yt)),
+    once(checkValidMove(Xf, Yf, Xt, Yt)),
+    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
+    once(canPileStacks(Xf, Yf, Xt, Yt)).
     /*,
     isNeutralStackJumpTo(Xf, Yf, Xt, Yt).*/
 
@@ -189,7 +188,7 @@ assertMoveTo(Xt, Yt):- % if empty
 assertMoveToLynkg(Xt, Yt, _):-
     assertMoveTo(Xt, Yt).
 assertMoveToLynkg(Xt, Yt, LyngkColor):- % if same color - LYNGK rule
-    write('finding color: '), write(LyngkColor), nl,
+    %write('finding color: '), write(LyngkColor), nl,
     getBoardTopColor(Xt, Yt, LyngkColor). %same color can go through, RULE E-4
 
 
@@ -270,7 +269,7 @@ moveDR_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
 %----------------------------------------MOVE RECURSIVE LYNGK START
 %add a pair of coordinates to the path
 addToPath(X-Y, Path, NewPath):-
-    write('adding to path: '), write(X-Y), nl, % DEBUG
+    %write('adding to path: '), write(X-Y), nl, % DEBUG
     append([[X-Y], Path], NewPath).
 %fail if the coordinates are in the pair
 notInPath(X-Y, Path):-
