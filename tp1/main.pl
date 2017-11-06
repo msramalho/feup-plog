@@ -159,8 +159,8 @@ init:-
     assert(board(G, Board)),   % save the board initial state
     assert(getColors(G, CurrentPlayer, [])),
     assert(getColors(G, NextPlayer, [])),
-    assert(getStacks(CurrentPlayer, [])),
-    assert(getStacks(NextPlayer, [])),
+    assert(getStacks(G, CurrentPlayer, [])),
+    assert(getStacks(G, NextPlayer, [])),
     !,
     nextTurn,
     clearInit.

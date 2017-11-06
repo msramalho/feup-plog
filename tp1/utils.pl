@@ -119,3 +119,11 @@ saveGetColors(Player, Colors):-
     retract(getColors(_, _, _)),
     game(G),
     assert(getColors(G, Player, Colors)).
+% get stacks database helpers
+getStacks(Player, Stacks):-
+    game(G),
+    getStacks(G, Player, Stacks).
+saveGetStacks(Player, Stacks):-
+    retract(getStacks(_, _, _)),
+    game(G),
+    assert(getStacks(G, Player, Stacks)).
