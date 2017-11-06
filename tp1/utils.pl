@@ -85,7 +85,7 @@ board(B):-
     board(G, B).
 saveBoard(B):-
     game(G),
-    retract(board(G, _)),
+    tryRetract(board(G, _)),
     assert(board(G, B)).
 % player database helpers
 player(Player):-
@@ -93,7 +93,7 @@ player(Player):-
     player(G, Player).
 savePlayer(Player):-
     game(G),
-    retract(player(G, _)),
+    tryRetract(player(G, _)),
     assert(player(G, Player)).
 % next player database helpers
 nextPlayer(Player):-
@@ -101,7 +101,7 @@ nextPlayer(Player):-
     nextPlayer(G, Player).
 saveNextPlayer(Player):-
     game(G),
-    retract(nextPlayer(G, _)),
+    tryRetract(nextPlayer(G, _)),
     assert(nextPlayer(G, Player)).
 % to claim database helpers
 toClaim(Colors):-
@@ -109,7 +109,7 @@ toClaim(Colors):-
     toClaim(G, Colors).
 saveToClaim(Colors):-
     game(G),
-    retract(toClaim(G, _)),
+    tryRetract(toClaim(G, _)),
     assert(toClaim(G, Colors)).
 % get colors database helpers
 getColors(Player, Colors):-
@@ -117,7 +117,7 @@ getColors(Player, Colors):-
     getColors(G, Player, Colors).
 saveGetColors(Player, Colors):-
     game(G),
-    retract(getColors(G, _, _)),
+    tryRetract(getColors(G, Player, _)),
     assert(getColors(G, Player, Colors)).
 % get stacks database helpers
 getStacks(Player, Stacks):-
@@ -125,7 +125,7 @@ getStacks(Player, Stacks):-
     getStacks(G, Player, Stacks).
 saveGetStacks(Player, Stacks):-
     game(G),
-    retract(getStacks(G, _, _)),
+    tryRetract(getStacks(G, Player, _)),
     assert(getStacks(G, Player, Stacks)).
 % has claimed database helpers
 hasClaimed(Val):-
@@ -133,11 +133,35 @@ hasClaimed(Val):-
     hasClaimed(G, Val).
 saveHasClaimed(Val):-
     game(G),
-    retract(hasClaimed(G, _)),
+    tryRetract(hasClaimed(G, _)),
     assert(hasClaimed(G, Val)).
 
 
 % switch game, can move from original to temporary and such
 switchGame(NewGame):-
-    retract(game(_)),
+    tryRetract(game(_)),
     assert(game(NewGame)).
+%duplicate a game state so a new one can be tested and destroyed at will
+duplicateGame(Original, Duplicate):-
+    board(Original, B),
+    assert(board(Duplicate, B)),
+
+destroyGame(ToDestroy):-
+    %get this game's players
+    player(ToDestroy, P),
+    nextPlayer(ToDestroy, NP),
+
+    %detroy all its related values, if they exist
+    tryRetract(game(ToDestroy)),
+    tryRetract(board(ToDestroy, _)),
+    tryRetract(player(ToDestroy, _)),
+    tryRetract(nextPlayer(ToDestroy, _)),
+    tryRetract(toClaim(ToDestroy, _)),
+    tryRetract(getColors(ToDestroy, P, _)),
+    tryRetract(getColors(ToDestroy, NP, _)),
+    tryRetract(getStacks(ToDestroy, P, _)),
+    tryRetract(getStacks(ToDestroy, NP, _)),
+    tryRetract(hasClaimed(ToDestroy, _)).
+
+tryRetract(ToRetract):-retract(ToRetract).
+tryRetract(_).

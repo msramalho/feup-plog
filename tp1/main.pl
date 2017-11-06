@@ -37,23 +37,20 @@
 randomizeBotPlay:-
     random_select(Temp, [0, 1], _),
     Temp =:= 0,
-    game(G),
-    assert(player(G, player1)),
-    assert(nextPlayer(G, bot)),
+    savePlayer(player1),
+    saveNextPlayer(bot),
     write('Player 1 goes first...\n').
 randomizeBotPlay:-
-    game(G),
-    assert(player(G, bot)),
-    assert(nextPlayer(G, player1)),
+    savePlayer(bot),
+    saveNextPlayer(player1),
     write('Bot goes first...\n').
 
 %game type (User x User | User x Bot)
 startGame(quit):-exit. %abort
 startGame(instructions):-displayInstructions. %abort
 startGame(humanVhuman):- %intialize both players. The real players should randomly choose their turn
-    game(G),
-    assert(player(G, player1)),
-    assert(nextPlayer(G, player2)),
+    savePlayer(player1),
+    saveNextPlayer(player2),
     write('Human Vs Human Selected\n').
 
 startGame(humanVbot):- % initialize the player and the nextPlayer randomly, the bot may be first
@@ -139,9 +136,8 @@ clearInit:-
     abolish(getStacks/3),
     abolish(hasClaimed/2),
 
-    G = original,
-    assert(game(G)),
-    assert(hasClaimed(G, false)).
+    assert(game(original)), % the only assert needed, others are in utils.pl
+    saveHasClaimed(false).
 
 %where everything begins
 init:-
@@ -155,13 +151,12 @@ init:-
     nextPlayer(NextPlayer),
 
     claimableColors(C),
-    game(G), % the original game
-    assert(toClaim(G, C)),     % load the colors that can be claimed
-    assert(board(G, Board)),   % save the board initial state
-    assert(getColors(G, CurrentPlayer, [])),
-    assert(getColors(G, NextPlayer, [])),
-    assert(getStacks(G, CurrentPlayer, [])),
-    assert(getStacks(G, NextPlayer, [])),
+    saveToClaim(C), % load the colors that can be claimed
+    saveBoard(Board), % save the board initial state
+    saveGetColors(CurrentPlayer, []),
+    saveGetColors(NextPlayer, []),
+    saveGetStacks(CurrentPlayer, []),
+    saveGetStacks(NextPlayer, []),
     !,
     nextTurn,
     clearInit.
