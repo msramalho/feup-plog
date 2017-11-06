@@ -39,12 +39,12 @@ randomizeBotPlay:-
     Temp =:= 0,
     game(G),
     assert(player(G, player1)),
-    assert(nextPlayer(bot)),
+    assert(nextPlayer(G, bot)),
     write('Player 1 goes first...\n').
 randomizeBotPlay:-
     game(G),
     assert(player(G, bot)),
-    assert(nextPlayer(player1)),
+    assert(nextPlayer(G, player1)),
     write('Bot goes first...\n').
 
 %game type (User x User | User x Bot)
@@ -53,7 +53,7 @@ startGame(instructions):-displayInstructions. %abort
 startGame(humanVhuman):- %intialize both players. The real players should randomly choose their turn
     game(G),
     assert(player(player1)),
-    assert(nextPlayer(player2)),
+    assert(nextPlayer(G, player2)),
     write('Human Vs Human Selected\n').
 
 startGame(humanVbot):- % initialize the player and the nextPlayer randomly, the bot may be first
@@ -107,8 +107,7 @@ invertPlayers:-
     player(CurrentPlayer),
     nextPlayer(NextPlayer),
     savePlayer(NextPlayer),
-    retract(nextPlayer(_)),
-    assert(nextPlayer(CurrentPlayer)).
+    saveNextPlayer(CurrentPlayer).
 invertPlayers.%if next player has no valid move, keep the players
 
 %display board and wait for instruction

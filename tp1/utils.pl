@@ -95,3 +95,11 @@ savePlayer(Player):-
     retract(player(_, _)),
     game(G),
     assert(player(G, Player)).
+% next player database helpers
+nextPlayer(Player):-
+    game(G),
+    nextPlayer(G, Player).
+saveNextPlayer(Player):-
+    retract(nextPlayer(_, _)),
+    game(G),
+    assert(nextPlayer(G, Player)).
