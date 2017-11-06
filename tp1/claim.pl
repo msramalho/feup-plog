@@ -2,8 +2,7 @@
 updateClaimedColor(Translated):-
     toClaim(ToClaim), %load the colors left for claiming
     nth0(_, ToClaim, Translated, NewToClaim),%if the chosen color is inside ToClaim
-    retract(toClaim(_)),
-    assert(toClaim(NewToClaim)). %updated available colors
+    saveToClaim(NewToClaim). %updated available colors
 updateClaimedColor(_):-%if update fails then it's because:
     write('This color is no longer available\n'), fail.
 

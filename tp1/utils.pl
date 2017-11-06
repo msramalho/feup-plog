@@ -103,3 +103,11 @@ saveNextPlayer(Player):-
     retract(nextPlayer(_, _)),
     game(G),
     assert(nextPlayer(G, Player)).
+% to claim database helpers
+toClaim(Colors):-
+    game(G),
+    toClaim(G, Colors).
+saveToClaim(Colors):-
+    retract(toClaim(_, _)),
+    game(G),
+    assert(toClaim(G, Colors)).
