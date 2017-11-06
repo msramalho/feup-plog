@@ -132,13 +132,13 @@ exit:-clearInit, abort.
 %empties the database
 clearInit:-
     abolish(game/1),
-    abolish(board/1),
-    abolish(player/1),
-    abolish(nextPlayer/1),
-    abolish(toClaim/1),
-    abolish(getColors/2),
-    abolish(getStacks/2),
-    abolish(hasClaimed/1),
+    abolish(board/2),
+    abolish(player/2),
+    abolish(nextPlayer/2),
+    abolish(toClaim/2),
+    abolish(getColors/3),
+    abolish(getStacks/3),
+    abolish(hasClaimed/2),
     assert(hasClaimed(false)).
 
 %where everything begins
