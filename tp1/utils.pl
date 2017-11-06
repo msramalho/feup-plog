@@ -84,48 +84,48 @@ board(B):-
     game(G),
     board(G, B).
 saveBoard(B):-
-    retract(board(_, _)),
     game(G),
+    retract(board(G, _)),
     assert(board(G, B)).
 % player database helpers
 player(Player):-
     game(G),
     player(G, Player).
 savePlayer(Player):-
-    retract(player(_, _)),
     game(G),
+    retract(player(G, _)),
     assert(player(G, Player)).
 % next player database helpers
 nextPlayer(Player):-
     game(G),
     nextPlayer(G, Player).
 saveNextPlayer(Player):-
-    retract(nextPlayer(_, _)),
     game(G),
+    retract(nextPlayer(G, _)),
     assert(nextPlayer(G, Player)).
 % to claim database helpers
 toClaim(Colors):-
     game(G),
     toClaim(G, Colors).
 saveToClaim(Colors):-
-    retract(toClaim(_, _)),
     game(G),
+    retract(toClaim(G, _)),
     assert(toClaim(G, Colors)).
 % get colors database helpers
 getColors(Player, Colors):-
     game(G),
     getColors(G, Player, Colors).
 saveGetColors(Player, Colors):-
-    retract(getColors(_, _, _)),
     game(G),
+    retract(getColors(G, _, _)),
     assert(getColors(G, Player, Colors)).
 % get stacks database helpers
 getStacks(Player, Stacks):-
     game(G),
     getStacks(G, Player, Stacks).
 saveGetStacks(Player, Stacks):-
-    retract(getStacks(_, _, _)),
     game(G),
+    retract(getStacks(G, _, _)),
     assert(getStacks(G, Player, Stacks)).
 % switch game, can move from original to temporary and such
 switchGame(NewGame):-
