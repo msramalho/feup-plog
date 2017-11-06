@@ -12,23 +12,26 @@
 
 
 % volatile and dynamic predicates declaration
+% all the predicates have the first Variable as being the current game
 :- volatile
-    board/1,        % the current board state
-    player/1,       % the current player
-    nextPlayer/1,   % the next player
-    toClaim/1,      % which colors are yet to claim
-    getColors/2,    % a list of the colors claimed by the selected player getColors(player, Colors)
-    getStacks/2.    % a list of the stacks collected by the selected player getStacks(player, Stacks)
-    hasClaimed/1.   % a flag to indicate wheter the current player has claimed a color in this turn
+    game/1,         % the current game to be used (original vs temp, and more if necessary)
+    board/2,        % the current board state
+    player/2,       % the current player
+    nextPlayer/2,   % the next player
+    toClaim/2,      % which colors are yet to claim
+    getColors/3,    % a list of the colors claimed by the selected player getColors(player, Colors)
+    getStacks/3.    % a list of the stacks collected by the selected player getStacks(player, Stacks)
+    hasClaimed/2.   % a flag to indicate wheter the current player has claimed a color in this turn
 
 :- dynamic
-    board/1,
-    player/1,
-    nextPlayer/1,
-    toClaim/1,
-    getColors/2,
-    getStacks/2,
-    hasClaimed/1.
+    game/1,
+    board/2,
+    player/2,
+    nextPlayer/2,
+    toClaim/2,
+    getColors/3,
+    getStacks/3,
+    hasClaimed/2.
 
 %make bot start first or human start first, 50% chance
 randomizeBotPlay:-
@@ -127,6 +130,7 @@ endTurn:-
 exit:-clearInit, abort.
 %empties the database
 clearInit:-
+    abolish(game/1),
     abolish(board/1),
     abolish(player/1),
     abolish(nextPlayer/1),
@@ -148,6 +152,8 @@ init:-
     nextPlayer(NextPlayer),
 
     claimableColors(C),
+    G = original, %the original game
+    assert(game(G)),
     assert(toClaim(C)),     % load the colors that can be claimed
     assert(board(Board)),   % save the board state
     assert(getColors(CurrentPlayer, [])),
