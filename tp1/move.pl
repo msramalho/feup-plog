@@ -24,13 +24,11 @@ isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
 getPlayerMoves(AllMoves):-
     getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
     findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
-    %trace,
     %Moves2 = [0-2, 0-4, 0-6],
     write('player can play:'), write(Moves), nl,
     %findall(Xf-Yf-Xt-Yt, isMoveValid(MoveableColors, Xf, Yf, Xt, Yt), AllMoves),
     isStackMoveValid(MoveableColors, Moves, AllMoves),
     remove_dups(AllMoves, AllMovesPruned),
-    %notrace,
     write('all possible moves are:'), write(AllMovesPruned), nl.
 
 
