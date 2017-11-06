@@ -122,3 +122,40 @@ isStackOfPlayer(X, Y):-
     getBoardTopColor(X, Y, Piece),
     getColors(CurentPlayer, ClaimedColors),
     nth0(_, ClaimedColors, Piece). %if this is the player's stack
+
+
+%---------------------------------- Evaluate the state of the game
+%Assertion functions to get all the possible moves
+
+isStackMoveValid(_, [], []).
+isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
+    findall(X-Y-Xt-Yt, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
+    remove_dups(AllMoves, AllMovesPruned),
+    isStackMoveValid(MoveableColors, T, Result),
+    append([Result, AllMovesPruned], NewResult).
+
+%get all the stacks a given stack can be moved to
+isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
+    once(isColorInStackPlayable(Xf, Yf, MoveableColors)),
+    isValid(Xt, Yt),
+    once(checkStackNotEmpty(Xt, Yt)),
+    once(checkValidMove(Xf, Yf, Xt, Yt)),
+    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
+    once(canPileStacks(Xf, Yf, Xt, Yt)).
+    /*,
+    isNeutralStackJumpTo(Xf, Yf, Xt, Yt).*/
+
+%get all the moves the currentPlayer can do
+getPlayerMoves(AllMoves):-
+    getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
+    findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
+    write('player can play:'), write(Moves), nl,
+    isStackMoveValid(MoveableColors, Moves, AllMoves),
+    remove_dups(AllMoves, AllMovesPruned),
+    write('all possible moves are:'), write(AllMovesPruned), nl.
+
+%get all the next plays possible actions in a list of Xf-Yf:Xt-Yt:claim where claim can be a color to claim or none
+explorePossibilities(Possibilities):-
+
+
+

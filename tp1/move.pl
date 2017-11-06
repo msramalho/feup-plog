@@ -1,39 +1,4 @@
-%Assertion functions to get all the possible moves
-
-isStackMoveValid(_, [], []).
-isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
-    findall(X-Y-Xt-Yt, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
-    remove_dups(AllMoves, AllMovesPruned),
-    isStackMoveValid(MoveableColors, T, Result),
-    append([Result, AllMovesPruned], NewResult).
-
-%get all the stacks a given stack can be moved to
-isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
-    once(isColorInStackPlayable(Xf, Yf, MoveableColors)),
-    isValid(Xt, Yt),
-    once(checkStackNotEmpty(Xt, Yt)),
-    once(checkValidMove(Xf, Yf, Xt, Yt)),
-    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
-    once(canPileStacks(Xf, Yf, Xt, Yt)).
-    /*,
-    isNeutralStackJumpTo(Xf, Yf, Xt, Yt).*/
-
-
-
-%get all the moves the currentPlayer can do
-getPlayerMoves(AllMoves):-
-    getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
-    findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
-    %Moves2 = [0-2, 0-4, 0-6],
-    write('player can play:'), write(Moves), nl,
-    %findall(Xf-Yf-Xt-Yt, isMoveValid(MoveableColors, Xf, Yf, Xt, Yt), AllMoves),
-    isStackMoveValid(MoveableColors, Moves, AllMoves),
-    remove_dups(AllMoves, AllMovesPruned),
-    write('all possible moves are:'), write(AllMovesPruned), nl.
-
-
-
-
+% file with the predicates for the implementation of the move command
 % check if cell is valid (x, y) and print error if not
 checkValidCell(X, Y):-isValid(X, Y), !.
 checkValidCell(X, Y):-format('Cell(~p, ~p) is not a valid cell in the board\n', [X, Y]), fail.
