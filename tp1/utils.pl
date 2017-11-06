@@ -79,6 +79,7 @@ clear:-write('\33\[2J').
 
 
 % databse manipulation helpers, remove arity one for consulting the database
+% board database helpers
 board(B):-
     game(G),
     board(G, B).
@@ -86,3 +87,11 @@ saveBoard(B):-
     retract(board(_, _)),
     game(G),
     assert(board(G, B)).
+% player database helpers
+player(Player):-
+    game(G),
+    player(G, Player).
+savePlayer(Player):-
+    retract(player(_, _)),
+    game(G),
+    assert(player(G, Player)).
