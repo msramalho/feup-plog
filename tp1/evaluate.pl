@@ -88,8 +88,7 @@ moveStackToPLayer([X-Y-Stack|T]):-
     %remove the stack from the board
     board(B),
     replaceBoardStack(B, X, Y, [], NewBoard),
-    retract(board(_)),
-    assert(board(NewBoard)),
+    saveBoard(NewBoard),
     moveStackToPLayer(T).
 %simply call itself again ignoring this one, to get here it means this stack is an obstacle (belongs to no one)
 moveStackToPLayer([_|T]):-

@@ -364,8 +364,7 @@ executeMove(Xf, Yf, Xt, Yt):-
     append([StackTop, StackBottom], Stack), % RULE E-2
     replaceBoardStack(B, Xt, Yt, Stack, B2),
     replaceBoardStack(B2, Xf, Yf, [], NewBoard),
-    retract(board(_)),
-    assert(board(NewBoard)).
+    saveBoard(NewBoard).
 
 /* checkIsValidPath(Xf, Yf, Xt, Yt),
     getBoardTopColor(Xf, Yf, FromC) */

@@ -76,3 +76,13 @@ not(X):-X, !, fail.
 not(_).
 
 clear:-write('\33\[2J').
+
+
+% databse manipulation helpers, remove arity one for consulting the database
+board(B):-
+    game(G),
+    board(G, B).
+saveBoard(B):-
+    retract(board(_, _)),
+    game(G),
+    assert(board(G, B)).
