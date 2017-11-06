@@ -127,3 +127,7 @@ saveGetStacks(Player, Stacks):-
     retract(getStacks(_, _, _)),
     game(G),
     assert(getStacks(G, Player, Stacks)).
+% switch game, can move from original to temporary and such
+switchGame(NewGame):-
+    retract(game(_)),
+    assert(game(NewGame)).
