@@ -25,8 +25,7 @@ claimColor:-
     append([ChosenColors, [Translated]], Result),
     write('new colors for '), write(CurrentPlayer), write(' are: '), write(Result),nl,
     saveGetColors(CurrentPlayer, Result),
-    retract(hasClaimed(false)),
-    assert(hasClaimed(true)).%set the flag hasClaimed to true
+    saveHasClaimed(true). %set the flag hasClaimed to true
 
 claimColor:-
     write('You can only claim two colors\n').

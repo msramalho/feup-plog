@@ -123,8 +123,7 @@ endTurn:-
     evaluateBoard, !,
     invertPlayers, !,
     isBotPlaying, !,
-    retract(hasClaimed(_)), % clear the hasClaimed flag.
-    assert(hasClaimed(false)),
+    setHasClaimed(false), % clear the hasClaimed flag.
     nextTurn.
 
 %empties the database and stops the program
@@ -139,8 +138,10 @@ clearInit:-
     abolish(getColors/3),
     abolish(getStacks/3),
     abolish(hasClaimed/2),
-    assert(hasClaimed(false)),
-    assert(game(original)).
+
+    G = original,
+    assert(game(G)),
+    assert(hasClaimed(G, false)).
 
 %where everything begins
 init:-
