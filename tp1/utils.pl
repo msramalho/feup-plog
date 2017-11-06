@@ -127,6 +127,16 @@ saveGetStacks(Player, Stacks):-
     game(G),
     retract(getStacks(G, _, _)),
     assert(getStacks(G, Player, Stacks)).
+% has claimed database helpers
+hasClaimed(Val):-
+    game(G),
+    hasClaimed(G, Val).
+saveHasClaimed(Val):-
+    game(G),
+    retract(hasClaimed(G, _)),
+    assert(hasClaimed(G, Val)).
+
+
 % switch game, can move from original to temporary and such
 switchGame(NewGame):-
     retract(game(_)),
