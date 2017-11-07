@@ -97,9 +97,6 @@ moveStackToPLayer([_|T]):-
 
 removeClaimedStacksWithFive:-
     findall(X-Y-Stack, (getBoardStackHeight(X, Y, 5), getBoardStack(X, Y, Stack)), L), %get all the blocks with height 5
-    length(L, Len),
-    %write('found: '), write(Len), nl,
-    %sleep(2),
     remove_dups(L, Pruned), %remove duplicates
     moveStackToPLayer(Pruned).
 
