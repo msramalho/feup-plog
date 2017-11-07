@@ -239,10 +239,9 @@ moveRecursiveLyngkHelper(Xf, Yf, Xt, Yt, Path, LyngkColor):-%if the new one is e
     isValid(Xf, Yf), % must be inside the board range, else does not even try
     notInPath(Xf-Yf, Path), % cannot already be in the path (avoid loops)
     assertMoveTo(Xf, Yf), !, %is empty, now it must find the next one in a straight line
-    write('path before is: '), write(Path), nl,
     moveStraightLineToColor(Xf, Yf, Path, LyngkColor, NewPath, ResX, ResY), %tries to find a straight line to lyngk color, updates the path
-    write('path after: '), write(Path), nl, nl,
-    moveRecursiveLyngk(ResX, ResY, Xt, Yt, NewPath, LyngkColor).%go until the next
+    addToPath(Xf-Yf, NewPath, FinalPath), % add to the path so as to avoid circular paths
+    moveRecursiveLyngk(ResX, ResY, Xt, Yt, FinalPath, LyngkColor).%go until the next
 
 moveRecursiveLyngkHelper(Xf, Yf, Xt, Yt, Path, LyngkColor):-%if the new one is NOT empty
     isValid(Xf, Yf), % must be inside the board range, else does not even try
@@ -331,7 +330,7 @@ moveRecursiveStraightLyngkHelper(Xf, Yf, Path, NewPath):-
     assertMoveTo(Xf, Yf),
     addToPath(Xf-Yf, Path, NewPath).% add to the path so as to avoid circular paths
 %-----------------move LEFT Recursive
-moveLStraight_Recursive(ResX, Yf, _, LyngkColor, _, ResX, ResY):-%reached the end
+moveLStraight_Recursive(ResX, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
     ResY is Yf - 2,
     getBoardTopColor(ResX, ResY, LyngkColor).%reached the destination
 moveLStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did not reach the end
@@ -339,7 +338,7 @@ moveLStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did n
     moveRecursiveStraightLyngkHelper(Xf, NewYf, Path, NewPath),
     moveLStraight_Recursive(Xf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
 %-----------------move RIGHT Recursive
-moveRStraight_Recursive(ResX, Yf, _, LyngkColor, _, ResX, ResY):-%reached the end
+moveRStraight_Recursive(ResX, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
     ResY is Yf + 2,
     getBoardTopColor(ResX, ResY, LyngkColor).%reached the destination
 moveRStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did not reach the end
@@ -347,7 +346,7 @@ moveRStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did n
     moveRecursiveStraightLyngkHelper(Xf, NewYf, Path, NewPath),
     moveRStraight_Recursive(Xf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
 %-----------------move UP and LEFT Recursive
-moveULStraight_Recursive(Xf, Yf, _, LyngkColor, _, ResX, ResY):-%reached the end
+moveULStraight_Recursive(Xf, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
     ResX is Xf - 1,
     ResY is Yf - 1,
     getBoardTopColor(ResX, ResY, LyngkColor).%reached the destination
@@ -357,7 +356,7 @@ moveULStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did 
     moveRecursiveStraightLyngkHelper(NewXf, NewYf, Path, NewPath),
     moveULStraight_Recursive(NewXf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
 %-----------------move UP and RIGHT Recursive
-moveURStraight_Recursive(Xf, Yf, _, LyngkColor, _, ResX, ResY):-%reached the end
+moveURStraight_Recursive(Xf, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
     ResX is Xf - 1,
     ResY is Yf + 1,
     getBoardTopColor(ResX, ResY, LyngkColor).%reached the destination
@@ -367,7 +366,7 @@ moveURStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did 
     moveRecursiveStraightLyngkHelper(NewXf, NewYf, Path, FinalPath, NewPath),
     moveURStraight_Recursive(NewXf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
 %-----------------move DOWN and LEFT Recursive
-moveDLStraight_Recursive(Xf, Yf, _, LyngkColor, _, ResX, ResY):-%reached the end
+moveDLStraight_Recursive(Xf, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
     ResX is Xf + 1,
     ResY is Yf - 1,
     getBoardTopColor(ResX, ResY, LyngkColor).%reached the destination
@@ -377,7 +376,7 @@ moveDLStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did 
     moveRecursiveStraightLyngkHelper(NewXf, NewYf, Path, NewPath),
     moveDLStraight_Recursive(NewXf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
 %-----------------move DOWN and RIGHT Recursive
-moveDRStraight_Recursive(Xf, Yf, _, LyngkColor, _, ResX, ResY):-%reached the end
+moveDRStraight_Recursive(Xf, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
     ResX is Xf + 1,
     ResY is Yf + 1,
     getBoardTopColor(ResX, ResY, LyngkColor).%reached the destination
