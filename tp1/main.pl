@@ -14,7 +14,7 @@
 % volatile and dynamic predicates declaration
 % all the predicates have the first Variable as being the current game
 :- volatile
-    game/1,         % the current game to be used (original vs temp, and more if necessary)
+    game/1,         % the current game to be used, numbers starting in 0
     board/2,        % the current board state
     player/2,       % the current player
     nextPlayer/2,   % the next player
@@ -73,18 +73,11 @@ waitForInstruction:-
 
 %expecting a move instruction
 parseInstruction("move"):-
-    repeat,
-        move,
-    !.
+    move.
 
 %expecting a claim instruction
 parseInstruction("claim"):-%instruction was claim and has not claimed any piece
-    hasClaimed(false),
-    repeat,
-        claimColor,
-    !, fail. % the players can move after a claim
-parseInstruction("claim"):-%claim but already claimed a piece in this turn
-    write('You can only claim one color per turn\n'), !,  fail.
+    !, claimColor. % the players can move after a claim
 
 %ignore empty input->newline
 parseInstruction([]):- !, fail.
@@ -120,7 +113,7 @@ endTurn:-
     evaluateBoard, !,
     invertPlayers, !,
     isBotPlaying, !,
-    setHasClaimed(false), % clear the hasClaimed flag.
+    saveHasClaimed(false), % clear the hasClaimed flag.
     nextTurn.
 
 %empties the database and stops the program
@@ -136,7 +129,7 @@ clearInit:-
     abolish(getStacks/3),
     abolish(hasClaimed/2),
 
-    assert(game(original)), % the only assert needed, others are in utils.pl
+    assert(game(0)), % the only assert needed, others are in utils.pl
     saveHasClaimed(false).
 
 %where everything begins

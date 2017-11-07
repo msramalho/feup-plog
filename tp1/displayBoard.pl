@@ -118,7 +118,7 @@ displayBoard:-
 
     toClaim(C),
 	write('\nAvailable Colors:'), write(C), nl, nl, nl,
-    getPlayerMoves(_).
+    explorePossibilities(_).
 
 
 

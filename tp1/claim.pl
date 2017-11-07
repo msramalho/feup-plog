@@ -9,23 +9,33 @@ updateClaimedColor(_):-%if update fails then it's because:
 readValidColor(Translated):-
     write('Which color would you like to claim?\n'),
     read_line(Color),
-    translateColor(Color, Translated),
+    translateColor(Color, Translated), !,
     updateClaimedColor(Translated).
 readValidColor(_):-%if readValid fails it's because:
     write('Invalid color name.\n'), fail.
 
-claimColor:-
-    player(CurrentPlayer),%load the current player
-    getColors(CurrentPlayer, ChosenColors), %get this player's colors
+%fails if the user cannot claim
+validClaim:-
+    getColors(ChosenColors), %get the current player player's colors
     length(ChosenColors, Len), %get the length of this player's colors
-    Len < 2, !, %if the length is less than 2, then read color else go to other option for claimColor
+    Len < 2. %if the length is less than 2, then read color else go to other option for claimColor
+
+%changes the game state by claiming a color
+claim(Color):-
+    getColors(ChosenColors), %get the current player player's colors
+    append([ChosenColors, [Color]], Result),
+    saveGetColors(Result),
+    saveHasClaimed(true).%set the flag hasClaimed to true
+
+claimColor:-
+    hasClaimed(true), write('You can only claim one color per turn\n'), !, fail.
+
+claimColor:-
+    validClaim, !,
     repeat,%repeatedly read color
         readValidColor(Translated),
     !,
-    append([ChosenColors, [Translated]], Result),
-    write('new colors for '), write(CurrentPlayer), write(' are: '), write(Result),nl,
-    saveGetColors(CurrentPlayer, Result),
-    saveHasClaimed(true). %set the flag hasClaimed to true
+    claim(Translated), fail.%,write('new colors for '), write(CurrentPlayer), write(' are: '), write(Result), nl.
 
 claimColor:-
     write('You can only claim two colors\n').
