@@ -1,8 +1,7 @@
 
 updateClaimedColor(Translated):-
     toClaim(ToClaim), %load the colors left for claiming
-    nth0(_, ToClaim, Translated, NewToClaim),%if the chosen color is inside ToClaim
-    saveToClaim(NewToClaim). %updated available colors
+    nth0(_, ToClaim, Translated).%if the chosen color is inside ToClaim
 updateClaimedColor(_):-%if update fails then it's because:
     write('This color is no longer available\n'), fail.
 
@@ -25,7 +24,10 @@ claim(Color):-
     getColors(ChosenColors), %get the current player player's colors
     append([ChosenColors, [Color]], Result),
     saveGetColors(Result),
-    saveHasClaimed(true).%set the flag hasClaimed to true
+    saveHasClaimed(true),%set the flag hasClaimed to true
+    toClaim(ToClaim),
+    nth0(_, ToClaim, Color, NewToClaim),%if the chosen color is inside ToClaim
+    saveToClaim(NewToClaim). %updated available colors
 
 claimColor:-
     hasClaimed(true), write('You can only claim one color per turn\n'), !, fail.

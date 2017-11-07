@@ -78,8 +78,7 @@ getValidPositions(Result):-
 moveStackToPLayer([]).
 moveStackToPLayer([X-Y-Stack|T]):-
     Stack = [TopColor|_],
-    getPlayerFromColor(TopColor, Player), %if this fails the color does not belong to any
-    !,
+    getPlayerFromColor(TopColor, Player), %if this fails the color does not belong to any player
     %update the player's stacks with the new one
     getStacks(Player, PLayerStacks),
     append([PLayerStacks, [Stack]], NewStacks),
@@ -98,18 +97,19 @@ removeClaimedStacksWithFive:-
     remove_dups(L, Pruned), %remove duplicates
     moveStackToPLayer(Pruned).
 
+%fails if current player has no move left
+currentPlayerHasMoves:-
+    explorePossibilities(Possibilities),
+    length(Possibilities, Len),
+    Len > 0.
 
-%check if the board is in a final state, probably use validMove and findall
-evaluateBoard:-
-    removeClaimedStacksWithFive,
-    write('----TODO: evaluate board state\n').
-
-
-%check if the next player has at least one valid move
-nextPlayerHasMoves:-
-    %TODO: find_all(X-Y, (processMove(X, Y, )))
-    write('----TODO: nextPlayerHasMoves not implemented\n').
-
+%check if the current player has moves, if not check if the next player has moves, if not endGame
+evaluateBoard:-currentPlayerHasMoves, !.
+evaluateBoard:-%current player has no moves, invert and test
+    invertPlayers,
+    currentPlayerHasMoves.
+evaluateBoard:-%if no player has moves, end the game
+    write('no more valid moves'), nl, exit.
 
 %fails if X and Y's top color is not a neutral stack
 isStackNeutral(X, Y):-
@@ -179,7 +179,7 @@ exploreClaims([_|R], Temp, Res):-
 explorePossibilities(Possibilities):-
     getPlayerMoves(AllMoves),
     toClaim(ToClaim),
-    exploreClaims(ToClaim, AllMoves, Result),
-    write('all possible moves are:'), write(AllMoves), nl.
+    exploreClaims(ToClaim, AllMoves, Possibilities).
+    %write('all possible moves are:'), write(Possibilities), nl.
 
 

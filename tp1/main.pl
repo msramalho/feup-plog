@@ -1,3 +1,7 @@
+:- use_module(library(system)).
+:- use_module(library(random)).
+:- use_module(library(lists)).
+
 :- include('utils.pl').
 
 :- include('getRandomBoard.pl').
@@ -7,6 +11,7 @@
 :- include('claim.pl').
 :- include('move.pl').
 :- include('interface.pl').
+:- include('bot.pl').
 
 %:- include('tests.pl').
 
@@ -57,6 +62,11 @@ startGame(humanVbot):- % initialize the player and the nextPlayer randomly, the 
     write('Human Vs Bot Selected\n'),
     randomizeBotPlay.
 
+startGame(botVbot):- % initialize the player and the nextPlayer randomly, the bot may be first
+    write('Bot Vs Bot Selected\n'),
+    savePlayer(bot1),
+    saveNextPlayer(bot2).
+
 %try to read a valid game type (1(humanVhuman), 2(humanVbot) or 3 (quit))
 getGameType(GameType):-
     read_line([GameTypeLine|_]),
@@ -85,36 +95,34 @@ parseInstruction([]):- !, fail.
 parseInstruction(_):-
     write('Instruction not recognized, try again.\n'), fail.
 
-%check the bot should play
-isBotPlaying:-
-    player(bot),!, %the next player is the bot
-    playBot.
-isBotPlaying.
-
 % inverts the two players
 invertPlayers:-
-    nextPlayerHasMoves, %only invert if the next player has valid moves
     player(CurrentPlayer),
     nextPlayer(NextPlayer),
     savePlayer(NextPlayer),
     saveNextPlayer(CurrentPlayer).
-invertPlayers.%if next player has no valid move, keep the players
 
-%display board and wait for instruction
-nextTurn:-
-    evaluateBoard,
+nextPlayerGoes:-%if this is a bot playing
+    player(Player),
+    isBot(Player), !,
+    displayBoard,
+    playBot, !,
+    endTurn.
+nextPlayerGoes:-%else, if this is a human player
     displayBoard,
     repeat,
         waitForInstruction,
-    !, endTurn.
+    !,
+    endTurn.
+
 
 %checks the board state, changes the players and starts the nextTurn
 endTurn:-
-    evaluateBoard, !,
-    invertPlayers, !,
-    isBotPlaying, !,
+    removeClaimedStacksWithFive, %move all the 5 stacks to the players they belong to to their Stacks
+    invertPlayers,
+    evaluateBoard,
     saveHasClaimed(false), % clear the hasClaimed flag.
-    nextTurn.
+    nextPlayerGoes.
 
 %empties the database and stops the program
 exit:-clearInit, abort.
@@ -151,5 +159,5 @@ init:-
     saveGetStacks(CurrentPlayer, []),
     saveGetStacks(NextPlayer, []),
     !,
-    nextTurn,
+    nextPlayerGoes,
     clearInit.

@@ -1,8 +1,3 @@
-:- use_module(library(system)).
-:- use_module(library(random)).
-:- use_module(library(lists)).
-
-
 setRandomSeed:-
 	now(Time), S is Time mod 30269,
 	getrand(random(X, Y, Z, _)),

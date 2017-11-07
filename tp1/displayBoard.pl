@@ -1,5 +1,4 @@
 /* This file implements the predicates required for displaying the board */
-:- use_module(library(lists)).
 
 concatenateList([], Result, Result).
 concatenateList([Color|NextColors], Initial, Final):-

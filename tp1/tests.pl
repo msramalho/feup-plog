@@ -1,4 +1,3 @@
-:- use_module(library(lists)).
 /* 8 pieces of each main color (D, R, I, G, B) and 3 of the wild color (W) */
 testBoard(N, B):-
     N = 1,

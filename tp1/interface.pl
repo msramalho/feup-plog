@@ -31,8 +31,9 @@ displayMenu:-
 	wel('30'), wel('30'),wel('30'),
 	wel('30', '1: Human Vs Human'),
 	wel('30', '2: Human Vs Bot'),
-	wel('30', '3: Quit'),
-	wel('30', '4: Instructions'),
+	wel('30', '3: Bot Vs Bot'),
+	wel('30', '4: Quit'),
+	wel('30', '5: Instructions'),
 	wel('30'), wel('30'),wel('30'),
 	wllc, wd(39), wlrc, nl.
 
@@ -90,5 +91,6 @@ translate(bot, 'BOT').
 
 menuTranslate(humanVhuman, 49). % 49 maps to "1"
 menuTranslate(humanVbot, 50). % 50 maps to "2"
-menuTranslate(quit, 51). % 51 maps to "3"
-menuTranslate(instructions, 52). % 52 maps to "4"
+menuTranslate(botVbot, 51). % 51 maps to "3"
+menuTranslate(quit, 52). % 52 maps to "4"
+menuTranslate(instructions, 53). % 53 maps to "5"

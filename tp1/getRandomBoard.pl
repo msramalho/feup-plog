@@ -1,5 +1,3 @@
-:- use_module(library(random)).
-:- use_module(library(lists)).
 
 /*The board is a matrix of 13 lines and 9 columns, not all are used */
 emptyBoard([
