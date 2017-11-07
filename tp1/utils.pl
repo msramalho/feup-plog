@@ -148,8 +148,7 @@ hasClaimed(Val):-
 saveHasClaimed(Val):-
     game(G),
     tryRetract(hasClaimed(G, _)),
-    assert(hasClaimed(G, Val)).
-
+    assert(hasClaimed(G, Val)), !.
 
 % switch game, can move from original to temporary and such
 saveGame(NewGame):-
@@ -184,7 +183,7 @@ duplicateGame(Original, Duplicate):-
     assert(getStacks(Duplicate, NP, SNP)),
     % hasClaimed starts as false
     hasClaimed(Original, H),
-    assert(hasClaimed(Duplicate, false)).
+    assert(hasClaimed(Duplicate, H)).
 
 destroyGame(ToDestroy):-
     %get this game's players

@@ -150,7 +150,7 @@ getPlayerMoves(AllMoves):-
     getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
     findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
     %write('player can play:'), write(Moves), nl,
-    isStackMoveValid(MoveableColors, Moves, AllMoves),
+    isStackMoveValid(MoveableColors, Moves, AllMoves).
     %remove_dups(AllMoves, AllMovesPruned),
     %write('all possible moves are:'), write(AllMoves), nl.
 
