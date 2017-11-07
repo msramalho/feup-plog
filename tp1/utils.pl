@@ -60,6 +60,8 @@ getPlayerFromColor(Color, _Player):-
 getPlayerFromColor(Color, Player):-testPlayerOwnsColor(player1, Color, Player).
 getPlayerFromColor(Color, Player):-testPlayerOwnsColor(player2, Color, Player).
 getPlayerFromColor(Color, Player):-testPlayerOwnsColor(bot, Color, Player).
+getPlayerFromColor(Color, Player):-testPlayerOwnsColor(bot1, Color, Player).
+getPlayerFromColor(Color, Player):-testPlayerOwnsColor(bot2, Color, Player).
 
 testPlayerOwnsColor(Player, Color, Player):-
     getColors(Player, Colors),

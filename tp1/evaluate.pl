@@ -78,7 +78,10 @@ getValidPositions(Result):-
 moveStackToPLayer([]).
 moveStackToPLayer([X-Y-Stack|T]):-
     Stack = [TopColor|_],
+    %trace,
     getPlayerFromColor(TopColor, Player), %if this fails the color does not belong to any player
+    write('Gor player '), write(Player), write(' from color '), write(TopColor), nl,
+    %notrace,
     %update the player's stacks with the new one
     getStacks(Player, PLayerStacks),
     append([PLayerStacks, [Stack]], NewStacks),
@@ -94,6 +97,9 @@ moveStackToPLayer([_|T]):-
 
 removeClaimedStacksWithFive:-
     findall(X-Y-Stack, (getBoardStackHeight(X, Y, 5), getBoardStack(X, Y, Stack)), L), %get all the blocks with height 5
+    length(L, Len),
+    %write('found: '), write(Len), nl,
+    %sleep(2),
     remove_dups(L, Pruned), %remove duplicates
     moveStackToPLayer(Pruned).
 
