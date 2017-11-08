@@ -94,7 +94,7 @@ processMove(Xf, Yf, Xt, Yt):-%process move otherwise
 
 %prompt for valid X and Y coordinates for origin and destination
 move:-
-    write('Choose cells FROM and TO using the following format "Xfrom-Yfrom:Xto-Yto." make Xfrom=q to quit\n'),
+    write('Choose cells FROM and TO using the following format "Xfrom-Yfrom:Xto-Yto."\n'),
     read(Xf-Yf:Xt-Yt), !,
     processMove(Xf, Yf, Xt, Yt),
     read_line([]).

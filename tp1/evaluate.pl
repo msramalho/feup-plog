@@ -1,7 +1,6 @@
-/* This file contains all the predicates required for the game logic to be implemented (allowed moves, ...)*/
+/* This file contains all the predicates required for the evaluation of the board (possible moves, board validation rules)*/
 
 /* Which board cells can be used (since it is not a board of squares) */
-
 /*[0, 0, 1, 0, 1, 0, 1, 0, 0]*/
 /* first line of matrix */
 isValid(0, 2).
@@ -78,10 +77,7 @@ getValidPositions(Result):-
 moveStackToPLayer([]).
 moveStackToPLayer([X-Y-Stack|T]):-
     Stack = [TopColor|_],
-    %trace,
     getPlayerFromColor(TopColor, Player), %if this fails the color does not belong to any player
-    write('Gor player '), write(Player), write(' from color '), write(TopColor), nl,
-    %notrace,
     %update the player's stacks with the new one
     getStacks(Player, PLayerStacks),
     append([PLayerStacks, [Stack]], NewStacks),

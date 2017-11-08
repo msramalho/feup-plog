@@ -77,23 +77,19 @@ getGameType(GameType):-
 
 %wait for instruction and enter
 waitForInstruction:-
-    write('Enter your instruction (move, claim, quit)\n'),
     read_line(Instruction),
     parseInstruction(Instruction).
 
+%expecting a quit instruction
+parseInstruction("quit"):- abort.
 %expecting a move instruction
-parseInstruction("move"):-
-    move.
-
+parseInstruction("move"):-!, move.
 %expecting a claim instruction
-parseInstruction("claim"):-%instruction was claim and has not claimed any piece
-    !, claimColor. % the players can move after a claim
-
+parseInstruction("claim"):-!, claimColor. % the players can move after a claim
 %ignore empty input->newline
-parseInstruction([]):- !, fail.
+parseInstruction([]):- !, waitForInstruction.
 %unexpected instruction
-parseInstruction(_):-
-    write('Instruction not recognized, try again.\n'), fail.
+parseInstruction(_):-write('Instruction not recognized, try again.\n'), fail.
 
 % inverts the two players
 invertPlayers:-
@@ -111,6 +107,7 @@ nextPlayerGoes:-%if this is a bot playing
 nextPlayerGoes:-%else, if this is a human player
     displayBoard,
     repeat,
+        write('Enter your instruction (move, claim, quit)\n'),
         waitForInstruction,
     !,
     endTurn.
@@ -125,7 +122,11 @@ endTurn:-
     nextPlayerGoes.
 
 exitGame:- %the game has ended, print the results
-    write('The player that has won is: '), nl.
+    write('The player that has won is: '), nl
+
+
+
+    , exit.
 
 
 %empties the database and stops the program
