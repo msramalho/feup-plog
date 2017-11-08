@@ -112,7 +112,8 @@ evaluateBoard:-%current player has no moves, invert and test
     invertPlayers,
     currentPlayerHasMoves.
 evaluateBoard:-%if no player has moves, end the game
-    write('no more valid moves'), nl, exit.
+    write('no more valid moves'), nl,
+    exitGame.
 
 %fails if X and Y's top color is not a neutral stack
 isStackNeutral(X, Y):-
@@ -133,7 +134,6 @@ isStackOfPlayer(X, Y):-
 isStackMoveValid(_, [], []).
 isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
     findall(X-Y-Xt-Yt, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
-    %remove_dups(AllMoves, AllMovesPruned),
     isStackMoveValid(MoveableColors, T, Result),
     append([Result, AllMoves], NewResult).
 
@@ -145,17 +145,12 @@ isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
     once(checkValidMove(Xf, Yf, Xt, Yt)),
     once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
     once(canPileStacks(Xf, Yf, Xt, Yt)).
-    /*,
-    isNeutralStackJumpTo(Xf, Yf, Xt, Yt).*/
 
 %get all the moves the currentPlayer can do
 getPlayerMoves(AllMoves):-
     getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
     findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
-    %write('player can play:'), write(Moves), nl,
     isStackMoveValid(MoveableColors, Moves, AllMoves).
-    %remove_dups(AllMoves, AllMovesPruned),
-    %write('all possible moves are:'), write(AllMoves), nl.
 
 %helper function for exploreClaims, appends the color at the end
 addColorAtEnd([], _, []).
@@ -178,11 +173,10 @@ exploreClaims([_|R], Temp, Res):-
     exploreClaims(R, Temp, Res).
 
 
-%get all the next plays possible actions in a list of Xf-Yf:Xt-Yt:claim where claim can be a color to claim or none
+%get all the next plays possible actions in a list of Xf-Yf:Xt-Yt and Xf-Yf:Xt-Yt:claim where claim can be a color to claim or none
 explorePossibilities(Possibilities):-
     getPlayerMoves(AllMoves),
     toClaim(ToClaim),
     exploreClaims(ToClaim, AllMoves, Possibilities).
-    %write('all possible moves are:'), write(Possibilities), nl.
 
 
