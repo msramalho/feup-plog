@@ -58,6 +58,23 @@ displayInstructions:-
     waitForEnter,
     init.
 
+displayBotLevels(Bot):-
+	write('\33\[2J'),
+	wulc, wd(107), wurc, nl,
+	wel('81'),
+	wel('81', 'Choose Bot Level for:'),
+	wel('81', Bot),
+	wel('81'),
+	wsl(107),
+	wel('81'), wel('81'),wel('81'),
+	wel('81', 'Available levels:'),
+	wel('81', 'R : (Random) random moves'),
+	wel('81', 'B : (Basic) The bot will choose the next direct best move'), wel('81'),
+	wel('81', '<N>: (Integer) The bot will search the next <N> plays for the best move'), wel('81'), wel('81'),
+	wel('81', 'Enter to go back'),
+	wel('81'), wel('81'),wel('81'),
+	wllc, wd(107), wlrc, nl.
+
 
 % translations
 translate(empty, ' ').
