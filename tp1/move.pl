@@ -363,7 +363,7 @@ moveURStraight_Recursive(Xf, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%rea
 moveURStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did not reach the end
     NewXf is Xf - 1,
     NewYf is Yf + 1,
-    moveRecursiveStraightLyngkHelper(NewXf, NewYf, Path, FinalPath, NewPath),
+    moveRecursiveStraightLyngkHelper(NewXf, NewYf, Path, NewPath),
     moveURStraight_Recursive(NewXf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
 %-----------------move DOWN and LEFT Recursive
 moveDLStraight_Recursive(Xf, Yf, NewPath, LyngkColor, NewPath, ResX, ResY):-%reached the end
