@@ -59,24 +59,6 @@ displayInstructions:-
     init.
 
 
-
-readString(String):-
-    read(String).
-
-readChar(Char):-
-	get_char(Char),
-	get_char(_), !.
-
-readInt(Int):-
-	get_code(TempInt),
-	Int is TempInt - 48,
-	get_code(_), !.
-
-waitForEnter:-
-	get_char(_).
-
-
-
 % translations
 translate(empty, ' ').
 translate(black, 'D').
@@ -88,6 +70,8 @@ translate(wild, 'W').
 translate(player1, 'Player1').
 translate(player2, 'Player2').
 translate(bot, 'BOT').
+translate(bot1, 'BOT 1').
+translate(bot2, 'BOT 2').
 
 menuTranslate(humanVhuman, 49). % 49 maps to "1"
 menuTranslate(humanVbot, 50). % 50 maps to "2"
