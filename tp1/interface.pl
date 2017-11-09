@@ -7,7 +7,7 @@ wrf:-put_code(9508). % write right fork ┤
 wvd:-put_code(9474). % write vertical dash│
 
 wd:-put_code(9472). % write horizontal dash ─
-wd(0):-wd.
+wd(N):-N=<0, wd.
 wd(N):-wd, N1 is N-1, wd(N1).
 
 % write dashed separator line
@@ -67,13 +67,12 @@ displayBotLevels(Bot):-
 	wel('81'),
 	wsl(107),
 	wel('81'), wel('81'),wel('81'),
-	wel('81', 'Available levels:'),
-	wel('81', 'R : (Random) random moves'),
-	wel('81', 'B : (Basic) The bot will choose the next direct best move'), wel('81'),
-	wel('81', '<N>: (Integer) The bot will search the next <N> plays for the best move'), wel('81'), wel('81'),
-	wel('81', 'Enter to go back'),
+	wel('81', 'Available levels:'), wel('81'),
+	wel('81', 'r. : (Random) random moves'),
+	wel('81', 'b. : (Basic) The bot will choose the next direct best move'),
+	wel('81', '<N>. : (Integer) The bot will search the next <N> plays for the best move'),
 	wel('81'), wel('81'),wel('81'),
-	wllc, wd(107), wlrc, nl.
+	wllc, wd(107), wlrc, nl, !.
 
 
 % translations
