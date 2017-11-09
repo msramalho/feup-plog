@@ -74,6 +74,24 @@ displayBotLevels(Bot):-
 	wel('81'), wel('81'),wel('81'),
 	wllc, wd(107), wlrc, nl, !.
 
+displayWinner(draw):-
+    wulc, wd(39), wurc, nl,
+	wel('30'), wel('30'),
+	wel('30', 'THERE WAS A DRAW'),
+	wel('30'), wel('30'),
+	wllc, wd(39), wlrc, nl.
+
+displayWinner(Winner):-
+    wulc, wd(39), wurc, nl,
+	wel('30'),
+	wel('30', 'THE WINNER IS:'),
+	wel('30'),
+	wsl(39),
+	wel('30'), wel('30'),
+	wel('30', Winner),
+	wel('30'), wel('30'),
+	wllc, wd(39), wlrc, nl.
+
 
 % translations
 translate(empty, ' ').

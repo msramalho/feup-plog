@@ -126,13 +126,6 @@ endTurn:-
     saveHasClaimed(false), % clear the hasClaimed flag.
     nextPlayerGoes.
 
-exitGame:- %the game has ended, print the results
-    write('The player that has won is: '), nl
-
-
-
-    , exit.
-
 
 %empties the database and stops the program
 exit:-clearInit, abort.
