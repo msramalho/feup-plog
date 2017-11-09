@@ -25,8 +25,9 @@
     nextPlayer/2,   % the next player
     toClaim/2,      % which colors are yet to claim
     getColors/3,    % a list of the colors claimed by the selected player getColors(player, Colors)
-    getStacks/3.    % a list of the stacks collected by the selected player getStacks(player, Stacks)
-    hasClaimed/2.   % a flag to indicate wheter the current player has claimed a color in this turn
+    getStacks/3,    % a list of the stacks collected by the selected player getStacks(player, Stacks)
+    hasClaimed/2,   % a flag to indicate wheter the current player has claimed a color in this turn
+    botLevel/3.     % the level of difficulty of each bot
 
 :- dynamic
     game/1,
@@ -36,7 +37,8 @@
     toClaim/2,
     getColors/3,
     getStacks/3,
-    hasClaimed/2.
+    hasClaimed/2,
+    botLevel/3.
 
 %make bot start first or human start first, 50% chance
 randomizeBotPlay:-
@@ -60,10 +62,13 @@ startGame(humanVhuman):- %intialize both players. The real players should random
 
 startGame(humanVbot):- % initialize the player and the nextPlayer randomly, the bot may be first
     write('Human Vs Bot Selected\n'),
+    chooseBotLevel(bot),
     randomizeBotPlay.
 
 startGame(botVbot):- % initialize the player and the nextPlayer randomly, the bot may be first
     write('Bot Vs Bot Selected\n'),
+    chooseBotLevel(bot1),
+    chooseBotLevel(bot2),
     savePlayer(bot1),
     saveNextPlayer(bot2).
 
@@ -102,7 +107,7 @@ nextPlayerGoes:-%if this is a bot playing
     player(Player),
     isBot(Player), !,
     displayBoard,
-    playBot, !,
+    playBot(Player), !,
     endTurn.
 nextPlayerGoes:-%else, if this is a human player
     displayBoard,
@@ -141,6 +146,7 @@ clearInit:-
     abolish(getColors/3),
     abolish(getStacks/3),
     abolish(hasClaimed/2),
+    abolish(botLevel/3),
 
     assert(game(0)), % the only assert needed, others are in utils.pl
     saveHasClaimed(false).
