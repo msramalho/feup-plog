@@ -19,7 +19,7 @@ playBot(Bot):-
     botLevel(Bot, Level),
     playBotByLevel(Level, Move),
     write('Bot is executing move: '), write(Move), write(' ... '), nl,
-    sleep(0.5),
+    %sleep(0.5),
     executeBotMove(Move).
 
 
