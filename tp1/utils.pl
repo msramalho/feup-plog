@@ -145,7 +145,15 @@ hasClaimed(Val):-
 saveHasClaimed(Val):-
     game(G),
     tryRetract(hasClaimed(G, _)),
-    assert(hasClaimed(G, Val)), !.
+    assert(hasClaimed(G, Val)).
+% bot level database helpers
+botLevel(Bot, Level):-
+    game(G),
+    botLevel(G, Bot, Level).
+saveBotLevel(Bot, Level):-
+    game(G),
+    tryRetract(botLevel(G, Bot, _)),
+    assert(botLevel(G, Bot, Level)).
 
 % switch game, can move from original to temporary and such
 saveGame(NewGame):-
