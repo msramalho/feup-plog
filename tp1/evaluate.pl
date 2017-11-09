@@ -103,13 +103,18 @@ currentPlayerHasMoves:-
     Len > 0.
 
 %check if the current player has moves, if not check if the next player has moves, if not endGame
-evaluateBoard:-currentPlayerHasMoves, !.
-evaluateBoard:-%current player has no moves, invert and test
+assertBoard:-currentPlayerHasMoves, !.
+assertBoard:-%current player has no moves, invert and test
     invertPlayers,
     currentPlayerHasMoves.
-evaluateBoard:-%if no player has moves, end the game
+assertBoard:-%if no player has moves, end the game
     write('no more valid moves'), nl,
+    evaluateWinner,
     exitGame.
+
+%get the winner of the game
+evaluateWinner:-
+    fail.
 
 %fails if X and Y's top color is not a neutral stack
 isStackNeutral(X, Y):-

@@ -122,7 +122,7 @@ nextPlayerGoes:-%else, if this is a human player
 endTurn:-
     removeClaimedStacksWithFive, %move all the 5 stacks to the players they belong to to their Stacks
     invertPlayers,
-    evaluateBoard,
+    assertBoard,
     saveHasClaimed(false), % clear the hasClaimed flag.
     nextPlayerGoes.
 
