@@ -183,10 +183,10 @@ isStackOfPlayer(X, Y):-
 %---------------------------------- Evaluate the state of the game
 %Assertion functions to get all the possible moves
 
-isStackMoveValid(_, [], []).
-isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
-    findall(X-Y-Xt-Yt, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
-    isStackMoveValid(MoveableColors, T, Result),
+isStackMoveValid(_, [], _, []).
+isStackMoveValid(MoveableColors, [X-Y |T], Color, NewResult):-
+    findall(X-Y-Xt-Yt-Color, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
+    isStackMoveValid(MoveableColors, T, Color, Result),
     append([Result, AllMoves], NewResult).
 
 %get all the stacks a given stack can be moved to
@@ -200,10 +200,10 @@ isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
     once(canPileStacks(Xf, Yf, Xt, Yt)).
 
 %get all the moves the currentPlayer can do
-getPlayerMoves(AllMoves):-
+getPlayerMoves(AllMoves, Color):-
     getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
     findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
-    isStackMoveValid(MoveableColors, Moves, AllMoves).
+    isStackMoveValid(MoveableColors, Moves, Color, AllMoves).
 
 %helper function for exploreClaims, appends the color at the end
 addColorAtEnd([], _, []).
@@ -217,10 +217,10 @@ exploreClaims([Color | R], Temp, NewRes):-
     validClaim,
     pushGame,
         claim(Color),
-        getPlayerMoves(AllMoves),
-        addColorAtEnd(AllMoves, Color, AllMovesReady),
+        getPlayerMoves(AllMoves, Color),
+        %addColorAtEnd(AllMoves, Color, AllMovesReady),
     popGame,
-    append([Temp, AllMovesReady], Res),
+    append([Temp, AllMoves], Res),
     exploreClaims(R, Res, NewRes).
 exploreClaims([_|R], Temp, Res):-
     exploreClaims(R, Temp, Res).
@@ -228,7 +228,7 @@ exploreClaims([_|R], Temp, Res):-
 
 %get all the next plays possible actions in a list of Xf-Yf:Xt-Yt and Xf-Yf:Xt-Yt:claim where claim can be a color to claim or none
 explorePossibilities(Possibilities):-
-    getPlayerMoves(AllMoves),
+    getPlayerMoves(AllMoves, none),
     toClaim(ToClaim),
     exploreClaims(ToClaim, AllMoves, Possibilities).
 

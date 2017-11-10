@@ -23,10 +23,10 @@ playBot(Bot):-
     executeBotMove(Move).
 
 
-%claim and then move
-executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeBotMove(Xf-Yf-Xt-Yt).
 %just move
-executeBotMove(Xf-Yf-Xt-Yt):-executeMove(Xf, Yf, Xt, Yt).
+executeBotMove(Xf-Yf-Xt-Yt-none):-executeMove(Xf, Yf, Xt, Yt).
+%claim and then move
+executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeMove(Xf, Yf, Xt, Yt).
 
 %CurrentMove = cmove, NewMove = move, CurrentScore = 10, NewScore = 20, getBest(CurrentMove, NewMove, CurrentScore, NewScore, FinalMove, FinalScore).
 %---------------bot greedy move
