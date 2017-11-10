@@ -2,13 +2,17 @@
 setof(V-X-Y, (validMove(J, X, Y, NewBoard), evaluateBoard(NewBoard, J)), L).
  */
 
+negativeInf(-2^2147483616).
+positiveInf(2^2147483616).
+
 playBotByLevel(random, Move):-
     explorePossibilities(Possibilities),
     random_select(Move, Possibilities, _).
 
 playBotByLevel(basic, Move):-
-    write('TODO by level basic'),
-    abort.
+    explorePossibilities([First| OtherPossibilities]),
+    negativeInf(NInf),
+    basicLevelSelect(OtherPossibilities, First, NInf, Move, _). %bests score starts as -inf
 
 playBotByLevel(Number):-
     integer(Number),
@@ -29,6 +33,27 @@ executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeBotMove(Xf-Yf-Xt-Yt).
 executeBotMove(Xf-Yf-Xt-Yt):-executeMove(Xf, Yf, Xt, Yt).
 
 
+%---------------bot basic move
+getBest(_CurrentMove, Possibility, CurrentBest, Score, NewMove, NewBest):- %new possibility is better
+    CurrentBest < Score, NewMove = Possibility, NewBest = CurrentBest.
+getBest(CurrentMove, _Possibility, CurrentBest, _Score, CurrentMove, CurrentBest). %new possibility is worse
+
+basicLevelSelect([], FinalMove, FinalBest, FinalMove, FinalBest).
+basicLevelSelect([Possibility | Others], CurrentMove, CurrentBest, FinalMove, FinalBest):-
+    write('pushing...'),
+    % TODO: try to repeat the experience but by passing a board and the other variables instead of a push and pop
+    pushGame,
+        player(Player), % the current player
+        once(executeBotMove(Possibility)), %execute the possibility on the new game instance
+        once(evaluateBoard(Player, Score)), %get the score of the possibility
+        write('(move '), write(Possibility), write(' leads to score of '), write(Score), write(')'),
+    popGame,
+    write('...done'), nl,
+    %choose the best move according to the pontuation
+    getBest(CurrentMove, Possibility, CurrentBest, Score, NewMove, NewBest),
+    basicLevelSelect(Others, NewMove, NewBest, FinalMove, FinalBest).
+
+%---------------player board score
 %evaluate the current board according to the current player, higher Score means better game for Player
 evaluateBoard(Player, Score):-
     getColors(Player, Colors),
