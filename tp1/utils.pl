@@ -62,7 +62,7 @@ testPlayerOwnsColor(Player, Color, Player):-
     getColors(Player, Colors),
     nth0(_, Colors, Color). %if the color belongs to the player
 
-clear:-write('\33\[2J').
+clear.%:-write('\33\[2J').
 
 %---------------------------------------------------------------------------
 % databse manipulation helpers, remove arity one for consulting the database
@@ -133,9 +133,13 @@ hasClaimed(Val):-
     game(G),
     hasClaimed(G, Val).
 saveHasClaimed(Val):-
+    write('\n--------------asserting hasClaimed to '), write(Val), nl,
     game(G),
     tryRetract(hasClaimed(G, _)),
     assert(hasClaimed(G, Val)).
+clearHasClaimed:-
+    abolish(hasClaimed/2),
+    saveHasClaimed(false).
 % bot level database helpers
 botLevel(Bot, Level):-
     game(G),

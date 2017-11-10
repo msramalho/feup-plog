@@ -120,10 +120,10 @@ nextPlayerGoes:-%else, if this is a human player
 
 %checks the board state, changes the players and starts the nextTurn
 endTurn:-
+    clearHasClaimed, % clear the hasClaimed flag.
     removeClaimedStacksWithFive, %move all the 5 stacks to the players they belong to to their Stacks
     invertPlayers,
     assertBoard,
-    saveHasClaimed(false), % clear the hasClaimed flag.
     nextPlayerGoes.
 
 
@@ -138,11 +138,10 @@ clearInit:-
     abolish(toClaim/2),
     abolish(getColors/3),
     abolish(getStacks/3),
-    abolish(hasClaimed/2),
     abolish(botLevel/3),
 
     assert(game(0)), % the only assert needed, others are in utils.pl
-    saveHasClaimed(false).
+    clearHasClaimed. % abolishes and resets
 
 %where everything begins
 init:-
