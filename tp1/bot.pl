@@ -12,7 +12,7 @@ playBotByLevel(greedy, Move):-%greedy move
     setof(Score:Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score)), Possibilities),
     last(Possibilities, Score:Move).
 
-playBotByLevel(greedy, Move):-%hardcore move (alpha-beta)
+playBotByLevel(greedy, _Move):-%hardcore move (alpha-beta)
     write('TODO hardcore move'),
     exit.
 
