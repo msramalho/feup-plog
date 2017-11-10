@@ -32,26 +32,27 @@ executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeBotMove(Xf-Yf-Xt-Yt).
 %just move
 executeBotMove(Xf-Yf-Xt-Yt):-executeMove(Xf, Yf, Xt, Yt).
 
-
+%CurrentMove = cmove, NewMove = move, CurrentScore = 10, NewScore = 20, getBest(CurrentMove, NewMove, CurrentScore, NewScore, FinalMove, FinalScore).
 %---------------bot greedy move
-getBest(_CurrentMove, Possibility, CurrentBest, Score, NewMove, NewBest):- %new possibility is better
-    CurrentBest < Score, NewMove = Possibility, NewBest = CurrentBest.
-getBest(CurrentMove, _Possibility, CurrentBest, _Score, CurrentMove, CurrentBest). %new possibility is worse
+getBest(_CurrentMove, NewMove, CurrentScore, NewScore, NewMove, CurrentScore):- %new possibility is better
+    %format('\n    IS ~d < ~d ? \n', [CurrentScore, Score]),
+    CurrentScore < NewScore.
+getBest(CurrentMove, _NewMove, CurrentScore, _NewScore, CurrentMove, CurrentScore). %new possibility is worse
 
-greedyLevelSelect([], FinalMove, FinalBest, FinalMove, FinalBest).
-greedyLevelSelect([Possibility | Others], CurrentMove, CurrentBest, FinalMove, FinalBest):-
+greedyLevelSelect([], FinalMove, FinalScore, FinalMove, FinalScore).
+greedyLevelSelect([Possibility | Others], CurrentMove, CurrentScore, FinalMove, FinalScore):-
     write('pushing...'),
     % TODO: try to repeat the experience but by passing a board and the other variables instead of a push and pop
     pushGame,
         player(Player), % the current player
-        once(executeBotMove(Possibility)), %execute the possibility on the new game instance
-        once(evaluateBoard(Player, Score)), %get the score of the possibility
+        executeBotMove(Possibility), %execute the possibility on the new game instance
+        evaluateBoard(Player, Score), %get the score of the possibility
         write('(move '), write(Possibility), write(' leads to score of '), write(Score), write(')'),
     popGame,
     write('...done'), nl,
     %choose the best move according to the pontuation
-    getBest(CurrentMove, Possibility, CurrentBest, Score, NewMove, NewBest),
-    greedyLevelSelect(Others, NewMove, NewBest, FinalMove, FinalBest).
+    getBest(CurrentMove, Possibility, CurrentScore, Score, NewMove, NewBest),
+    greedyLevelSelect(Others, NewMove, NewBest, FinalMove, FinalScore).
 
 %---------------player board score
 %evaluate the current board according to the current player, higher Score means better game for Player
