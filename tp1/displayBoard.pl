@@ -1,5 +1,6 @@
-/* This file implements the predicates required for displaying the board */
-
+/*
+displayBoard.pl: This file implements the predicates required for displaying the board
+*/
 concatenateList([], Result, Result).
 concatenateList([Color|NextColors], Initial, Final):-
 	translate(Color, Value),

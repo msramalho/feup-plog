@@ -1,4 +1,6 @@
-
+/*
+claim.pl: predicates related to the color claiming operation
+*/
 updateClaimedColor(Translated):-
     toClaim(ToClaim), %load the colors left for claiming
     nth0(_, ToClaim, Translated).%if the chosen color is inside ToClaim
@@ -69,5 +71,5 @@ translateColor("b", blue).
 isClaimableColor(Color):-
     toClaim(Colors),
     nth0(_, Colors, Color).
-
-claimableColors([black, red, ivory, green, blue]).%this will be redacted and asserted
+%from the initial colors, which can be claimed
+claimableColors([black, red, ivory, green, blue]).

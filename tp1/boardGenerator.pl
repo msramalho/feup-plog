@@ -1,4 +1,9 @@
 
+
+/*
+evaluate.pl: This file implements the predicates required for generating a random board
+*/
+
 /*The board is a matrix of 13 lines and 9 columns, not all are used */
 emptyBoard([
     [[], [], [], [], [], [], [], [], []],
@@ -38,7 +43,7 @@ fillBoard(Board, [Position|OtherPositions], Pieces, FinalBoard):-
     fillBoard(NewBoard, OtherPositions, NewPieces, FinalBoard).
 
 
-getRandomBoard(NewBoard):-
+generateBoard(NewBoard):-
     getValidPositions(Positions),
     piecesToDistribute(Pieces),
     emptyBoard(E),

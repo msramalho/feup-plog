@@ -4,7 +4,7 @@
 
 :- include('utils.pl').
 
-:- include('getRandomBoard.pl').
+:- include('boardGenerator.pl').
 :- include('displayBoard.pl').
 
 :- include('evaluate.pl').
@@ -150,7 +150,7 @@ init:-
     displayMenu,
     getGameType(GameType),
     startGame(GameType),
-    getRandomBoard(Board),
+    generateBoard(Board),
 
     player(CurrentPlayer),
     nextPlayer(NextPlayer),
