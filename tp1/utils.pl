@@ -62,7 +62,7 @@ testPlayerOwnsColor(Player, Color, Player):-
     getColors(Player, Colors),
     nth0(_, Colors, Color). %if the color belongs to the player
 
-clear.%:-write('\33\[2J').
+clear:-write('\33\[2J').
 
 %---------------------------------------------------------------------------
 % databse manipulation helpers, remove arity one for consulting the database
