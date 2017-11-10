@@ -98,9 +98,8 @@ removeClaimedStacksWithFive:-
 
 %fails if current player has no move left
 currentPlayerHasMoves:-
-    explorePossibilities(Possibilities),
-    length(Possibilities, Len),
-    Len > 0.
+    getMoveableColorsByPlayer(MoveableColors),
+    getFullValidMove(MoveableColors, _Xf, _Yf, _Xt, _Yt, _Color).
 
 %check if the current player has moves, if not check if the next player has moves, if not endGame
 assertBoard:-currentPlayerHasMoves, !.
@@ -166,7 +165,6 @@ countStacksByColorAndHeight([Color | OtherColors], Height, FinalCount):-%max cla
 %--------------------- identify te winner end
 
 
-
 %fails if X and Y's top color is not a neutral stack
 isStackNeutral(X, Y):-
     getBoardTopColor(X, Y, Piece),
@@ -178,58 +176,5 @@ isStackOfPlayer(X, Y):-
     getBoardTopColor(X, Y, Piece),
     getColors(CurentPlayer, ClaimedColors),
     nth0(_, ClaimedColors, Piece). %if this is the player's stack
-
-
-%---------------------------------- Evaluate the state of the game
-%Assertion functions to get all the possible moves
-
-isStackMoveValid(_, [], _, []).
-isStackMoveValid(MoveableColors, [X-Y |T], Color, NewResult):-
-    findall(X-Y-Xt-Yt-Color, isMoveValid(MoveableColors, X, Y, Xt, Yt), AllMoves),
-    isStackMoveValid(MoveableColors, T, Color, Result),
-    append([Result, AllMoves], NewResult).
-
-%get all the stacks a given stack can be moved to
-isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
-    once(isColorInStackPlayable(Xf, Yf, MoveableColors)),
-    isValid(Xt, Yt),
-    once(checkStackNotEmpty(Xf, Yf)),
-    once(checkStackNotEmpty(Xt, Yt)),
-    once(checkValidMove(Xf, Yf, Xt, Yt)),
-    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
-    once(canPileStacks(Xf, Yf, Xt, Yt)).
-
-%get all the moves the currentPlayer can do
-getPlayerMoves(AllMoves, Color):-
-    getMoveableColorsByPlayer(MoveableColors), %merge the two lists to get the colors the player can move
-    findall(X-Y, isColorInStackPlayable(X, Y, MoveableColors), Moves),
-    isStackMoveValid(MoveableColors, Moves, Color, AllMoves).
-
-%helper function for exploreClaims, appends the color at the end
-addColorAtEnd([], _, []).
-addColorAtEnd([Move | R], Color, [Move-Color | NewRest]):-
-    addColorAtEnd(R, Color, NewRest).
-
-
-%make a claim, if possible and then getAllPossibilities
-exploreClaims([], Final, Final).
-exploreClaims([Color | R], Temp, NewRes):-
-    validClaim,
-    pushGame,
-        claim(Color),
-        getPlayerMoves(AllMoves, Color),
-        %addColorAtEnd(AllMoves, Color, AllMovesReady),
-    popGame,
-    append([Temp, AllMoves], Res),
-    exploreClaims(R, Res, NewRes).
-exploreClaims([_|R], Temp, Res):-
-    exploreClaims(R, Temp, Res).
-
-
-%get all the next plays possible actions in a list of Xf-Yf:Xt-Yt and Xf-Yf:Xt-Yt:claim where claim can be a color to claim or none
-explorePossibilities(Possibilities):-
-    getPlayerMoves(AllMoves, none),
-    toClaim(ToClaim),
-    exploreClaims(ToClaim, AllMoves, Possibilities).
 
 

@@ -31,28 +31,6 @@ executeBotMove(Xf-Yf-Xt-Yt-none):-executeMove(Xf, Yf, Xt, Yt).
 %claim and then move
 executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeMove(Xf, Yf, Xt, Yt).
 
-%CurrentMove = cmove, NewMove = move, CurrentScore = 10, NewScore = 20, getBest(CurrentMove, NewMove, CurrentScore, NewScore, FinalMove, FinalScore).
-%---------------bot greedy move
-getBest(_CurrentMove, NewMove, CurrentScore, NewScore, NewMove, NewScore):- %new possibility is better
-    %write('\n    IS '), write(CurrentScore),  write(' < '), write(NewScore), write(' ? \n'),
-    CurrentScore < NewScore.
-getBest(CurrentMove, _NewMove, CurrentScore, _NewScore, CurrentMove, CurrentScore). %new possibility is worse
-
-greedyLevelSelect([], FinalMove, FinalScore, FinalMove, FinalScore).
-greedyLevelSelect([Possibility | Others], CurrentMove, CurrentScore, FinalMove, FinalScore):-
-    %write('pushing...'),
-    % TODO: try to repeat the experience but by passing a board and the other variables instead of a push and pop
-    pushGame,
-        player(Player), % the current player
-        executeBotMove(Possibility), %execute the possibility on the new game instance
-        evaluateBoard(Player, Score), %get the score of the possibility
-        %write('(move '), write(Possibility), write(' leads to score of '), write(Score), write(')'),
-    popGame,
-    %write('...done'), nl,
-    %choose the best move according to the pontuation
-    getBest(CurrentMove, Possibility, CurrentScore, Score, NewMove, NewBest),
-    greedyLevelSelect(Others, NewMove, NewBest, FinalMove, FinalScore).
-
 %---------------player board score
 %evaluate the current board according to the current player, higher Score means better game for Player
 evaluateBoard(Player, Score):-
@@ -80,13 +58,6 @@ evaluateMove(Move, Score):-
         once(evaluateBoard(Player, Score)), %get the score of the possibility
     once(popGame).
 
-
-%TODO: setof(Score-Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score), L),
-/*
-displayAllMoves:-
-    getMoveableColorsByPlayer(MoveableColors),
-    findall(Xf-Yf-Xt-Yt-Color, getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), L),
-    write('\nAll moves are: '), write(L), nl. */
 
 %get all the stacks a given stack can be moved to
 getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, ClaimedColor):-%with claim
