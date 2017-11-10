@@ -7,7 +7,7 @@ wrf:-put_code(9508). % write right fork ┤
 wvd:-put_code(9474). % write vertical dash│
 
 wd:-put_code(9472). % write horizontal dash ─
-wd(0):-wd.
+wd(N):-N=<0, wd.
 wd(N):-wd, N1 is N-1, wd(N1).
 
 % write dashed separator line
@@ -58,9 +58,42 @@ displayInstructions:-
     waitForEnter,
     init.
 
+displayBotLevels(Bot):-
+	write('\33\[2J'),
+	wulc, wd(107), wurc, nl,
+	wel('81'),
+	wel('81', 'Choose Bot Level for:'),
+	wel('81', Bot),
+	wel('81'),
+	wsl(107),
+	wel('81'), wel('81'),wel('81'),
+	wel('81', 'Available levels:'), wel('81'),
+	wel('81', 'r. : (Random) random moves'),
+	wel('81', 'g. : (Greedy) The bot will choose the next direct best move'),
+	wel('81', '<N>. : (Integer) The bot will search the next <N> plays for the best move'),
+	wel('81'), wel('81'),wel('81'),
+	wllc, wd(107), wlrc, nl, !.
+
+displayWinner(draw):-
+    wulc, wd(39), wurc, nl,
+	wel('30'), wel('30'),
+	wel('30', 'THERE WAS A DRAW'),
+	wel('30'), wel('30'),
+	wllc, wd(39), wlrc, nl.
+
+displayWinner(Winner):-
+    wulc, wd(39), wurc, nl,
+	wel('30'),
+	wel('30', 'THE WINNER IS:'),
+	wel('30'),
+	wsl(39),
+	wel('30'), wel('30'),
+	wel('30', Winner),
+	wel('30'), wel('30'),
+	wllc, wd(39), wlrc, nl.
+
 
 % translations
-translate(empty, ' ').
 translate(black, 'D').
 translate(red, 'R').
 translate(ivory, 'I').

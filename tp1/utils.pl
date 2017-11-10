@@ -22,16 +22,20 @@ writeString(String, Count):-
     NewCount is Count - 1,
     writeString(String, NewCount).
 
-%https://stackoverflow.com/questions/41454755/how-can-i-replace-an-element-of-a-list-using-an-index-in-prolog
+/* %https://stackoverflow.com/questions/41454755/how-can-i-replace-an-element-of-a-list-using-an-index-in-prolog
 replaceAt([_|T],0,E,[E|T]).
 replaceAt([H|T],P,E,[H|R]) :-
-    P > 0, NP is P-1, replaceAt(T,NP,E,R).
+    P > 0, NP is P-1, replaceAt(T,NP,E,R). */
 
 %replace a stack at the Line, Column by the NewStack
 replaceBoardStack(Board, X, Y, NewStack, NewBoard):-
-    nth0(X, Board, Line),
-    replaceAt(Line, Y, NewStack, NewLine), %replace the cell for the new piece
-    replaceAt(Board, X, NewLine, NewBoard).
+    nth0(X, Board, OldLine, BoardWithoutLine), %remove the line from the board
+    nth0(Y, OldLine, _OldStack, LineWithoutStack), %remove the old stack from te line
+    nth0(Y, NewLine, NewStack, LineWithoutStack), %add the stack to the line
+    nth0(X, NewBoard, NewLine, BoardWithoutLine). %add the new line to the board
+    %e.g. nth0(2, List, c, [a,b,d,e]) unifies List with [a,b,c,d,e].
+    % replaceAt(Line, Y, NewStack, NewLine), %replace the cell for the new piece
+    % replaceAt(Board, X, NewLine, NewBoard).
 
 
 getBoardTopColor(X, Y, TopColor):-
@@ -44,9 +48,8 @@ getBoardStack(X, Y, Stack):-
     nth0(X, B, Line),  %get the line
     nth0(Y, Line, Stack). %get the Stack
 
-%get the stack height (getBoardStackHeight/4 sets the last as the Stack)
-getBoardStackHeight(X, Y, Height):-getBoardStackHeight(X, Y, Height, _).
-getBoardStackHeight(X, Y, Height, Stack):-
+%get the stack height
+getBoardStackHeight(X, Y, Height):-
     getBoardStack(X, Y, Stack),
     length(Stack, Height).
 
@@ -145,7 +148,15 @@ hasClaimed(Val):-
 saveHasClaimed(Val):-
     game(G),
     tryRetract(hasClaimed(G, _)),
-    assert(hasClaimed(G, Val)), !.
+    assert(hasClaimed(G, Val)).
+% bot level database helpers
+botLevel(Bot, Level):-
+    game(G),
+    botLevel(G, Bot, Level).
+saveBotLevel(Bot, Level):-
+    game(G),
+    tryRetract(botLevel(G, Bot, _)),
+    assert(botLevel(G, Bot, Level)).
 
 % switch game, can move from original to temporary and such
 saveGame(NewGame):-

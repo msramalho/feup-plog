@@ -1,19 +1,19 @@
 
 /*The board is a matrix of 13 lines and 9 columns, not all are used */
 emptyBoard([
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]],
-    [[empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty], [empty]]
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []],
+    [[], [], [], [], [], [], [], [], []]
 ]).
 
 

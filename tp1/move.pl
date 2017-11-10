@@ -227,14 +227,6 @@ moveDR_Recursive(Xf, Yf, Xt, Yt):-%did not reach the end
 
 
 %----------------------------------------MOVE RECURSIVE LYNGK START
-/* isNextLyngkAccessibel()
-moveRecursiveBetweenLyngks(Xf, Yf, Xt, Yt, Path, LyngkColor):-
-    notInPath(Xf-Yf, Path), % cannot already be in the path (avoid loops)
-    assertMoveTo(Xf, Yf), % if this is empty
-    findall(NewXt-NewYt, (moveRecursive(Xf, Yf, NewXt, NewYt), getBoardTopColor(NewXt, NewYt, LyngkColor)), Res),
-    moveRecursive(Xf, Yf, Xt, Yt), % if the */
-
-
 moveRecursiveLyngkHelper(Xf, Yf, Xt, Yt, Path, LyngkColor):-%if the new one is empty
     isValid(Xf, Yf), % must be inside the board range, else does not even try
     notInPath(Xf-Yf, Path), % cannot already be in the path (avoid loops)
@@ -391,14 +383,6 @@ moveDRStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did 
 
 
 %----------------------------------------MOVE RECURSIVE LYNGK In STRAGIH LINE END
-
-
-
-
-
-
-
-
 
 
 executeMove(Xf, Yf, Xt, Yt):-
