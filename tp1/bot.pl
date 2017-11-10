@@ -28,11 +28,11 @@ executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeBotMove(Xf-Yf-Xt-Yt).
 %just move
 executeBotMove(Xf-Yf-Xt-Yt):-executeMove(Xf, Yf, Xt, Yt).
 
-/*
-%evaluate the current board according to the current player
-evaluateBoard:-player(Player),evaluateBoard(Player).
-%evaluate the current board according to a given player
-evaluateBoard(Player).*/
+
+%evaluate the current board according to the current player, higher Score means better game for Player
+evaluateBoard(Player, Score):-
+    fail.
+
 
 
 
