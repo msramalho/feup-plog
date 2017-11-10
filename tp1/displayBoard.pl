@@ -118,8 +118,7 @@ displayBoard:-
     displayPlayerStats(NextPlayer),
 
     toClaim(C),
-	write('\nAvailable Colors:'), write(C), nl, nl, nl,
-    explorePossibilities(_).
+	write('\nAvailable Colors:'), write(C), nl, nl, nl.
 
 
 
