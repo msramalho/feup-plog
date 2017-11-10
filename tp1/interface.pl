@@ -69,7 +69,7 @@ displayBotLevels(Bot):-
 	wel('81'), wel('81'),wel('81'),
 	wel('81', 'Available levels:'), wel('81'),
 	wel('81', 'r. : (Random) random moves'),
-	wel('81', 'b. : (Basic) The bot will choose the next direct best move'),
+	wel('81', 'g. : (Greedy) The bot will choose the next direct best move'),
 	wel('81', '<N>. : (Integer) The bot will search the next <N> plays for the best move'),
 	wel('81'), wel('81'),wel('81'),
 	wllc, wd(107), wlrc, nl, !.

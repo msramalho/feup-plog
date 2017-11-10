@@ -9,10 +9,10 @@ playBotByLevel(random, Move):-
     explorePossibilities(Possibilities),
     random_select(Move, Possibilities, _).
 
-playBotByLevel(basic, Move):-
+playBotByLevel(greedy, Move):-
     explorePossibilities([First| OtherPossibilities]),
     negativeInf(NInf),
-    basicLevelSelect(OtherPossibilities, First, NInf, Move, _). %bests score starts as -inf
+    greedyLevelSelect(OtherPossibilities, First, NInf, Move, _). %bests score starts as -inf
 
 playBotByLevel(Number):-
     integer(Number),
@@ -33,13 +33,13 @@ executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeBotMove(Xf-Yf-Xt-Yt).
 executeBotMove(Xf-Yf-Xt-Yt):-executeMove(Xf, Yf, Xt, Yt).
 
 
-%---------------bot basic move
+%---------------bot greedy move
 getBest(_CurrentMove, Possibility, CurrentBest, Score, NewMove, NewBest):- %new possibility is better
     CurrentBest < Score, NewMove = Possibility, NewBest = CurrentBest.
 getBest(CurrentMove, _Possibility, CurrentBest, _Score, CurrentMove, CurrentBest). %new possibility is worse
 
-basicLevelSelect([], FinalMove, FinalBest, FinalMove, FinalBest).
-basicLevelSelect([Possibility | Others], CurrentMove, CurrentBest, FinalMove, FinalBest):-
+greedyLevelSelect([], FinalMove, FinalBest, FinalMove, FinalBest).
+greedyLevelSelect([Possibility | Others], CurrentMove, CurrentBest, FinalMove, FinalBest):-
     write('pushing...'),
     % TODO: try to repeat the experience but by passing a board and the other variables instead of a push and pop
     pushGame,
@@ -51,7 +51,7 @@ basicLevelSelect([Possibility | Others], CurrentMove, CurrentBest, FinalMove, Fi
     write('...done'), nl,
     %choose the best move according to the pontuation
     getBest(CurrentMove, Possibility, CurrentBest, Score, NewMove, NewBest),
-    basicLevelSelect(Others, NewMove, NewBest, FinalMove, FinalBest).
+    greedyLevelSelect(Others, NewMove, NewBest, FinalMove, FinalBest).
 
 %---------------player board score
 %evaluate the current board according to the current player, higher Score means better game for Player
@@ -81,7 +81,7 @@ getPlayerStackScore(Player, Colors, Height, StackScore):- %if there are still he
 
 %----------bot difficulty
 validBotLevel(r, random).%random move
-validBotLevel(b, basic).%basic move
+validBotLevel(g, greedy).%greedy move
 validBotLevel(Number, Number):-%numeric value
     integer(Number).%random move
 
