@@ -2,17 +2,13 @@
 setof(V-X-Y, (validMove(J, X, Y, NewBoard), evaluateBoard(NewBoard, J)), L).
  */
 
-negativeInf(-2^2147483616).
-positiveInf(2^2147483616).
-
 playBotByLevel(random, Move):-
     explorePossibilities(Possibilities),
     random_select(Move, Possibilities, _).
 
 playBotByLevel(greedy, Move):-
     explorePossibilities([First| OtherPossibilities]),
-    negativeInf(NInf),
-    greedyLevelSelect(OtherPossibilities, First, NInf, Move, _). %bests score starts as -inf
+    greedyLevelSelect(OtherPossibilities, First, -1000, Move, _). %bests score starts as -inf
 
 playBotByLevel(Number):-
     integer(Number),
@@ -34,22 +30,22 @@ executeBotMove(Xf-Yf-Xt-Yt):-executeMove(Xf, Yf, Xt, Yt).
 
 %CurrentMove = cmove, NewMove = move, CurrentScore = 10, NewScore = 20, getBest(CurrentMove, NewMove, CurrentScore, NewScore, FinalMove, FinalScore).
 %---------------bot greedy move
-getBest(_CurrentMove, NewMove, CurrentScore, NewScore, NewMove, CurrentScore):- %new possibility is better
-    %format('\n    IS ~d < ~d ? \n', [CurrentScore, Score]),
+getBest(_CurrentMove, NewMove, CurrentScore, NewScore, NewMove, NewScore):- %new possibility is better
+    %write('\n    IS '), write(CurrentScore),  write(' < '), write(NewScore), write(' ? \n'),
     CurrentScore < NewScore.
 getBest(CurrentMove, _NewMove, CurrentScore, _NewScore, CurrentMove, CurrentScore). %new possibility is worse
 
 greedyLevelSelect([], FinalMove, FinalScore, FinalMove, FinalScore).
 greedyLevelSelect([Possibility | Others], CurrentMove, CurrentScore, FinalMove, FinalScore):-
-    write('pushing...'),
+    %write('pushing...'),
     % TODO: try to repeat the experience but by passing a board and the other variables instead of a push and pop
     pushGame,
         player(Player), % the current player
         executeBotMove(Possibility), %execute the possibility on the new game instance
         evaluateBoard(Player, Score), %get the score of the possibility
-        write('(move '), write(Possibility), write(' leads to score of '), write(Score), write(')'),
+        %write('(move '), write(Possibility), write(' leads to score of '), write(Score), write(')'),
     popGame,
-    write('...done'), nl,
+    %write('...done'), nl,
     %choose the best move according to the pontuation
     getBest(CurrentMove, Possibility, CurrentScore, Score, NewMove, NewBest),
     greedyLevelSelect(Others, NewMove, NewBest, FinalMove, FinalScore).
