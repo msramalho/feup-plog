@@ -94,7 +94,6 @@ displayWinner(Winner):-
 
 
 % translations
-translate(empty, ' ').
 translate(black, 'D').
 translate(red, 'R').
 translate(ivory, 'I').
