@@ -133,7 +133,6 @@ hasClaimed(Val):-
     game(G),
     hasClaimed(G, Val).
 saveHasClaimed(Val):-
-    write('\n--------------asserting hasClaimed to '), write(Val), nl,
     game(G),
     tryRetract(hasClaimed(G, _)),
     assert(hasClaimed(G, Val)).
