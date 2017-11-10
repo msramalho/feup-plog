@@ -48,9 +48,8 @@ getBoardStack(X, Y, Stack):-
     nth0(X, B, Line),  %get the line
     nth0(Y, Line, Stack). %get the Stack
 
-%get the stack height (getBoardStackHeight/4 sets the last as the Stack)
-getBoardStackHeight(X, Y, Height):-getBoardStackHeight(X, Y, Height, _).
-getBoardStackHeight(X, Y, Height, Stack):-
+%get the stack height
+getBoardStackHeight(X, Y, Height):-
     getBoardStack(X, Y, Stack),
     length(Stack, Height).
 

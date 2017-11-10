@@ -3,12 +3,14 @@ setof(V-X-Y, (validMove(J, X, Y, NewBoard), evaluateBoard(NewBoard, J)), L).
  */
 
 playBotByLevel(random, Move):-
-    explorePossibilities(Possibilities),
+    getMoveableColorsByPlayer(MoveableColors),
+    findall(Xf-Yf-Xt-Yt-Color, getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), Possibilities),
     random_select(Move, Possibilities, _).
 
 playBotByLevel(greedy, Move):-
-    explorePossibilities([First| OtherPossibilities]),
-    greedyLevelSelect(OtherPossibilities, First, -1000, Move, _). %bests score starts as -inf
+    getMoveableColorsByPlayer(MoveableColors),
+    setof(Score:Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score)), Possibilities),
+    last(Possibilities, Score:Move).
 
 playBotByLevel(Number):-
     integer(Number),
@@ -18,9 +20,10 @@ playBotByLevel(Number):-
 playBot(Bot):-
     botLevel(Bot, Level),
     playBotByLevel(Level, Move),
-    write('Bot is executing move: '), write(Move), write(' ... '), nl,
+    write('Bot is executing move: '), write(Move), write(' ... '),
     %sleep(0.5),
-    executeBotMove(Move).
+    executeBotMove(Move),
+    write('...move done\n').
 
 
 %just move
@@ -70,9 +73,51 @@ getPlayerStackScore(Player, Colors, Height, StackScore):- %if there are still he
     StackScore is ((Count * Height) + TempScore). %each extra stack is worth it's height (1 to 4)
 
 
+evaluateMove(Move, Score):-
+    once(pushGame),
+        once(player(Player)), % the current player
+        once(executeBotMove(Move)), %execute the possibility on the new game instance
+        once(evaluateBoard(Player, Score)), %get the score of the possibility
+    once(popGame).
 
 
+%TODO: setof(Score-Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score), L),
+/*
+displayAllMoves:-
+    getMoveableColorsByPlayer(MoveableColors),
+    findall(Xf-Yf-Xt-Yt-Color, getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), L),
+    write('\nAll moves are: '), write(L), nl. */
 
+%get all the stacks a given stack can be moved to
+getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, ClaimedColor):-%with claim
+    once(validClaim), %the player has claimed less than 2 colors
+
+    isClaimableColor(ClaimedColor), %is this a valid color to claim
+    once(append([MoveableColors, [ClaimedColor]], NewMoveableColors)), %the claimed color can also be moved
+
+    isValid(Xf, Yf),
+    once(checkStackNotEmpty(Xf, Yf)),
+
+    isValid(Xt, Yt),
+    once(checkStackNotEmpty(Xt, Yt)),
+
+    once(isColorInStackPlayable(Xf, Yf, NewMoveableColors)), %the stack belongs to the player
+    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
+    once(canPileStacks(Xf, Yf, Xt, Yt)),
+    once(checkValidMove(Xf, Yf, Xt, Yt)).
+
+%get all the stacks a given stack can be moved to
+getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, none):-%no color claimed
+    isValid(Xf, Yf),
+    once(checkStackNotEmpty(Xf, Yf)),
+
+    isValid(Xt, Yt),
+    once(checkStackNotEmpty(Xt, Yt)),
+
+    isColorInStackPlayable(Xf, Yf, MoveableColors),
+    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
+    once(canPileStacks(Xf, Yf, Xt, Yt)),
+    once(checkValidMove(Xf, Yf, Xt, Yt)).
 
 
 

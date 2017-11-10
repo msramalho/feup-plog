@@ -67,7 +67,7 @@ translateColor("b", blue).
 
 % fails if this color is not a claimable one
 isClaimableColor(Color):-
-    claimableColors(Colors),
+    toClaim(Colors),
     nth0(_, Colors, Color).
 
 claimableColors([black, red, ivory, green, blue]).%this will be redacted and asserted
