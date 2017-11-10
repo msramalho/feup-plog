@@ -96,7 +96,9 @@ displayPlayerStats(Player):-
     getColors(Player, Colors),
 	format('~s\n    colors: ', Player), write(Colors),
     getStacks(Player, Stacks),
-    write('\n    stacks: '), write(Stacks).
+    write('\n    stacks: '), write(Stacks),
+    evaluateBoard(Player, Score),
+    write('\n    Score: '), write(Score).
 
 %clears the screen and ouputs the board and the game state
 displayBoard:-

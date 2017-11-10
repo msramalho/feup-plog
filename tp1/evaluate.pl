@@ -154,6 +154,7 @@ decideWiner(Player, _NextPlayer, CountP, CountNP, Winner):-CountP > CountNP, Win
 decideWiner(_Player, NextPlayer, CountP, CountNP, Winner):-CountNP > CountP, Winner = NextPlayer.
 
 %count how many stacks with this topcolor and this height are in the board
+countStacksByColorAndHeight([], _, 0).
 countStacksByColorAndHeight([FinalColor], Height, FinalCount):-%the last color just returns
     findall(X-Y, (getBoardStackHeight(X, Y, Height), getBoardTopColor(X, Y, FinalColor)), L), %get all the stacks with color Color and height Height
     length(L, FinalCount).
@@ -192,6 +193,7 @@ isStackMoveValid(MoveableColors, [X-Y |T], NewResult):-
 isMoveValid(MoveableColors, Xf, Yf, Xt, Yt):-
     once(isColorInStackPlayable(Xf, Yf, MoveableColors)),
     isValid(Xt, Yt),
+    once(checkStackNotEmpty(Xf, Yf)),
     once(checkStackNotEmpty(Xt, Yt)),
     once(checkValidMove(Xf, Yf, Xt, Yt)),
     once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
