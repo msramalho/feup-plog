@@ -13,13 +13,10 @@ playBotByLevel(greedy, Move):-%greedy move
     setof(Score:Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score)), Possibilities),
     last(Possibilities, Score:Move).
 
-playBotByLevel(Number, _Move):-%hardcore move (alpha-beta)
+playBotByLevel(Number, Move):-%hardcore move (alpha-beta)
     integer(Number),
-    write('starting alphabeta: '), nl,
-    startAlphaBeta(Number, Move),
-    write('Value is: '), write(Move), nl,
-    write('TODO hardcore move with number'),
-    exit.
+    startAlphaBeta(Number, Value:Move),
+    write('alphabeta: '), write(Value), nl.
 
 playBot(Bot):-
     botLevel(Bot, Level),

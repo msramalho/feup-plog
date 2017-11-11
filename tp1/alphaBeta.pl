@@ -6,10 +6,10 @@ startAlphaBeta(MaxDepth, Move):-
     % 0 is the current depth, -10000 and 10000 are the starting alpha and beta, 1 is true (means it is starting with a maximizing (alpha) player)
     % alphabeta(0, MaxDepth, -10000, 10000, 1, -10000:Move).
     write('starting a.B...\n'),
-    alphabeta(0, MaxDepth, -10000, 10000, 1, Move).
+    alphabeta(0, MaxDepth, -10000:nothing, 10000:nothing, 1, Move).
 
 % alphabeta(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Value):-
-alphabeta(Depth, Depth, _Alpha, _Beta, _IsMaximizing, Value):-%depth matched max depth, return the heuristic
+alphabeta(Depth, Depth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%depth matched max depth, return the heuristic
     player(Player), %TODO: rewrite evaluateBoard to receive no player
     evaluateBoard(Player, Value). %get the score of the possibility.
     %write('alphabeta value is '), write(Value), nl.
@@ -17,22 +17,39 @@ alphabeta(Depth, Depth, _Alpha, _Beta, _IsMaximizing, Value):-%depth matched max
 %TODO: missing end check for terminal states!!!!!!
 
 
-alphabeta(Depth, MaxDepth, Alpha, Beta, 1, NewValue):-%is maximizingPlayer (alpha)
-    Value is -10000,
+alphabeta(Depth, MaxDepth, Alpha, Beta, 1, _Possibility, NewValue):-%is maximizingPlayer (alpha)
+    currentPlayerHasMoves, !,
+    Value = -10000:nothing,
     getPossibilities(Possibilities), %get all the children of this node
 
     %length(Possibilities, Len), write('MAXIMIZING alphabeta depth is '), write(Depth), write(', a = '), write(Alpha), write(', B = '), write(Beta), write(', Possibilities: '), write(Len), nl,
 
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, Possibilities, Value, NewValue).
 
-alphabeta(Depth, MaxDepth, Alpha, Beta, 0, NewValue):-%is maximizingPlayer (alpha)
-    Value is 10000,
+alphabeta(Depth, MaxDepth, Alpha, Beta, 0, _Possibility, NewValue):-%is minimizingPlayer (beta)
+    currentPlayerHasMoves, !,
+    Value = 10000:nothing,
     getPossibilities(Possibilities), %get all the children of this node
 
     %length(Possibilities, Len),write('MINIMIZING alphabeta depth is '), write(Depth), write(', a = '), write(Alpha), write(', B = '), write(Beta), write(', Possibilities: '), write(Len), nl,
 
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, Possibilities, Value, NewValue).
 
+alphabeta(Depth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue):-%MAX, current player has no moves, check if next player has
+    invertPlayers,
+    currentPlayerHasMoves, !,
+    NewDepth is Depth + 1,
+    alphabeta(NewDepth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue).
+
+alphabeta(Depth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue):-%MIN, current player has no moves, check if next player has
+    invertPlayers,
+    currentPlayerHasMoves, !,
+    NewDepth is Depth + 1,
+    alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue).
+
+alphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%this is a terminal state
+    player(Player), %TODO: rewrite evaluateBoard to receive no player
+    evaluateBoard(Player, Value).
 
 %applyAlphabeta(_Depth, _Alpha, _Beta, _IsMaximizing, [], Value, NewValue):-
 applyAlphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, [], Value, Value).
@@ -42,7 +59,7 @@ applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, [Possibility | Others], Value, F
         %write('->Executing: '), write(Possibility), nl,
         NewDepth is Depth + 1,
         invertPlayers,
-        alphabeta(NewDepth, MaxDepth, Alpha, Beta, 0, NewValue), %call the min
+        alphabeta(NewDepth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue), %call the min
         max_member(TempValue, [Value, NewValue]),
         max_member(NewAlpha, [Alpha, TempValue]),
     popGame,
@@ -54,7 +71,7 @@ applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, [Possibility | Others], Value, F
         %write('->Executing: '), write(Possibility), nl,
         NewDepth is Depth + 1,
         invertPlayers,
-        alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, NewValue), %call the max
+        alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue), %call the max
         min_member(TempValue, [Value, NewValue]),
         min_member(NewBeta, [Beta, TempValue]),
     popGame,
@@ -63,9 +80,10 @@ applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, [Possibility | Others], Value, F
 
 testExploreNext(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Others, Value, FinalValue):-
     %format('    testing ~d > ~d \n', [Beta, Alpha]),
-    Beta > Alpha,%in this case, proceed
+    Beta = B:_, Alpha = A:_,
+    B > A,%in this case, proceed
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Others, Value, FinalValue).
-testExploreNext(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, _Others, Value, Value):-write('   beta <= alpha -> prunning\n').%does not explore any further - prunning
+testExploreNext(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, _Others, Value, Value):-write('p').%:-write('   beta <= alpha  -> prunning\n').%does not explore any further - prunning
 
 /*
 max_member()
