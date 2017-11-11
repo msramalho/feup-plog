@@ -180,8 +180,8 @@ duplicateGame(Original, Duplicate):-
     getStacks(Original, NP, SNP),
     assert(getStacks(Duplicate, NP, SNP)),
     % hasClaimed starts as false
-    hasClaimed(Original, H),
-    assert(hasClaimed(Duplicate, H)).
+    %hasClaimed(Original, _H),
+    assert(hasClaimed(Duplicate, false)).
 
 destroyGame(ToDestroy):-
     %get this game's players
