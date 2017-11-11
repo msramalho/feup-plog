@@ -6,16 +6,12 @@ startAlphaBeta(MaxDepth, Move):-
     % 0 is the current depth, -10000 and 10000 are the starting alpha and beta, 1 is true (means it is starting with a maximizing (alpha) player)
     % alphabeta(0, MaxDepth, -10000, 10000, 1, -10000:Move).
     write('starting a.B...\n'),
-    alphabeta(0, MaxDepth, -10000:nothing, 10000:nothing, 1, Move).
+    %trace,
+    alphabeta(0, MaxDepth, -10000:nothing, 10000:nothing, 1, _, Move).
 
 % alphabeta(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Value):-
 alphabeta(Depth, Depth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%depth matched max depth, return the heuristic
-    player(Player), %TODO: rewrite evaluateBoard to receive no player
-    evaluateBoard(Player, Value). %get the score of the possibility.
-    %write('alphabeta value is '), write(Value), nl.
-
-%TODO: missing end check for terminal states!!!!!!
-
+    evaluateBoard(Value). %get the score of the possibility.
 
 alphabeta(Depth, MaxDepth, Alpha, Beta, 1, _Possibility, NewValue):-%is maximizingPlayer (alpha)
     currentPlayerHasMoves, !,
@@ -48,8 +44,7 @@ alphabeta(Depth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue):-%MIN, current
     alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue).
 
 alphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%this is a terminal state
-    player(Player), %TODO: rewrite evaluateBoard to receive no player
-    evaluateBoard(Player, Value).
+    evaluateBoard(Value).
 
 %applyAlphabeta(_Depth, _Alpha, _Beta, _IsMaximizing, [], Value, NewValue):-
 applyAlphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, [], Value, Value).
