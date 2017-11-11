@@ -1,6 +1,7 @@
 /*
 bot.pl: all the predicates for validating and choosing the bots' moves
 */
+:- include('alphaBeta.pl').
 
 playBotByLevel(random, Move):-%random move
     getMoveableColorsByPlayer(MoveableColors),
@@ -12,8 +13,12 @@ playBotByLevel(greedy, Move):-%greedy move
     setof(Score:Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score)), Possibilities),
     last(Possibilities, Score:Move).
 
-playBotByLevel(greedy, _Move):-%hardcore move (alpha-beta)
-    write('TODO hardcore move'),
+playBotByLevel(Number, _Move):-%hardcore move (alpha-beta)
+    integer(Number),
+    write('starting alphabeta: '), nl,
+    startAlphaBeta(Number, Move),
+    write('Value is: '), write(Move), nl,
+    write('TODO hardcore move with number'),
     exit.
 
 playBot(Bot):-
@@ -95,7 +100,8 @@ evaluateMove(Move, Score):-
 %--------------------------------------------bot difficulty
 validBotLevel(r, random).%random move
 validBotLevel(g, greedy).%greedy move
-validBotLevel(h, hardcore).%hardcore move (alfa-beta prunning)
+validBotLevel(Number, Number):-%numeric value (alfa-beta prunning)
+    integer(Number).%random move
 
 chooseBotLevel(Bot):-
     displayBotLevels(Bot),
