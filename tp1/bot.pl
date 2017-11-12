@@ -15,7 +15,7 @@ playBotByLevel(greedy, Move):-%greedy move
 
 playBotByLevel(Number, Move):-%hardcore move (alpha-beta)
     integer(Number),
-    startAlphaBeta(Number, Value:Move).
+    startAlphaBeta(Number, _Value:Move).
 
 playBot(Bot):-
     botLevel(Bot, Level),
