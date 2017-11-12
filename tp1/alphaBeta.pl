@@ -7,23 +7,24 @@ startAlphaBeta(MaxDepth, Move):-
     write('starting a.B...\n'),
     alphabeta(0, MaxDepth, -10000:nothing, 10000:nothing, 1, _, Move).
 
-% alphabeta(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Value):-
-alphabeta(Depth, Depth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%depth matched max depth, return the heuristic
+alphabeta(Depth, Depth, _Alpha, _Beta, 1, Possibility, Value:Possibility):-%depth matched max depth, return the heuristic
     evaluateBoard(Value), %get the score of the possibility
     invertPlayers.
+alphabeta(Depth, Depth, _Alpha, _Beta, 0, Possibility, Value:Possibility):-%depth matched max depth, return the heuristic
+    invertPlayers, %because this is supposed to minimize the maximizer's move
+    evaluateBoard(Value). %get the score of the possibility
 
 alphabeta(Depth, MaxDepth, Alpha, Beta, 1, _Possibility, NewValue):-%is maximizingPlayer (alpha)
-    currentPlayerHasMoves, !,
+    currentPlayerHasMoves,
     Value = -10000:nothing,
     getPossibilities(Possibilities), %get all the children of this node
 
     %length(Possibilities, Len), write('MAXIMIZING alphabeta depth is '), write(Depth), write(', a = '), write(Alpha), write(', B = '), write(Beta), write(', Possibilities: '), write(Len), nl,
 
-
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, Possibilities, Value, NewValue).
 
 alphabeta(Depth, MaxDepth, Alpha, Beta, 0, _Possibility, NewValue):-%is minimizingPlayer (beta)
-    currentPlayerHasMoves, !,
+    currentPlayerHasMoves,
     Value = 10000:nothing,
     getPossibilities(Possibilities), %get all the children of this node
 
@@ -43,8 +44,10 @@ alphabeta(Depth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue):-%MIN, current
     NewDepth is Depth + 1,
     alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue).
 
-alphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%this is a terminal state
+alphabeta(_Depth, _MaxDepth, _Alpha, _Beta, 1, Possibility, Value:Possibility):-%terminal, maximizer playing
     evaluateBoard(Value).
+alphabeta(_Depth, _MaxDepth, _Alpha, _Beta, 0, Possibility, Value:Possibility):-%terminal, minimizer playing
+    invertPlayers, evaluateBoard(Value).%because this is supposed to minimize the maximizer's move
 
 %applyAlphabeta(_Depth, _Alpha, _Beta, _IsMaximizing, [], Value, NewValue):-
 applyAlphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, [], Value, Value).
