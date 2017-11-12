@@ -85,7 +85,7 @@ displaySlashesLine(LineIndex):-
 displayLine([], _).
 displayLine([Line|Rest], LineIndex):-
 	numberToString(LineIndex, LineString),	%convert the lineIndex to a string
-	format('~2s  ', LineString),				%print the index with the right padding
+	format('~2s  ', LineString),			%print the index with the right padding
 	stateIgnoreInvalidCell(Line, LineIndex, 0), nl,
     write('   '),
     displaySlashesStart(Line, LineIndex, 0),

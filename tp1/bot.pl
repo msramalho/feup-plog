@@ -11,7 +11,7 @@ playBotByLevel(random, Move):-%random move
 playBotByLevel(greedy, Move):-%greedy move
     getMoveableColorsByPlayer(MoveableColors),
     setof(Score:Xf-Yf-Xt-Yt-Color, (getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), evaluateMove(Xf-Yf-Xt-Yt-Color, Score)), Possibilities),
-    last(Possibilities, Move).
+    last(Possibilities, _Score:Move).
 
 playBotByLevel(Number, Move):-%hardcore move (alpha-beta)
     integer(Number),
@@ -45,16 +45,7 @@ getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, ClaimedColor):-%with claim
     isClaimableColor(ClaimedColor), %is this a valid color to claim
     once(append([MoveableColors, [ClaimedColor]], NewMoveableColors)), %the claimed color can also be moved
 
-    isValid(Xf, Yf),
-    once(checkStackNotEmpty(Xf, Yf)),
-
-    isValid(Xt, Yt),
-    once(checkStackNotEmpty(Xt, Yt)),
-
-    once(isColorInStackPlayable(Xf, Yf, NewMoveableColors)), %the stack belongs to the player
-    once(hasNoDuplicateColors(Xf, Yf, Xt, Yt)),
-    once(canPileStacks(Xf, Yf, Xt, Yt)),
-    once(checkValidMove(Xf, Yf, Xt, Yt)).
+    getFullValidMove(NewMoveableColors, Xf, Yf, Xt, Yt, none).
 
 
 executeBotMove(Xf-Yf-Xt-Yt-none):-executeMove(Xf, Yf, Xt, Yt).%just move
