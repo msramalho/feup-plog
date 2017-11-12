@@ -63,7 +63,7 @@ getPlayerStackScore(Player, Colors, Height, Score):-  %reached the end, return t
     getStacks(Player, Stacks),
     length(Stacks, TempScore), %count the height of the stacks
     length(Colors, LenColors), %count the number of claimed colors
-    Score is ((TempScore * 20) + ((2- LenColors) * 10)). %each stack is worth 10 points, each unclaimed color 5
+    Score is ((TempScore * 20) + ((2- LenColors) * 10)). %each stack is worth 20 points, each unclaimed color 10
 
 getPlayerStackScore(Player, Colors, Height, StackScore):- %if there are still heights to evaluate
     countStacksByColorAndHeight(Colors, Height, Count),

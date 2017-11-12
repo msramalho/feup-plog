@@ -115,3 +115,6 @@ menuTranslate(humanVbot, 50). % 50 maps to "2"
 menuTranslate(botVbot, 51). % 51 maps to "3"
 menuTranslate(quit, 52). % 52 maps to "4"
 menuTranslate(instructions, 53). % 53 maps to "5"
+
+waitForEnter:-
+	get_char(_).
