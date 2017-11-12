@@ -1,3 +1,7 @@
+/*
+interface.pl: predicates related to the color menus and special character printing predicates
+*/
+
 wulc:-put_code(9484). % write upper left corner ┌
 wurc:-put_code(9488). % write upper right corner ┐
 wllc:-put_code(9492). % write lower left corner ┘

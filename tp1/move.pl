@@ -1,4 +1,7 @@
-% file with the predicates for the implementation of the move command
+/*
+move.pl:file with the predicates for the implementation of the move command
+*/
+
 % check if cell is valid (x, y) and print error if not
 checkValidCell(X, Y):-isValid(X, Y), !.
 checkValidCell(X, Y):-format('Cell(~p, ~p) is not a valid cell in the board\n', [X, Y]), fail.
@@ -18,7 +21,6 @@ getMoveableColorsByPlayer(MoveableColors):-
 isColorInStackPlayable(X, Y, AllowedColors):-
     getBoardTopColor(X, Y, TopColor),
     nth0(_, AllowedColors, TopColor). %if the TopColor is one of the colors the player can move
-
 
 %check if a position belongs to a player, does not load the moveable colors
 belongsToPlayer(X, Y):-
@@ -63,7 +65,6 @@ isHeighSmaller(Xf, Yf, Xt, Yt):-
     H1 >= H2.
 checkHeightIsSmaller(Xf, Yf, Xt, Yt):-isHeighSmaller(Xf, Yf, Xt, Yt).
 checkHeightIsSmaller(_, _, _, _):-write('A Neutral Stack (or piece) cannot jump on top of a larger one'), nl, !, fail.
-
 
 hasNoDuplicateColors(Xf, Yf, Xt, Yt):-
     getBoardStack(Xf, Yf, Stack1),
@@ -149,7 +150,6 @@ assertMoveTo(Xt, Yt):- % if empty
 %is True if Xt, Yt are of the same color (LYNGK) rule
 assertMoveToLynkg(Xt, Yt, LyngkColor):- % if same color - LYNGK rule
     getBoardTopColor(Xt, Yt, LyngkColor). %same color can go through, RULE E-4
-
 
 %----------------------------------------MOVE RECURSIVE START
 %-----------------move LEFT Recursive
@@ -376,11 +376,6 @@ moveDRStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did 
     NewYf is Yf + 1,
     moveRecursiveStraightLyngkHelper(NewXf, NewYf, Path, NewPath),
     moveDRStraight_Recursive(NewXf, NewYf, NewPath, LyngkColor, FinalPath, ResX, ResY).
-
-
-
-
-
 %----------------------------------------MOVE RECURSIVE LYNGK In STRAGIH LINE END
 
 

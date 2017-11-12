@@ -1,4 +1,3 @@
-
 /*
 evaluate.pl: This file implements the predicates required for assessing what are valid positions
 */
@@ -93,7 +92,6 @@ countStacksByColorAndHeight([Color | OtherColors], Height, FinalCount):-%max cla
     length(L, TempCount),
     FinalCount is Count + TempCount.
 %--------------------- identify te winner end
-
 
 %fails if X and Y's top color is not a neutral stack
 isStackNeutral(X, Y):-

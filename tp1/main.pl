@@ -13,9 +13,6 @@
 :- include('interface.pl').
 :- include('bot.pl').
 
-%:- include('tests.pl').
-
-
 % volatile and dynamic predicates declaration
 % all the predicates have the first Variable as being the current game
 :- volatile
@@ -117,7 +114,6 @@ nextPlayerGoes:-%else, if this is a human player
     !,
     endTurn.
 
-
 %checks the board state, changes the players and starts the nextTurn
 endTurn:-
     clearHasClaimed, % clear the hasClaimed flag.
@@ -125,7 +121,6 @@ endTurn:-
     invertPlayers,
     assertBoard,
     nextPlayerGoes.
-
 
 %empties the database and stops the program
 exit:-clearInit, abort.
@@ -139,7 +134,6 @@ clearInit:-
     abolish(getColors/3),
     abolish(getStacks/3),
     abolish(botLevel/3),
-
     assert(game(0)), % the only assert needed, others are in utils.pl
     clearHasClaimed. % abolishes and resets
 

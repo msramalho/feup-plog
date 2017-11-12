@@ -21,7 +21,6 @@ emptyBoard([
     [[], [], [], [], [], [], [], [], []]
 ]).
 
-
 % a list of all the pieces that enter the board at the beginning 8 of each and 3 of wild
 piecesToDistribute([
     black, black, black, black, black, black, black, black,
@@ -36,12 +35,10 @@ piecesToDistribute([
 fillBoard(Board, [], [], Board).
 fillBoard(Board, [Position|OtherPositions], Pieces, FinalBoard):-
     X-Y = Position,
-    %format('(~d,~d)', [X, Y]),
     random_select(Piece, Pieces, NewPieces),
     NewCell = [Piece],
     replaceBoardStack(Board, X, Y, NewCell, NewBoard), %replace the cell for the new piece
     fillBoard(NewBoard, OtherPositions, NewPieces, FinalBoard).
-
 
 generateBoard(NewBoard):-
     getValidPositions(Positions),

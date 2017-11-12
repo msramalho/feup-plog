@@ -1,6 +1,7 @@
 /*
 displayBoard.pl: This file implements the predicates required for displaying the board
 */
+
 concatenateList([], Result, Result).
 concatenateList([Color|NextColors], Initial, Final):-
 	translate(Color, Value),
@@ -33,7 +34,6 @@ stateReceiveValidCell([_|Rest], LineIndex, CellIndex):-
     write('     '),
 	NewCellIndex is CellIndex + 1,
 	stateReceiveValidCell(Rest, LineIndex, NewCellIndex).
-
 
 %initial state of the state machine, stays while there is no valid cell
 stateIgnoreInvalidCell(Cells, LineIndex, CellIndex):-%leave state if a valid is found
@@ -120,6 +120,3 @@ displayBoard:-
 
     toClaim(C),
 	write('\nAvailable Colors:'), write(C), nl, nl, nl.
-
-
-

@@ -1,6 +1,7 @@
 /*
 claim.pl: predicates related to the color claiming operation
 */
+
 updateClaimedColor(Translated):-
     toClaim(ToClaim), %load the colors left for claiming
     nth0(_, ToClaim, Translated).%if the chosen color is inside ToClaim
@@ -43,8 +44,6 @@ claimColor:-
 
 claimColor:-
     write('You can only claim two colors\n').
-
-
 
 %colors transaltion
 translateColor("black", black).

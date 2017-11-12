@@ -21,9 +21,7 @@ playBot(Bot):-
     botLevel(Bot, Level),
     playBotByLevel(Level, Move),
     write('Bot is executing move: '), write(Move), nl,
-    %sleep(2),
     executeBotMove(Move).
-
 
 %--------------------------------------------get valid moves
 
@@ -59,10 +57,8 @@ getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, ClaimedColor):-%with claim
     once(checkValidMove(Xf, Yf, Xt, Yt)).
 
 
-%just move
-executeBotMove(Xf-Yf-Xt-Yt-none):-executeMove(Xf, Yf, Xt, Yt).
-%claim and then move
-executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeMove(Xf, Yf, Xt, Yt).
+executeBotMove(Xf-Yf-Xt-Yt-none):-executeMove(Xf, Yf, Xt, Yt).%just move
+executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeMove(Xf, Yf, Xt, Yt).%claim and then move
 
 %--------------------------------------------player board score
 %evaluate the current board according to the current player, higher Score means better game for Player
@@ -84,15 +80,11 @@ getPlayerStackScore(Player, Colors, Height, StackScore):- %if there are still he
     getPlayerStackScore(Player, Colors, NewHeight, TempScore),
     StackScore is ((Count * Height) + TempScore). %each extra stack is worth it's height (1 to 4)
 
-
 evaluateMove(Move, Score):-
     once(pushGame),
         once(executeBotMove(Move)), %execute the possibility on the new game instance
         once(evaluateBoard(Score)), %get the score of the possibility
     once(popGame).
-
-
-
 
 %--------------------------------------------bot difficulty
 validBotLevel(r, random).%random move

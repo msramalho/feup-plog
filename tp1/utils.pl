@@ -1,3 +1,6 @@
+/*
+utils.pl: file with the useful, contextless and reused predicates.
+*/
 setRandomSeed:-
 	now(Time), S is Time mod 30269,
 	getrand(random(X, Y, Z, _)),
