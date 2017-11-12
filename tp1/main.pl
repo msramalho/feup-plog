@@ -85,7 +85,7 @@ waitForInstruction:-
 %expecting a quit instruction
 parseInstruction("quit"):- abort.
 %expecting a move instruction
-parseInstruction("move"):-!, move.
+parseInstruction("move"):-!, moveStack.
 %expecting a claim instruction
 parseInstruction("claim"):-!, claimColor. % the players can move after a claim
 %ignore empty input->newline

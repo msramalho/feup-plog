@@ -89,11 +89,11 @@ processMove(Xf, Yf, Xt, Yt):-%process move otherwise
     checkNeutralStackJumpTo(Xf, Yf, Xt, Yt), !, % RULE E-6, RULE E-7
     checkDuplicateColors(Xf, Yf, Xt, Yt), !,  % RULE E-5
     checkValidMove(Xf, Yf, Xt, Yt),
-    executeMove(Xf, Yf, Xt, Yt).
+    move(Xf, Yf, Xt, Yt).
 
 
 %prompt for valid X and Y coordinates for origin and destination
-move:-
+moveStack:-
     write('Choose cells FROM and TO using the following format "Xfrom-Yfrom:Xto-Yto."\n'),
     read(Xf-Yf:Xt-Yt), !,
     processMove(Xf, Yf, Xt, Yt),
@@ -379,7 +379,7 @@ moveDRStraight_Recursive(Xf, Yf, Path, LyngkColor, FinalPath, ResX, ResY):-%did 
 %----------------------------------------MOVE RECURSIVE LYNGK In STRAGIH LINE END
 
 
-executeMove(Xf, Yf, Xt, Yt):-
+move(Xf, Yf, Xt, Yt):-
     board(B),
     getBoardStack(Xf, Yf, StackTop),
     getBoardStack(Xt, Yt, StackBottom),

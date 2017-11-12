@@ -48,8 +48,8 @@ getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, ClaimedColor):-%with claim
     getFullValidMove(NewMoveableColors, Xf, Yf, Xt, Yt, none).
 
 
-executeBotMove(Xf-Yf-Xt-Yt-none):-executeMove(Xf, Yf, Xt, Yt).%just move
-executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),executeMove(Xf, Yf, Xt, Yt).%claim and then move
+executeBotMove(Xf-Yf-Xt-Yt-none):-move(Xf, Yf, Xt, Yt).%just move
+executeBotMove(Xf-Yf-Xt-Yt-Color):-claim(Color),move(Xf, Yf, Xt, Yt).%claim and then move
 
 %--------------------------------------------player board score
 %evaluate the current board according to the current player, higher Score means better game for Player
