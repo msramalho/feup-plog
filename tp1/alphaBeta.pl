@@ -16,12 +16,19 @@ alphabeta(Depth, MaxDepth, Alpha, Beta, 1, _Possibility, NewValue):-%is maximizi
     currentPlayerHasMoves, !,
     Value = -10000:nothing,
     getPossibilities(Possibilities), %get all the children of this node
+
+    %length(Possibilities, Len), write('MAXIMIZING alphabeta depth is '), write(Depth), write(', a = '), write(Alpha), write(', B = '), write(Beta), write(', Possibilities: '), write(Len), nl,
+
+
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, Possibilities, Value, NewValue).
 
 alphabeta(Depth, MaxDepth, Alpha, Beta, 0, _Possibility, NewValue):-%is minimizingPlayer (beta)
     currentPlayerHasMoves, !,
     Value = 10000:nothing,
     getPossibilities(Possibilities), %get all the children of this node
+
+    %length(Possibilities, Len),write('MINIMIZING alphabeta depth is '), write(Depth), write(', a = '), write(Alpha), write(', B = '), write(Beta), write(', Possibilities: '), write(Len), nl,
+
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, Possibilities, Value, NewValue).
 
 alphabeta(Depth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue):-%MAX, current player has no moves, check if next player has
@@ -44,6 +51,7 @@ applyAlphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, [], Value, Value
 applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, [Possibility | Others], Value, FinalValue):-%foreach for max
     pushGame,
         executeBotMove(Possibility), %execute the possibility on the new game instance
+        %write('->Executing: '), write(Possibility),
         NewDepth is Depth + 1,
         alphabeta(NewDepth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue), %call the min
         max_member(TempValue, [Value, NewValue]),
@@ -54,6 +62,7 @@ applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, [Possibility | Others], Value, F
 applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, [Possibility | Others], Value, FinalValue):-%foreach for min
     pushGame,
         executeBotMove(Possibility), %execute the possibility on the new game instance
+        %write('->Executing: '), write(Possibility),
         NewDepth is Depth + 1,
         alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue), %call the max
         min_member(TempValue, [Value, NewValue]),
