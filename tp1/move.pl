@@ -10,8 +10,7 @@ checkStackNotEmpty(X, Y):-
 
 %get all the colors a player can move
 getMoveableColorsByPlayer(MoveableColors):-
-    player(CurrentPlayer),
-    getColors(CurrentPlayer, ClaimedColors),
+    getColors(ClaimedColors),
     toClaim(ToClaim),
     append([ClaimedColors, ToClaim], MoveableColors).%return all the colors the Player can move
 

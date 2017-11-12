@@ -11,7 +11,8 @@ startAlphaBeta(MaxDepth, Move):-
 
 % alphabeta(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Value):-
 alphabeta(Depth, Depth, _Alpha, _Beta, _IsMaximizing, Possibility, Value:Possibility):-%depth matched max depth, return the heuristic
-    evaluateBoard(Value). %get the score of the possibility.
+    evaluateBoard(Value), %get the score of the possibility
+    invertPlayers.
 
 alphabeta(Depth, MaxDepth, Alpha, Beta, 1, _Possibility, NewValue):-%is maximizingPlayer (alpha)
     currentPlayerHasMoves, !,
@@ -51,9 +52,8 @@ applyAlphabeta(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, [], Value, Value
 applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 1, [Possibility | Others], Value, FinalValue):-%foreach for max
     pushGame,
         executeBotMove(Possibility), %execute the possibility on the new game instance
-        %write('->Executing: '), write(Possibility), nl,
+        %write('->Executing: '), write(Possibility),
         NewDepth is Depth + 1,
-        invertPlayers,
         alphabeta(NewDepth, MaxDepth, Alpha, Beta, 0, Possibility, NewValue), %call the min
         max_member(TempValue, [Value, NewValue]),
         max_member(NewAlpha, [Alpha, TempValue]),
@@ -65,7 +65,6 @@ applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, [Possibility | Others], Value, F
         executeBotMove(Possibility), %execute the possibility on the new game instance
         %write('->Executing: '), write(Possibility), nl,
         NewDepth is Depth + 1,
-        invertPlayers,
         alphabeta(NewDepth, MaxDepth, Alpha, Beta, 1, Possibility, NewValue), %call the max
         min_member(TempValue, [Value, NewValue]),
         min_member(NewBeta, [Beta, TempValue]),
@@ -73,6 +72,7 @@ applyAlphabeta(Depth, MaxDepth, Alpha, Beta, 0, [Possibility | Others], Value, F
     testExploreNext(Depth, MaxDepth, Alpha, NewBeta, 0, Others, TempValue, FinalValue).
 
 
+testExploreNext(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, [], Value, Value).
 testExploreNext(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Others, Value, FinalValue):-
     %format('    testing ~d > ~d \n', [Beta, Alpha]),
     Beta = B:_, Alpha = A:_,
@@ -80,6 +80,9 @@ testExploreNext(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Others, Value, Final
     applyAlphabeta(Depth, MaxDepth, Alpha, Beta, IsMaximizing, Others, Value, FinalValue).
 testExploreNext(_Depth, _MaxDepth, _Alpha, _Beta, _IsMaximizing, _Others, Value, Value):-write('p').%:-write('   beta <= alpha  -> prunning\n').%does not explore any further - prunning
 
+getPossibilities(Possibilities):-
+    getMoveableColorsByPlayer(MoveableColors),
+    findall(Xf-Yf-Xt-Yt-Color, getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), Possibilities).
 /*
 max_member()
 
@@ -106,6 +109,3 @@ max_member()
 alphabeta(origin, depth, -∞, +∞, TRUE)
 */
 
-getPossibilities(Possibilities):-
-    getMoveableColorsByPlayer(MoveableColors),
-    findall(Xf-Yf-Xt-Yt-Color, getFullValidMove(MoveableColors, Xf, Yf, Xt, Yt, Color), Possibilities).
