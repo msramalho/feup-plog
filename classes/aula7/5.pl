@@ -13,9 +13,6 @@ despejarAteEsvaziar([Vde,Cde], [Vpara, Cpara], [0, Cde], [VNpara, Cpara]):-%as c
 	VNparaHipotetico is Vpara + Vde,
 	min_member(VNpara, [VNparaHipotetico, Cpara]).
 
-%contem([Valor, _Capacidade], Valor).%balde contem o valor
-%contemOu(B1, B2, Objetivo):- contem(B1, Objetivo); contem(B2, Objetivo).%um dos baldes contem o valor
-
 %operation on Balde
 /* opBalde(B1:_, B2, B3:esvaziar, B2):-esvaziar(B1, B3).
 opBalde(B1:_, B2, B3:encher, B2):-encher(B1, B3).
@@ -43,7 +40,7 @@ algumFinal([_|T], BObjetivo):-algumFinal(T, BObjetivo).%none go to next, fails o
 bfs(Baldes, BObjetivoopBalde):-algumFinal(Baldes, BObjetivoopBalde), !.
 bfs(Baldes, BObjetivoopBalde):-proximaOperacao(Baldes, BObjetivoopBalde).
 
-%proximaOperacao([BObjetivo-_:_], BObjetivo).
+proximaOperacao([BObjetivo-_], BObjetivo).
 proximaOperacao(Baldes, BObjetivoopBalde):-
 	obterProximos(Baldes, [], Proximos),
 	write('Proximos: '), write(Proximos), nl, 
