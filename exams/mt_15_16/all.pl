@@ -99,6 +99,7 @@ predX(Q, [R|Rs], Ps):-
 predX(_, [], []).
 	
 %pergunta 10
+%qualquer coisa é uma lista vazia, um elemento, uma lista, ou qualquer outra coisa, que prolog aceite. 
 %impoe faz com que Mid seja uma lista com tamanho X, de seguida restringe a lista L a ser do formato [_, X, Mid, X, _], o que se traduz numa lista que começa e acaba em quaquer coisa, mesmo numa lista vazia, e que contem uma sublista que começa em X e acaba em X com X elementos pelo meio, respeitando a regra definida de subsquência válida para quando K é igual a X. Sendo que cada _ pode ser também uma lista vazia, ou seja L pode ser apenas [X, Mid, X] ou [_, X, Mid, X] ou [X, Mid, X, _]. Não estou a usar sintaxe de prolog porque Mid é uma lista e não é assim que se concatena, é só esquenática da ordem dos elementos/listas dentro de L.
 impoe(X, L):-
 	length(Mid, X),
