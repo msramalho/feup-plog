@@ -107,6 +107,8 @@ impoe(X, L):-
 	append(_, [X|Mid], L1).
 	
 %pergunta 11
+/*
+%option 1 - noob
 unifyAll([], Final, Final).
 unifyAll([UList|R], Acc, Final):-
 	append([_, UList, _], Acc),
@@ -121,7 +123,20 @@ langford(N, L):-
 		once(impoe(X, Temp)),
 		once(append([_, Temp], SList))
 	),SubSets),
-	unifyAll(SubSets, LTemp, L).
+	unifyAll(SubSets, LTemp, L).*/
+	
+%option 2
+impoeTudo(0, _).
+impoeTudo(N, L):-
+	impoe(N, L),
+	N1 is N - 1, 
+	impoeTudo(N1, L).
+	
+langford(N, L):-
+	Size is 2 * N,
+	length(L, Size),
+	impoeTudo(N, L).
+	
 	
 	
 	
