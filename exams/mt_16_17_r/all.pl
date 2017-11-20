@@ -161,6 +161,35 @@ dumpDataBase(FileName):-
     writePredicates([user-3, film-4, vote-2], File),%flexible design
     close(File).
 
+%pergunta 9
+nNumeros([], 0).
+nNumeros([A-B|R], Quantos):-
+	nNumeros(R, Acc),
+	Quantos is (Acc + (B - A) + 1).
+
+%pergunta 10
+
+%they intersect, stop
+intersetam([A-B|_], [X-Y|_]):-
+	(X =< A, Y >= A);
+	(X =< B, Y >= B);
+	(X >= A, Y =< B).
+%no intersection -> is first to be replaced
+intersetam([_-B|R1], [X-Y|R2]):- B < X, intersetam(R1, [X-Y|R2]).
+%else, no intersection and the 2nd is smaller
+intersetam(L1, [_|R2]):-intersetam(L1, R2).
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 %utils
 ite(If, Then, _Else):-If, !, Then.
 ite(_If, _Then, Else):-Else.
