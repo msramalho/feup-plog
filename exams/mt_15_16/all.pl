@@ -1,38 +1,34 @@
 :- use_module(library(lists)).
-:- use_module(library(between)).
 clear:-write('\33\[2J').
 
-%participant(Id, Age, Performance)
-participant(12, 17, 'Pé coxinho').
-participant(34, 21, 'Programar com os pés').
-participant(37, 20, 'Sing a Bit').
-participant(48, 22, 'Pontes de esparguete').
-participant(89, 19, 'Pontes de pen-drives').
-participant(125, 20, 'Moodle hack').
+%participant(Id,Age,Performance)
+participant(1234, 17, 'Pé coxinho').
+participant(3423, 21, 'Programar com os pés').
+participant(3788, 20, 'Sing a Bit').
+participant(4865, 22, 'Pontes de esparguete').
+participant(8937, 19, 'Pontes de pen-drives').
+participant(2564, 20, 'Moodle hack').
 
-%performance(Id, Times)
-performance(12, [120, 120, 120, 120]).
-performance(34, [32, 120, 45, 120]).
-performance(37, [110, 2, 6, 43]).
-performance(48, [120, 120, 110, 120]).
-performance(89, [97, 101, 105, 110]).
+%performance(Id,Times)
+performance(1234,[120,120,120,120]).
+performance(3423,[32,120,45,120]).
+performance(3788,[110,2,6,43]).
+performance(4865,[120,120,110,120]).
+performance(8937,[97,101,105,110]).
 
 %pergunta 1
 madeItThrough(Participant):-
 	performance(Participant, Times),
 	member(120, Times).
-	
-%pergunta 2
-getParticipantsJuriTime([], _, []).
-getParticipantsJuriTime([P|R], JuriMember, [Value|Next]):-
-	performance(P, Times),
-	nth1(JuriMember, Times, Value),
-	getParticipantsJuriTime(R, JuriMember, Next).
 
-juriTimes(Participants, JuriMember, Times, Total):-
-	getParticipantsJuriTime(Participants, JuriMember, Times),
-	sumlist(Times, Total).
-	
+%pergunta 2
+juriTimes([], _JuriMember, [], 0).
+juriTimes([Participant|R], JuriMember, [Time|Times], Total):-
+	performance(Participant, PTimes),
+	nth1(JuriMember, PTimes, Time),
+	juriTimes(R, JuriMember, Times, OldTotal),
+	Total is OldTotal + Time.
+
 %pergunta 3
 patientJuri(JuriMember):-
 	performance(A, Times),
@@ -40,119 +36,92 @@ patientJuri(JuriMember):-
 	performance(B, NewTimes),
 	B\=A,
 	nth1(JuriMember, NewTimes, 120).
-	
-%pergunta 4
-getParticipantScores(P, Score):-
-	performance(P, Times),
-	sumlist(Times, Score).
 
+
+%pergunta 4
+getBest(_P1, _P2, Sum, Sum, _):- !, fail.
+getBest(P1, _P2, Sum1, Sum2, P1):- Sum1 > Sum2.
+getBest(_P1, P2, _Sum1, _Sum2, P2).
 bestParticipant(P1, P2, P):-
-	getParticipantScores(P1, Score1),
-	getParticipantScores(P2, Score2),
-	Score1\=Score2,%different scores
-	ite(Score1>Score2, P=P1, P=P2).
-	
+	performance(P1, Times1),
+	performance(P2, Times2),
+	sumlist(Times1, Sum1),
+	sumlist(Times2, Sum2),
+	getBest(P1, P2, Sum1, Sum2, P).
+
 %pergunta 5
 allPerfs:-
-	performance(User, Times),
-	participant(User, _, Performance),
-	format('~d:~s:~p\n', [User, Performance, Times]),
+	performance(Participant, Times), %performance comes before to exclude as soon as possible
+	participant(Participant, _, What),
+	format('~p:~p:~p\n',[Participant, What, Times]),
 	fail.
 allPerfs.
-	
+
 %pergunta 6
 nSuccessfulParticipants(T):-
 	findall(Participant, (
 		performance(Participant, Times), remove_dups(Times, [120])
 	), Result),
 	length(Result, T).
-	
+
 %pergunta 7
 juriFans(JuriFansList):-
-	findall(User-Fans,(
-		performance(User, Times),
-		findall(Fan, (nth1(Fan, Times, 120)), Fans)
+	findall(Participant-Juris, (
+		performance(Participant, Times),
+		findall(Juri, (nth1(Juri, Times, 120)),Juris)
 	), JuriFansList).
-	
+
+
 %pergunta 8
-eligibleOutcome(Id, Perf, TT):-
-	performance(Id, Times),
-	madeItThrough(Id),
-	participant(Id, _, Perf),
-	sumlist(Times, TT).
+%given predicate
+eligibleOutcome(Id,Perf,TT) :-
+    performance(Id,Times),
+    madeItThrough(Id),
+    participant(Id,_,Perf),
+    sumlist(Times,TT).
 
 nextPhase(N, Participants):-
-	setof(TT-Id-Perf, (eligibleOutcome(Id, Perf, TT)), All),
-	nth1(N, All, _),%at least N
 	length(Participants, N),
-	append([Participants, _], All).
+	setof(TT-Participant-Perf, (eligibleOutcome(Participant, Perf, TT)), AllReversed),
+	reverse(AllReversed, All),
+	append(Participants, _, All).
 	
 %pergunta 9
-%pred(Idade, Participants, Performances)
-%verdade se tem pelo menos um participante com idade menor ou igual a Q para cada performance, neste caso o cut é verde, porque só é útil para evitar backtracking, dado que não há necessidade de ir buscar um novo participante com idade menor ou igual a Q se não houve participantes suficientes para o anterior, já que também não haverá agora.
+predX(_, [], []).
 predX(Q, [R|Rs], [P|Ps]):-
-	participant(R, I, P), I =< Q, !, 
+	participant(R, I, P), 
+	I =< Q, !, 
 	predX(Q, Rs, Ps).
 predX(Q, [R|Rs], Ps):-
-	participant(R, I, _), I > Q,
+	participant(R, I, _), 
+	I > Q, %desnecessário
 	predX(Q, Rs, Ps).
-predX(_, [], []).
-	
+%Este predicado recebe uma idade e uma lista de participantes, devolvendo, no terceiro parâmetro, uma lista das atuações correspondentes (ordenadas de acordo com a lista de participantes (apenas os escolhidos)) aos participantes escolhidos; são escolhidos os participantes e, consequentemente as suas atuações, que têm idade menor ou igual a Q.
+%De realçar que o uso de I > Q é desencessário
+%O cut utilizado é verde (dado que a cláusula I > Q existe) porque não altera as soluções geradas, apenas previne a procura de soluções inexistentes.
+
+
 %pergunta 10
-%qualquer coisa é uma lista vazia, um elemento, uma lista, ou qualquer outra coisa, que prolog aceite. 
-%impoe faz com que Mid seja uma lista com tamanho X, de seguida restringe a lista L a ser do formato [_, X, Mid, X, _], o que se traduz numa lista que começa e acaba em quaquer coisa, mesmo numa lista vazia, e que contem uma sublista que começa em X e acaba em X com X elementos pelo meio, respeitando a regra definida de subsquência válida para quando K é igual a X. Sendo que cada _ pode ser também uma lista vazia, ou seja L pode ser apenas [X, Mid, X] ou [_, X, Mid, X] ou [X, Mid, X, _]. Não estou a usar sintaxe de prolog porque Mid é uma lista e não é assim que se concatena, é só esquenática da ordem dos elementos/listas dentro de L.
 impoe(X, L):-
 	length(Mid, X),
 	append(L1, [X|_], L),
 	append(_, [X|Mid], L1).
-	
-%pergunta 11
-/*
-%option 1 - noob
-unifyAll([], Final, Final).
-unifyAll([UList|R], Acc, Final):-
-	append([_, UList, _], Acc),
-	unifyAll(R, Acc, Final).
+%Ao longo da resposta '_' significa Qualquer Coisa: um elemento, um número, uma lista, uma lista vazia, nada, ...
+%Este predicado recebe uma lista L e um número X.
+%O predicado altera a lista L de forma a que seja uma lista não completamente instanciada e que respeite as condições:
+%1. começa com _
+%2. acaba com _
+%3. tem, entre o início (_) e o fim (_) uma lista de comprimento X + 2, que começa e acaba com o número X e que tem, de permeio, tantos elementos quanto o valor de X.
+%No fundo algo como [_, X, X_ELEMENTOS_NAO_INSTANCIADOS, X, _], onde X_ELEMENTOS_NAO_INSTANCIADOS é uma sequência de X elementos não instanciados.
 
-langford(N, L):-
-	Size is 2 * N, 
-	length(LTemp, Size),
-	range(1, N, Numbers),
-	findall(SList, (
-		member(X, Numbers),
-		once(impoe(X, Temp)),
-		once(append([_, Temp], SList))
-	),SubSets),
-	unifyAll(SubSets, LTemp, L).*/
-	
-%option 2
-impoeTudo(0, _).
-impoeTudo(N, L):-
-	impoe(N, L),
-	N1 is N - 1, 
-	impoeTudo(N1, L).
-	
+%pergunta 11
+impoeTodos(0, _).
+impoeTodos(N, L):-
+	impoe(N, L1),
+	N1 is N - 1,
+	impoeTodos(N1, L).
+
 langford(N, L):-
 	Size is 2 * N,
 	length(L, Size),
-	impoeTudo(N, L).
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-%utils
-ite(If, Then, _Else):- If, !, Then.
-ite(_If, _Then, Else):- Else.
-%range(I, F, Res):-findall(X, between(I, F, X), Res).
-
-
-	
-	
+	impoeTodos(N, L).
