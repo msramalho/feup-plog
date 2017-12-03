@@ -91,9 +91,9 @@ def convertToProlog(data, filename):
     for field in data["scientificFields"]:
         content += ("scientificField(%d). %% %s\n" % (field["id"], field["name"]))
 
-    content += "\n% subject(Subject, Semester, HT, HP, durationT, durationP, Fields).\n"
+    content += "\n% subject(Subject, Semester, HT, HP, durationT, durationP, Field).\n"
     for s in data["subjects"]:
-        content += ("subject(%d, %d, %2d, %2d, %d, %d, %s). %% %s\n" % (s["id"], s["semester"], s["HT"], s["HP"], s["durationT"], s["durationP"], s["field"], s["name"]))
+        content += ("subject(%d, %d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["id"], s["semester"], s["HT"], s["HP"], s["durationT"], s["durationP"], s["field"], s["name"]))
 
     content += "\n% teacherType(Type, AverageWeekHours).\n"
     for t in data["teacherTypes"]:
