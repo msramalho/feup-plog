@@ -6,7 +6,7 @@ Logic Programmin in PROLOG
 <hr/>
 
 ## TP2- Teacher's Working Hours Distribution - Restrictions over a Finite Domain
-We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl). 
+We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus restrictions engine for Finite Domains (`:- use_module(library(clpfd)).`). 
 
 ## generator.py
 **However**, we went a step further and created a Python script ([generator.py](https://github.com/msramalho/feup-plog/blob/master/tp2/generator.py)) that is able to convert a given `dataFile.json` ([example](https://github.com/msramalho/feup-plog/blob/master/tp2/data/mieic_a3_s1.json)) into the format used in the `data.pl` file, which gives us flexibility when we want to test different problem specifications agains our restrictions algorithm.
