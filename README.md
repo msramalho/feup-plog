@@ -9,7 +9,7 @@ Logic Programmin in PROLOG
 We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus restrictions engine for Finite Domains (`:- use_module(library(clpfd)).`). 
 
 ## generator.py
-**However**, we went a step further and created a Python script ([generator.py](https://github.com/msramalho/feup-plog/blob/master/tp2/generator.py)) that is able to convert a given `dataFile.json` ([example](https://github.com/msramalho/feup-plog/blob/master/tp2/data/mieic_a3_s1.json)) into the format used in the `data.pl` file, which gives us flexibility when we want to test different problem specifications agains our restrictions algorithm.
+**However**, we went a step further and created a Python script ([generator.py](https://github.com/msramalho/feup-plog/blob/master/tp2/generator.py)) that is able to convert a given `dataFile.json` ([example](https://github.com/msramalho/feup-plog/blob/master/tp2/data/mieic_a3_s1.json)) into the format used in the [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) file, which gives us flexibility when we want to test different problem specifications agains our restrictions algorithm.
 
 To convert a `.json` file into a `data.pl`, we simply run:
 ```
@@ -25,7 +25,7 @@ And this will replace the current `data.pl` file with the new data.
  
  ## tester.py
  
-**Aditionally**, we decided one step was not enough, so we took another. We created yet another Python script ([tester.py](https://github.com/msramalho/feup-plog/blob/master/tp2/tester.py)) that is able to use [multiprocessing](https://docs.python.org/3.6/library/multiprocessing.html) so as to read all the `.json` files in a folder, namely `data/`, and foreach one of those, to use the `generator.py` tools to create multiple `data_customName.pl` data files **and then** run them by invoking the `sicstus` command. Thus giving us a tailored way of testing our program in a speedy way.
+**Aditionally**, we decided one step was not enough, so we took another. We created yet another Python script ([tester.py](https://github.com/msramalho/feup-plog/blob/master/tp2/tester.py)) that is able to use [multiprocessing](https://docs.python.org/3.6/library/multiprocessing.html) so as to read all the `.json` files in a folder, namely `data/`, and to use the `generator.py` tools to create multiple `data_customName.pl` data files, for each one of those, **and then** run them by invoking the `sicstus` command. Thus giving us a tailored way of testing our program in a speedy way. It does it's best to distribute process amongs different CPU cores, since a sicstus PROLOG program is only run on a single core.
 
 To test all the `.json` files in the `data/` folder, we simply run:
 ```
