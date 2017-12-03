@@ -4,6 +4,7 @@ import os
 from os.path import isfile, join
 from multiprocessing import Manager, Pool, cpu_count
 import time
+from sys import argv
 
 from generator import *
 
@@ -40,6 +41,10 @@ def executeMainFile(newMain):
 
     diff = (time.time() - start) * 1000000 # microseconds, time measurement end
     return (processOutput, diff)#return tuple with output, time in microseconds
+
+def executeMainFileToShell(newMain):
+    cmd = "echo init. | sicstus --nologo --noinfo -l %s" % newMain
+    sp.call(cmd, shell=True)
 
 #read the output of a subprocess, print and return it
 # it is done this way so that later we can parse the stdout in python
@@ -80,14 +85,16 @@ def outputResults(results):
         print("\n  ", "\n   ".join(matched_lines))
 
 if __name__ == '__main__':
-    #read all the files in the data folder
-    jsonFiles = [f for f in listdir(dataFolder) if isfile(join(dataFolder, f)) and f[-5:] == ".json"]
-    print("Found %d file(s): %s" % (len(jsonFiles), jsonFiles))
+    if len(argv) == 2 and argv[1] == "default":#run the default file
+        executeMainFileToShell("src/main.pl")
+    else:#read all the files in the data folder
+        jsonFiles = [f for f in listdir(dataFolder) if isfile(join(dataFolder, f)) and f[-5:] == ".json"]
+        print("Found %d file(s): %s" % (len(jsonFiles), jsonFiles))
 
-    nCores = cpu_count()#number of cpu cores
-    with Pool(nCores) as pool:
-        work_results = pool.map(worker, jsonFiles)
-    outputResults(work_results)
-    print("------------------------------------------------")
+        nCores = cpu_count()#number of cpu cores
+        with Pool(nCores) as pool:
+            work_results = pool.map(worker, jsonFiles)
+        outputResults(work_results)
+    print("-" * 50)
 
     print("FINISHED")
