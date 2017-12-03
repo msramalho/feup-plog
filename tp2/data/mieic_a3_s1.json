@@ -25,6 +25,8 @@
         "semester": 1,
         "HT": 2,
         "HP": 8,
+        "durationT" : 2,
+        "durationP" : 2,
         "areas": [1, 3]
     }, {
         "id": 2,
@@ -32,6 +34,8 @@
         "semester": 1,
         "HT": 2,
         "HP": 12,
+        "durationT" : 2,
+        "durationP" : 3,
         "areas": [2, 3]
     }, {
         "id": 3,
@@ -39,6 +43,8 @@
         "semester": 1,
         "HT": 2,
         "HP": 8,
+        "durationT" : 2,
+        "durationP" : 2,
         "areas": [5, 6]
     }, {
         "id": 4,
@@ -46,13 +52,17 @@
         "semester": 1,
         "HT": 2,
         "HP": 8,
+        "durationT" : 1,
+        "durationP" : 2,
         "areas": [4]
     }, {
         "id": 4,
         "name": "ESOF",
         "semester": 1,
         "HT": 2,
-        "HP": 8,
+        "HP": 10,
+        "durationT" : 1,
+        "durationP" : 2,
         "areas": [6]
     }],
     "teacherTypes": [{
@@ -109,6 +119,13 @@
         "type": 3,
         "HS1": 9,
         "HS2": 9,
+        "areas": [1, 3, 4, 6]
+    }, {
+        "id": 6,
+        "name": "Gonçalo Garcia",
+        "type": 3,
+        "HS1": 5,
+        "HS2": 13,
         "areas": [1, 3, 4, 6]
     }]
 }

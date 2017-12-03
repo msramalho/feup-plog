@@ -23,7 +23,7 @@ def printConfiguration(data):
 
     print("\nSubjects (%d):" % len(data["subjects"]))
     pdSubjects = pd.DataFrame(data["subjects"], columns=[
-                              "id", "name", "semester", "HT", "HP", "areas"])
+                              "id", "name", "semester", "HT", "HP", "durationT", "durationP" "areas"])
     print(pdSubjects.to_string(index=False))
 
     ht = pdSubjects["HT"].sum()
@@ -99,9 +99,9 @@ def convertToProlog(data, filename):
     for area in data["scientificAreas"]:
         content += ("scientificArea(%d). %% %s\n" % (area["id"], area["name"]))
 
-    content += "\n% subject(Subject, Semester, HT, HP, Areas).\n"
+    content += "\n% subject(Subject, Semester, HT, HP, durationT, durationP, Areas).\n"
     for s in data["subjects"]:
-        content += ("subject(%d, %d, %2d, %2d, %s). %% %s\n" % (s["id"], s["semester"], s["HT"], s["HP"], listToStr(s["areas"]), s["name"]))
+        content += ("subject(%d, %d, %2d, %2d, %d, %d, %s). %% %s\n" % (s["id"], s["semester"], s["HT"], s["HP"], s["durationT"], s["durationP"], listToStr(s["areas"]), s["name"]))
 
     content += "\n% teacherType(Type, AverageWeekHours).\n"
     for t in data["teacherTypes"]:
