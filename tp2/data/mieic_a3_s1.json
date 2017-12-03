@@ -1,6 +1,6 @@
 {
     "department": "DEI",
-    "scientificFields": [{
+    "fields": [{
         "id": 1,
         "name": "Artificial Intelligence"
     }, {
