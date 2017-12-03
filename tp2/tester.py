@@ -35,7 +35,7 @@ def createNewMainFile(jsonFile, filesToRemove, edit="src/main.pl"):
 def executeMainFile(newMain):
     start = time.time()#time measurement start
 
-    cmd = "echo init. | sicstus --nologo --noinfo -l %s" % newMain
+    cmd = "echo init(Subjects, Teachers). | sicstus --nologo --noinfo -l %s" % newMain
     process = sp.Popen(cmd, shell=True, stdout=sp.PIPE)
     processOutput = processToStdout(process)
 
@@ -43,7 +43,7 @@ def executeMainFile(newMain):
     return (processOutput, diff)#return tuple with output, time in microseconds
 
 def executeMainFileToShell(newMain):
-    cmd = "echo init. | sicstus --nologo --noinfo -l %s" % newMain
+    cmd = "echo init(Subjects, Teachers). | sicstus --nologo --noinfo -l %s" % newMain
     sp.call(cmd, shell=True)
 
 #read the output of a subprocess, print and return it
