@@ -19,6 +19,7 @@ And this will replace the current `data.pl` file with the new data.
 #### Notes on generator.py
  * It implements a function `generatePrologForFile(filename, print = False, ouput = "src/data.pl")`, that can be called and that can print an easy-to-ready tabular output from the `.json` file, if the parameter `print` is set to `True`;
  * A custom path to output the PROLOG data file can also be passed in the `ouput parameter`;
+ * So this can be used to update the contents of `data.pl` and later be invoked by using [tester](https://github.com/msramalho/feup-plog#testerpy) like so: `python tester.py default` (See [notes on tester.py](`python tester.py default`))
  * It runs some basic tests on the `.json` data so as to ascertain wether the configuration can be excluded due to immediate problems, such as a universe where there are more hours to teach than the available teachers can teach.
  
  ---
@@ -35,3 +36,4 @@ And watch the magic happening.
 
 #### Notes on tester.py
  * This script performs an output, after running all the data files, and displays the duration that process took. Since we also wanted time measurement form inside the PROLOG code, `tester.py` is able to catch sicstus prints in the format `\nprologTime%` (where `\n` is a newline and `%` is anything after `prologTime`) and display them. They can also be used for further statistical analysis done on the PROLOG code performance.
+ * Instead of all the hastle involved in using sictus to test the program we also implemented an option to test the default `main.pl` file with the `data.pl` file, this can be achieved by running `python tester.py default`
