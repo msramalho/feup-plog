@@ -1,23 +1,39 @@
 import subprocess as sp  # call, Popen, PIPE
-from os import listdir, remove
+from os import listdir, remove, mkdir
+import os
 from os.path import isfile, join
+from multiprocessing import Manager, Pool, cpu_count
 
 from generator import *
 
-def createPrologDataFromJson(jsonFile):
+#important variables:
+tmpFolder = "src/"#folder to use for the temporary usage of files, should not be inner folder, due to include referencing
+dataPrefix = "data_"#append to generated data prolog files
+mainPrefix = "main_"#append to generated data prolog files
+dataFolder = "data/"#source folder to look for json files
+
+def createPrologDataFromJson(jsonFile, filesToRemove):
     outputFileName = jsonFile[:-4] + "pl" # mieic_a3_s1.pl
-    completeOutputFileName = "src/tmp/data_" + outputFileName # src/mieic_a3_s1.pl
+    completeOutputFileName = tmpFolder + dataPrefix + outputFileName # src/mieic_a3_s1.pl
+    completeJsonFile = dataFolder + jsonFile
     generatePrologForFile(completeJsonFile, ouput=completeOutputFileName) #generate the .pl file from the json
+    filesToRemove.append(completeOutputFileName)#add to the list of files to remove
 
-def createNewMainFile(jsonFile, edit="src/main.pl"):
+def createNewMainFile(jsonFile, filesToRemove, edit="src/main.pl"):
     contents = ""
-    print(edit)
-    with open(edit, 'r', encoding="utf-8") as mainFile:
+    jsonToPl = jsonFile[:-4]+"pl"
+    with open(edit, 'r', encoding="utf-8") as mainFile:#read default main file
         contents = mainFile.read()
-        print("HEER")
-        print( mainFile.read())
-    print(contents)
+    contents = contents.replace("data.pl", dataPrefix + jsonToPl)#replace included data file
+    newMainFilename = getValidFileName(tmpFolder + mainPrefix + jsonToPl)
+    writeFileWarnDuplicate(newMainFilename, contents)# write to file
+    filesToRemove.append(newMainFilename)#add to the list of files to remove
+    return newMainFilename
 
+def executeMainFile(newMain):
+    cmd = "echo init. | sicstus --nologo --noinfo -l %s" % newMain
+    process = sp.Popen(cmd, shell=True, stdout=sp.PIPE)
+    return processToStdout(process) # it is done this way so that later we can parse the stdout in python
 
 #read the output of a subprocess, print and return it
 def processToStdout(process):
@@ -26,33 +42,39 @@ def processToStdout(process):
     print(ouput)
     return ouput
 
-#edit main.pl file so that the correct datafile (.pl) is included
-''' def editMainFile(dataFileName, edit="src/main.pl"):
-    contents = ""
-    with open(edit, 'r', encoding="utf-8") as mainFile:
-        contents = mainFile.read()
-    contents.replace("data.pl", dataFileName)#edit the main.pl file
-    with open(edit, 'w', encoding="utf-8") as mainFile:
-        contents = mainFile.read() '''
+def getValidFileName(original):
+    return "".join([c for c in original if c.isalpha() or c.isdigit() or c in ['.', '/', '_', '-']]).rstrip()
 
-dataFolder = "data/"
-jsonFiles = [f for f in listdir(dataFolder) if isfile(join(dataFolder, f)) and f[-5:] == ".json"]
+#delete the files in filesToRemove
+def removeTmpFiles(filesToRemove):
+    for f in filesToRemove:
+        try:
+            remove(f)
+        except OSError:
+            print("----[WARNING]: Unable to remove temporay file: %s" % f)
+    print("DONE")
 
-print("Found %d file(s): %s" % (len(jsonFiles), jsonFiles))
-print("Starting tests:")
-for jsonFile in jsonFiles:
-    completeJsonFile = dataFolder + jsonFile
+#create the tmp folder if it does not exist
+if not os.path.exists(tmpFolder):
+    os.makedirs(tmpFolder)
+
+def worker(jsonFile):
+    filesToRemove = []
+    createPrologDataFromJson(jsonFile, filesToRemove)
+    newMain = createNewMainFile(jsonFile, filesToRemove)
+    result =  executeMainFile(newMain)
+    removeTmpFiles(filesToRemove)
+    return result
+
+if __name__ == '__main__':
+    #read all the files in the data folder
+    jsonFiles = [f for f in listdir(dataFolder) if isfile(join(dataFolder, f)) and f[-5:] == ".json"]
+    print("Found %d file(s): %s" % (len(jsonFiles), jsonFiles))
+
+    nCores = cpu_count()#number of cpu cores
+    with Pool(nCores) as pool:
+        work_results = pool.map(worker, jsonFiles)
+
     print("------------------------------------------------")
-    print("TESTING %s:\n" % completeJsonFile)
-    createPrologDataFromJson(jsonFile)
-    createNewMainFile(jsonFile)
-    # executeMainFile()
-    # change extension from .json to .pl
-    # editMainFile(outputFileName)
-    # cmd = "echo run. | sicstus --nologo --noinfo -l src/main.pl"
-    # process = sp.Popen(cmd, shell=True, stdout=sp.PIPE)
-    # ouput = processToStdout(process) # it is done this way so that later we can parse the stdout in python
-    # remove(completeOutputFileName) # delete created file
 
-print("------------------------------------------------")
-print("DONE")
+    print("FINISHED")
