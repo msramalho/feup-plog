@@ -3,6 +3,7 @@ from os import listdir, remove, mkdir
 import os
 from os.path import isfile, join
 from multiprocessing import Manager, Pool, cpu_count
+import time
 
 from generator import *
 
@@ -31,15 +32,20 @@ def createNewMainFile(jsonFile, filesToRemove, edit="src/main.pl"):
     return newMainFilename
 
 def executeMainFile(newMain):
+    start = time.time()#time measurement start
+
     cmd = "echo init. | sicstus --nologo --noinfo -l %s" % newMain
     process = sp.Popen(cmd, shell=True, stdout=sp.PIPE)
-    return processToStdout(process) # it is done this way so that later we can parse the stdout in python
+    processOutput = processToStdout(process)
+
+    diff = (time.time() - start) * 1000000 # microseconds, time measurement end
+    return (processOutput, diff)#return tuple with output, time in microseconds
 
 #read the output of a subprocess, print and return it
+# it is done this way so that later we can parse the stdout in python
 def processToStdout(process):
     out, err = process.communicate()
     ouput = out.decode("utf-8")
-    print(ouput)
     return ouput
 
 def getValidFileName(original):
@@ -52,7 +58,6 @@ def removeTmpFiles(filesToRemove):
             remove(f)
         except OSError:
             print("----[WARNING]: Unable to remove temporay file: %s" % f)
-    print("DONE")
 
 #create the tmp folder if it does not exist
 if not os.path.exists(tmpFolder):
@@ -64,7 +69,15 @@ def worker(jsonFile):
     newMain = createNewMainFile(jsonFile, filesToRemove)
     result =  executeMainFile(newMain)
     removeTmpFiles(filesToRemove)
-    return result
+    return (jsonFile, result)
+
+def outputResults(results):
+    for (f, (ouput, time)) in results:
+        print("-" * 50)
+        print("%s lasted for %10f microseconds" % (f, time))
+        #get the output time from prolog
+        matched_lines = [line for line in ouput.split('\n') if "prologTime" in line]
+        print("\n  ", "\n   ".join(matched_lines))
 
 if __name__ == '__main__':
     #read all the files in the data folder
@@ -74,7 +87,7 @@ if __name__ == '__main__':
     nCores = cpu_count()#number of cpu cores
     with Pool(nCores) as pool:
         work_results = pool.map(worker, jsonFiles)
-
+    outputResults(work_results)
     print("------------------------------------------------")
 
     print("FINISHED")
