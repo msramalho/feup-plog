@@ -7,104 +7,78 @@ import os
 def printConfiguration(data):
     print("Department: %s" % data["department"])
 
-    pdTeacherTypes = pd.DataFrame(data["teacherTypes"], columns=["id", "name", "averageWeekHours"])
-    print("\nTeacher types (%d):" % len(data["teacherTypes"]))
-    print(pdTeacherTypes.to_string(index=False))
+    #print teacher types in a table
+    pDTeacherTypes = pd.DataFrame(data["teacherTypes"], columns=["name", "averageWeekHours"])
+    pDTeacherTypes.index +=1
+    print("\nTeacher types (%d):" % len(pDTeacherTypes))
+    print(pDTeacherTypes)
 
-    print("\nScientific fields (%d):" % len(data["fields"]))
-    print(pd.DataFrame(data["fields"], columns=["id", "name"]).to_string(index=False))
+    #print scientific types in a table
+    pdFields = pd.DataFrame(data["fields"])
+    pdFields.index +=1
+    print("\nScientific fields (%d):" % len(pdFields))
+    print(pdFields)
 
-    print("\nTeachers (%d):" % len(data["teachers"]))
-    pdTeachers = pd.DataFrame(data["teachers"], columns=["id", "name", "type", "field", "HS1", "HS2"])
-    print(pdTeachers.to_string(index=False))
+    #print teacher information in a table
+    pDTeachers = pd.DataFrame(data["teachers"], columns=["name", "type", "field", "Diff"])
+    pDTeachers.index +=1
+    print("\nTeachers (%d):" % len(pDTeachers))
+    print(pDTeachers)
 
+    #print subject information in a table
+    pdSubjects = pd.DataFrame(data["subjects"], columns=["name", "semester", "HT", "HP", "DT", "DP", "field"])
+    pdSubjects.index +=1
     print("\nSubjects (%d):" % len(data["subjects"]))
-    pdSubjects = pd.DataFrame(data["subjects"], columns=["id", "name", "semester", "HT", "HP", "durationT", "durationP" "field"])
-    print(pdSubjects.to_string(index=False))
+    print(pdSubjects)
 
+    #print hours sum summary
     ht = pdSubjects["HT"].sum()
     hp = pdSubjects["HP"].sum()
-    print("\nTotal Theoretical: %dh" % ht)
-    print("Total Practical  : %dh" % hp)
-
+    print("\n%30s: %4dh" % ("Total Theoretical", ht))
+    print("%30s: %4dh" % ("Total Practical", hp))
+    #semester 1
     s1 = pdSubjects.query("semester == 1")
     ht1 = s1["HT"].sum()
     hp1 = s1["HP"].sum()
-    print("\nTotal Semester 1: %dh" % (ht1 + hp1))
-    print("Total Theoretical Semester 1: %dh" % ht1)
-    print("Total Practical   Semester 1: %dh" % hp1)
-
+    print("\n%30s: %4dh" % ("Total Theoretical Semester 1", ht1))
+    print("%30s: %4dh" % ("Total Theoretical Semester 1", hp1))
+    print("%30s: %4dh" % ("Total Semester 1", ht1 + hp1))
+    #semester 2
     s2 = pdSubjects.query("semester == 2")
     ht2 = s2["HT"].sum()
     hp2 = s2["HP"].sum()
-    print("\nTotal Semester 2: %dh" % (ht2 + hp2))
-    print("Total Theoretical Semester 2: %dh" % ht2)
-    print("Total Practical   Semester 2: %dh" % hp2)
-
-def testConfiguration(data):
-    #create pandas DataFrame from json data
-    pdTeacherTypes = pd.DataFrame(data["teacherTypes"], columns=["id", "name", "averageWeekHours"])
-    pdTeachers = pd.DataFrame(data["teachers"], columns=["id", "name", "type", "field", "HS1", "HS2"])
-    pdSubjects = pd.DataFrame(data["subjects"], columns=[ "id", "name", "semester", "HT", "HP", "field"])
-    #merge teachers and subjects so as to extract joined data
-    pdMergedTeachers = pd.merge(pdTeachers, pdTeacherTypes, left_on=['type'], right_on=['id'])
-
-    #get total required hours for theoretical(HT) and pratical(HP) lessons
-    ht = pdSubjects["HT"].sum()
-    hp = pdSubjects["HP"].sum()
-    #repeat, but for the 1st semester
-    s1 = pdSubjects.query("semester == 1")
-    ht1 = s1["HT"].sum()
-    hp1 = s1["HP"].sum()
-    #repeat, but for the 2nd semester
-    s2 = pdSubjects.query("semester == 2")
-    ht2 = s2["HT"].sum()
-    hp2 = s2["HP"].sum()
-
-    #check total hours semester 1
-    maxHoursS1 = pdMergedTeachers["HS1"].sum()
-    if maxHoursS1 < ht1 + hp1:
-        print("Error: There are not enough teacher hours in the first semester (%dh) to cover the required hours (%dh), missing %dh" % (
-            maxHoursS1, ht1 + hp1, ht1 + hp1 - maxHoursS1))
-        return False
-
-    #check total hours semester 2
-    maxHoursS2 = pdMergedTeachers["HS2"].sum()
-    if maxHoursS2 < ht2 + hp2:
-        print("Error: There are not enough teacher hours in the second semester (%dh) to cover the required hours (%dh), missing %dh" % (
-            maxHoursS2, ht2 + hp2, ht2 + hp2 - maxHoursS2))
-        return False
-
-    #falible but easy check on average validity, just tests if the sums match
-    maxHours = pdMergedTeachers["averageWeekHours"].sum() * 2
-    if maxHours != maxHoursS1 + maxHoursS2:
-        print("Error: The total week hours sum (%dh) does not match the partial hours sum (%dh)" % (
-            maxHours, maxHoursS1 + maxHoursS2))
-        return False
-
-    return True#if no test fails
+    print("\n%30s: %4dh" % ("Total Theoretical Semester 2", ht2))
+    print("%30s: %4dh" % ("Total Theoretical Semester 2", hp2))
+    print("%30s: %4dh" % ("Total Semester 2", ht2 + hp2))
 
 #convert the json data into prolog predicates, with proper comments and format
 def convertToProlog(data, filename):
     content = ("%% Autogenerated data file from JSON file: '%s'\n" % filename)
-    content += "\n% field(Field).\n"
+
+    #print field
+    ''' content += "\n% field(Field).\n"
     for field in data["fields"]:
-        content += ("field(%d). %% %s\n" % (field["id"], field["name"]))
+        content += ("%%field(%d). %% %s\n" % (i, field["name"])) '''
     content += "\nfields(%d). %% count fields\n" % len(data["fields"])
 
-    content += "\n% subject(Subject, Semester, HT, HP, durationT, durationP, Field).\n"
+    #print subject
+    content += "\n% subject(Semester, HT, HP, DT, DP, Field).\n"
     for s in data["subjects"]:
-        content += ("subject(%d, %d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["id"], s["semester"], s["HT"], s["HP"], s["durationT"], s["durationP"], s["field"], s["name"]))
+        content += ("subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
     content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
 
+    #print teacher types
     content += "\n% teacherType(Type, AverageWeekHours).\n"
+    i = 0
     for t in data["teacherTypes"]:
-        content += ("teacherType(%d, %2d). %% %s\n" % (t["id"], t["averageWeekHours"], t["name"]))
+        i += 1
+        content += ("teacherType(%d, %2d). %% %s\n" % (i, t["averageWeekHours"], t["name"]))
     content += "\nteacherTypes(%d). %% count teacher types\n" % len(data["teacherTypes"])
 
-    content += "\n% teacher(Teacher, Type, HS1, HS2, Fields).\n"
+    #print teacher information
+    content += "\n% teacher(Type, Diff, Field).\n"
     for t in data["teachers"]:
-        content += ("teacher(%d, %d, %2d, %2d, %s). %% %s\n" % (t["id"], t["type"], t["HS1"], t["HS2"], t["field"], t["name"]))
+        content += ("teacher(%d, %2d, %s). %% %s\n" % (t["type"], t["Diff"], t["field"], t["name"]))
     content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
     return content
 
@@ -120,11 +94,10 @@ def generatePrologForFile(filename, print = False, ouput = "src/data.pl"):
         data = json.loads(jsonFile.read())
         if print:
             printConfiguration(data)
-        if testConfiguration(data):
-            dataFile = open(ouput, 'w', encoding="utf-8")
-            prologCode = convertToProlog(data, filename)
-            dataFile.write(prologCode)
-            dataFile.close()
+        dataFile = open(ouput, 'w', encoding="utf-8")
+        prologCode = convertToProlog(data, filename)
+        dataFile.write(prologCode)
+        dataFile.close()
 
 if __name__ == "__main__":
     if len(argv) < 2:
