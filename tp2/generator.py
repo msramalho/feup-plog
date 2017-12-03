@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from sys import argv
+import os
 
 #print the json data to the console and perform minor validation tests
 def printConfiguration(data):
@@ -110,6 +111,13 @@ def convertToProlog(data, filename):
     for t in data["teachers"]:
         content += ("\nteacher(%d, %d, %2d, %2d, %s). %% %s" % (t["id"], t["type"], t["HS1"], t["HS2"], listToStr(t["areas"]), t["name"]))
     return content
+
+#write contents to a file, warns if it already exists
+def writeFileWarnDuplicate(filename, contents):
+    if os.path.isfile(filename):
+        print("----[WARNING]: %s already exists, either it was not deleted or our name clear rules had a collison" % filename)
+    with open(filename, 'w', encoding="utf-8") as f:#write the new main
+        f.write(contents)
 
 def generatePrologForFile(filename, print = False, ouput = "src/data.pl"):
     with open(filename, 'r', encoding="utf-8") as jsonFile:
