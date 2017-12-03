@@ -6,8 +6,9 @@ field(2). % Computer Networks
 field(3). % Algorithms
 field(4). % Computer Graphics
 field(5). % Web
-field(6). % Software Engineering´
-fields(6). % count
+field(6). % Software Engineering
+
+fields(6). % count fields
 
 % subject(Subject, Semester, HT, HP, durationT, durationP, Field).
 subject(1, 1,  2,  8, 2, 2,  1). % Plog
@@ -15,12 +16,15 @@ subject(2, 1,  2, 12, 2, 3,  2). % Rcom
 subject(3, 1,  2,  8, 2, 2,  5). % LTW
 subject(4, 1,  2,  8, 1, 2,  4). % LAIG
 subject(4, 1,  2, 10, 1, 2,  6). % ESOF
-subjects(5). % count
+
+subjects(5). % count subjects
 
 % teacherType(Type, AverageWeekHours).
 teacherType(1,  7). % Gownsman
 teacherType(2,  8). % Associate
 teacherType(3,  9). % Auxiliar
+
+teacherTypes(3). % count teacher types
 
 % teacher(Teacher, Type, HS1, HS2, Fields).
 teacher(1, 1,  8,  6, 2). % Álvaro Alves
@@ -30,3 +34,5 @@ teacher(4, 3, 10,  8, 5). % Daniel Damásio
 teacher(5, 3,  9,  9, 1). % Eduardo Ernesto
 teacher(6, 3,  9,  9, 6). % Francisco Fanhoso
 teacher(6, 3,  5, 13, 4). % Gonçalo Garcia
+
+teachers(7). % count teachers

@@ -90,19 +90,22 @@ def convertToProlog(data, filename):
     content += "\n% field(Field).\n"
     for field in data["fields"]:
         content += ("field(%d). %% %s\n" % (field["id"], field["name"]))
-    content += "fields(%d). % count fields\n"
+    content += "\nfields(%d). %% count fields\n" % len(data["fields"])
 
     content += "\n% subject(Subject, Semester, HT, HP, durationT, durationP, Field).\n"
     for s in data["subjects"]:
         content += ("subject(%d, %d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["id"], s["semester"], s["HT"], s["HP"], s["durationT"], s["durationP"], s["field"], s["name"]))
+    content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
 
     content += "\n% teacherType(Type, AverageWeekHours).\n"
     for t in data["teacherTypes"]:
         content += ("teacherType(%d, %2d). %% %s\n" % (t["id"], t["averageWeekHours"], t["name"]))
+    content += "\nteacherTypes(%d). %% count teacher types\n" % len(data["teacherTypes"])
 
-    content += "\n% teacher(Teacher, Type, HS1, HS2, Fields)."
+    content += "\n% teacher(Teacher, Type, HS1, HS2, Fields).\n"
     for t in data["teachers"]:
-        content += ("\nteacher(%d, %d, %2d, %2d, %s). %% %s" % (t["id"], t["type"], t["HS1"], t["HS2"], t["field"], t["name"]))
+        content += ("teacher(%d, %d, %2d, %2d, %s). %% %s\n" % (t["id"], t["type"], t["HS1"], t["HS2"], t["field"], t["name"]))
+    content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
     return content
 
 #write contents to a file, warns if it already exists
