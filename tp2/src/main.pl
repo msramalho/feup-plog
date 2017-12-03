@@ -30,10 +30,7 @@ init(Subjects, Teachers):-
 defineSubjects(Subjects):-
     findall([Semester-Field-HT-HP-DT-DP, _, _], subject(Semester, HT, HP, DT, DP, Field), Subjects).
 defineTeachers(Teachers):-
-    findall(Avg-Diff-Field-_HS1-_HS2, (
-            teacher(Type, Diff, Field),
-            teacherType(Type, Avg)
-        ), Teachers).
+    findall(Avg-Diff-Field-_HS1-_HS2, (teacher(Type, Diff, Field), teacherType(Type, Avg)), Teachers).
 
 %restrictions on lists helpers
 restrictTeachers([]).
