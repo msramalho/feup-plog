@@ -1,10 +1,17 @@
 import json
-import pandas as pd
 from sys import argv
 import os
 
+#try to import pandas
+try:
+    import pandas as pd
+except ImportError:
+    pd = False
+
 #print the json data to the console and perform minor validation tests
 def printConfiguration(data):
+    if not pd:
+        print("Cannot print configuration without installing pandas")
     print("Department: %s" % data["department"])
 
     #print teacher types in a table
