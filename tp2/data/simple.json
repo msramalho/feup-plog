@@ -1,0 +1,47 @@
+{
+    "department": "DEI",
+    "fields": [
+        "Artificial Intelligence"
+    ],
+    "subjects": [{
+        "name": "Plog",
+        "semester": 1,
+        "HT": 4,
+        "HP": 10,
+        "DT": 2,
+        "DP": 5,
+        "field": 1
+    }, {
+        "name": "Plog Avançado",
+        "semester": 2,
+        "HT": 4,
+        "HP": 10,
+        "DT": 2,
+        "DP": 5,
+        "field": 1
+    }],
+    "teacherTypes": [{
+        "id": 1,
+        "name": "Gownsman",
+        "averageWeekHours": 7
+    }, {
+        "id": 2,
+        "name": "Associate",
+        "averageWeekHours": 8
+    }, {
+        "id": 3,
+        "name": "Auxiliar",
+        "averageWeekHours": 9
+    }],
+    "teachers": [{
+        "name": "Álvaro Alves",
+        "type": 1,
+        "Diff": 0,
+        "field": 1
+    }, {
+        "name": "Bernardo Belo",
+        "type": 1,
+        "Diff": 0,
+        "field": 1
+    }]
+}

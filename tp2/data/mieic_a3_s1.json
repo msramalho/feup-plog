@@ -1,57 +1,52 @@
 {
     "department": "DEI",
-    "fields": [{
-        "name": "Artificial Intelligence"
-    }, {
-        "name": "Computer Networks"
-    }, {
-        "name": "Algorithms"
-    }, {
-        "name": "Computer Graphics"
-    }, {
-        "name": "Web"
-    }, {
-        "name": "Software Engineering"
-    }],
+    "fields": [
+        "Artificial Intelligence",
+        "Computer Networks",
+        "Algorithms",
+        "Computer Graphics",
+        "Web",
+        "Software Engineering"
+    ],
     "subjects": [{
         "name": "Plog",
         "semester": 1,
         "HT": 2,
         "HP": 8,
-        "DT" : 2,
-        "DP" : 2,
+        "DT": 2,
+        "DP": 2,
         "field": 1
     }, {
         "name": "Rcom",
         "semester": 1,
         "HT": 2,
         "HP": 12,
-        "DT" : 2,
-        "DP" : 3,
+        "DT": 2,
+        "DP": 3,
         "field": 2
     }, {
         "name": "LTW",
         "semester": 1,
         "HT": 2,
         "HP": 8,
-        "DT" : 2,
-        "DP" : 2,
+        "DT": 2,
+        "DP": 2,
         "field": 5
     }, {
         "name": "LAIG",
         "semester": 1,
         "HT": 2,
         "HP": 8,
-        "DT" : 1,
-        "DP" : 2,
+        "DT": 1,
+        "DP": 2,
         "field": 4
     }, {
         "name": "ESOF",
         "semester": 1,
         "HT": 2,
         "HP": 10,
-        "DT" : 1,
-        "DP" : 2,
+        "DT": 1,
+        "DP": 2,
         "field": 6
     }],
     "teacherTypes": [{
