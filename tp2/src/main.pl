@@ -1,6 +1,7 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
 :- use_module(library(between)).
+:- use_module(library(timeout)).
 
 :- include('data.pl').
 :- include('utils.pl').
@@ -11,11 +12,12 @@ test:-
 
 %main function
 init(Subjects, Teachers):-
+    clear,
 % 1 - variable definition + 2 - domain specification
     defineTeachers(Teachers),
     defineSubjects(Subjects),
-    % PreferenceFailedCount in 0..40,
-    FailedHours in 0..20,
+    PreferenceFailedCount in 2..20,
+    % FailedHours in 0..20,
     write('1\n'),
 
 % 3 - restrictions application
@@ -27,22 +29,24 @@ init(Subjects, Teachers):-
     getMatrixOfComplementedFields(Teachers, CompFields),
     write('4\n'),
     restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
-    write(PreferenceFailedCount), nl,
+    % write(PreferenceFailedCount), nl,
     write('5\n'),
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
-    getMatrixOfComplementedFields(Teachers, CompFields),
-    write('7\n'),
     getFailedHours(Teachers, FailedHours),
-    write(FailedHours), nl,
-    write('8\n'),
+    write('7\n'),
+    %restriction to force enough teacher hours to exist
+    % write(FailedHours), nl,
 
 % 4 - search for solutions
     getTeachersVariablesToLabel(Teachers, TVars),
-    labeling([], TVars).
+    write('8\n'),
+    mergeSubjectTs(Subjects, SVars),
+    % labeling([], SVars).
     %see: https://www.informatik.uni-kiel.de/~curry/listarchive/0817.html
-    % labeling([minimize(FailedHours)], TVars).
-    % labeling([minimize(PreferenceFailedCount)], TVars).
+    time_out(labeling([minimize(FailedHours)], SVars), 5000, Res),
+    write(Res).
+    % labeling([minimize(PreferenceFailedCount)], SVars).
 
 
 %------------------------------------variable definition helpers
@@ -79,14 +83,20 @@ getFailedHours(Teachers, FailedHours):-
         Temp #= (HS1 + HS2) / 2,
         D #= Avg - Temp
     ),FailedHoursList),
-    write(FailedHoursList),
     sum(FailedHoursList, #=, FailedHours).
+
+%get a list of all the variables in TT and TP so that we can label them
+mergeSubjectTs([], []).
+mergeSubjectTs([[_, TT, TP]|T], Merged):-
+    mergeSubjectTs(T, TempMerged),
+    append([TT, TP, TempMerged], Merged).
 
 
 
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
 restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
+    % todo: optimze mahour
     MaxHours is Avg * 2, % the maximum amount of hours for a teacher in a semester = 2 * avg (extreme cases)
     domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
     Diff #= HS1 - HS2, % Restriction-1
@@ -181,5 +191,8 @@ Restrictions:
 
 TODO:
     . Organize generator so that it only generates relevant information and in the same order as it is used in the prolog code
-
+    . Tabela de opções de labeling usadas para o relatório
+    . ver fd_statistics, (numero de backtracks, ...)
+    . ver timeout
+    . gráfico de evolução do tempo com o aumento da complexidade
  */
