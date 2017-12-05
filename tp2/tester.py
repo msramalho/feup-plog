@@ -74,7 +74,7 @@ def worker(jsonFile):
     createPrologDataFromJson(jsonFile, filesToRemove)
     newMain = createNewMainFile(jsonFile, filesToRemove)
     result =  executeMainFile(newMain)
-    # removeTmpFiles(filesToRemove)
+    removeTmpFiles(filesToRemove)
     return (jsonFile, result)
 
 def outputResults(results):
