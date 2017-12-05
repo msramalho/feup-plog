@@ -7,16 +7,16 @@
 :- include('utils.pl').
 
 %run congruence tests on the supplied data
-test:-
-    testMatcHTecherTypes.
+test(Res, TimeOutRes):-
+    time_out(setof(FailedHours-Teachers-Subjects, init(Subjects, Teachers, FailedHours), Res), 5000, TimeOutRes).
 
 %main function
-init(Subjects, Teachers):-
-    clear,
+init(Subjects, Teachers, FailedHours):-
+    % clear,
 % 1 - variable definition + 2 - domain specification
     defineTeachers(Teachers),
     defineSubjects(Subjects),
-    PreferenceFailedCount in 2..20,
+    % PreferenceFailedCount in 2..20,
     % FailedHours in 0..20,
     write('1\n'),
 
@@ -42,11 +42,13 @@ init(Subjects, Teachers):-
     getTeachersVariablesToLabel(Teachers, TVars),
     write('8\n'),
     mergeSubjectTs(Subjects, SVars),
-    % labeling([], SVars).
-    %see: https://www.informatik.uni-kiel.de/~curry/listarchive/0817.html
-    time_out(labeling([minimize(FailedHours)], SVars), 5000, Res),
-    write(Res).
-    % labeling([minimize(PreferenceFailedCount)], SVars).
+    append(TVars, SVars, Vars),
+    write('\n...................................\n\n'),
+    write(Vars),
+    write('\n\n...................................\n'),
+    labeling([bysect], Vars).
+    % labeling([minimize(FailedHours)], Vars).
+    % time_out(labeling([minimize(FailedHours)], Vars), 5000, Res), write('Res is: \n'), write(Res).
 
 
 %------------------------------------variable definition helpers
@@ -80,10 +82,11 @@ getMatrixOfComplementedFields(Teachers, CompFields):-
 getFailedHours(Teachers, FailedHours):-
     findall(D, (
         member(Avg-_Diff-_Field-HS1-HS2, Teachers),
-        Temp #= (HS1 + HS2) / 2,
-        D #= Avg - Temp
-    ),FailedHoursList),
-    sum(FailedHoursList, #=, FailedHours).
+        D #= (Avg * 2) - (HS1 + HS2)
+    ), FailedHoursList),
+    write(FailedHoursList),
+    maximum(FailedHours, FailedHoursList).
+    % sum(FailedHoursList, #=, FailedHours).
 
 %get a list of all the variables in TT and TP so that we can label them
 mergeSubjectTs([], []).
@@ -108,6 +111,8 @@ restrictSubjects([], _, _, 0).
 restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeachers, PreferenceFailedCount):-
     %recursive call
     restrictSubjects(R, CompFields, NTeachers, TempCount),
+    %assert typical standards HP > HT
+    HP #> HT,
     % number of teachers needed for Theoretical (Total Hours/Division)
     length(TT, NTeachers),
     sum(TT, #=, HT),
@@ -124,8 +129,8 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
     %restrict to only allow teachers of the field in the Theoretical lessons
     nth1(Field, CompFields, FieldComplements),
     scalar_product(FieldComplements, TT, #= , 0), %Restriction-3,
-    scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
-    PreferenceFailedCount #= TempCount + CurrentCount.
+    scalar_product(FieldComplements, TP, #= , 0), % minimize this, Restriction-4
+    PreferenceFailedCount = TempCount.% + CurrentCount.
 
 
 %make sure the sum of the times for each subject, in both semesters, match that of the teachers
@@ -133,7 +138,10 @@ restrictSumBySemester(Subjects, Teachers):-
     %semester 1
     getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
-    restrictTeacherSemester1(Teachers, TimesS1),%match the teacher's time with the corresponding cell
+    %restrictTeacherSemester1(Teachers, TimesS1),%match the teacher's time with the corresponding cell
+    findall(HS1, member(_Avg-_Diff-_Field-HS1-_HS2, Teachers), LHS1), % TODO: this is not working, the sums don't add up xD
+    element(IndexS1, TimesS1, SumTeacherS1),
+    element(IndexS1, LHS1, SumTeacherS1),
     %semester 2
     getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
