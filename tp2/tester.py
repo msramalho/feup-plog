@@ -4,6 +4,7 @@ import os
 from os.path import isfile, join
 from multiprocessing import Manager, Pool, cpu_count
 import time
+import ntpath
 from sys import argv
 
 from generator import *
@@ -73,7 +74,7 @@ def worker(jsonFile):
     createPrologDataFromJson(jsonFile, filesToRemove)
     newMain = createNewMainFile(jsonFile, filesToRemove)
     result =  executeMainFile(newMain)
-    removeTmpFiles(filesToRemove)
+    # removeTmpFiles(filesToRemove)
     return (jsonFile, result)
 
 def outputResults(results):
@@ -85,8 +86,12 @@ def outputResults(results):
         print("\n  ", "\n   ".join(matched_lines))
 
 if __name__ == '__main__':
-    if len(argv) == 2 and argv[1] == "default":#run the default file
-        executeMainFileToShell("src/main.pl")
+    if len(argv) == 2:
+        if argv[1] == "default":#run the default file
+            executeMainFileToShell("src/main.pl")
+        else: #assume it is a datafile
+            worker(ntpath.basename(argv[1]))
+
     else:#read all the files in the data folder
         jsonFiles = [f for f in listdir(dataFolder) if isfile(join(dataFolder, f)) and f[-5:] == ".json"]
         print("Found %d file(s): %s" % (len(jsonFiles), jsonFiles))
