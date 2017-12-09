@@ -33,3 +33,21 @@ scalarSumMatrix([Last], Last).
 scalarSumMatrix([L1|R], Sum):-
     scalarSumMatrix(R, TempSum),
     scalarSum(L1, TempSum, Sum).
+
+%restrict lists to match element by element
+restrictEqualLists([], []):-!.
+restrictEqualLists([A|R1], [B|R2]):-
+    A #= B,
+    restrictEqualLists(R1, R2).
+
+%initialize a list of size N full of E
+emptyList([], 0, _):-!.
+emptyList([E|L], N, E):-
+    N1 is N - 1,
+    emptyList(L, N1, E).
+
+%writeList
+writeList([]).
+writeList([E|R]):-
+    write(E), nl,
+    writeList(R).
