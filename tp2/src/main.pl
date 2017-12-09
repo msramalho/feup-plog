@@ -132,38 +132,25 @@ restrictSubjects([], _, _, 0).
 restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeachers, PreferenceFailedCount):-
     %recursive call
     restrictSubjects(R, CompFields, NTeachers, TempCount),
-    length(R, LenR),
-    format('(~d)\n', LenR),
     %assert typical standards HP > HT
     HP #> HT,
     % number of teachers needed for Theoretical (Total Hours/Division)
-    write('---1'),
     length(TT, NTeachers),
     sum(TT, #=, HT),
-    write('---2'),
     generateFdset(0, HT, DT, TFdset),
     domainFdset(TT, TFdset),
-    write('---3'),
     % number of teachers needed for Pratical (Total Hours/Division)
     length(TP, NTeachers),
-    write('---4'),
     sum(TP, #=, HP),
     generateFdset(0, HP, DP, PFdset),
-    write('---5'),
     domainFdset(TP, PFdset),
     %restrict the domain of the subjects to the total number of teachers
-    write('---6'),
     domain(TT, 0, HT),
-    write('---7'),
     domain(TP, 0, HP),
-    write('---8'),
     %restrict to only allow teachers of the field in the Theoretical lessons
     nth1(Field, CompFields, FieldComplements),
-    write('---9'),
     scalar_product(FieldComplements, TT, #= , 0), %Restriction-3,
-    write('---10'),
     scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
-    write('---11'),
     PreferenceFailedCount #= TempCount + CurrentCount.
 
 
