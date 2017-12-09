@@ -27,6 +27,7 @@ init(Subjects, Teachers):-
     length(Teachers, NTeachers), %get the number of teachers
     write('3\n'),
     getMatrixOfComplementedFields(Teachers, CompFields),
+    write(CompFields),
     write('4\n'),
     restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
     % write(PreferenceFailedCount), nl,
@@ -38,17 +39,25 @@ init(Subjects, Teachers):-
     %restriction to force enough teacher hours to exist
     % write(FailedHours), nl,
 
+    %generate heuristic to optimize
+
 % 4 - search for solutions
     getTeachersVariablesToLabel(Teachers, TVars),
     write('8\n'),
     mergeSubjectTs(Subjects, SVars),
     append(TVars, SVars, Vars),
-    write('\n...................................\n\n'),
+    write('\n...................................\n'),
     write(Vars),
-    write('\n\n...................................\n'),
-    labeling([], Vars).
+    write('\n...................................\n'),
+
+    % element(22, Vars, First),
+    % indomain(First),
+    % format('First is ~p\n', First).
+
+    % labeling([], Vars).
     % labeling([minimize(FailedHours)], Vars).
-    % time_out(labeling([minimize(FailedHours)], Vars), 5000, Res), write('Res is: \n'), write(Res).
+    time_out(labeling([], TVars), 5000, Res), write('Res is: \n'), write(Res).
+    % time_out(labeling([minimize(PreferenceFailedCount)], Vars), 6000, Res), write('Res is: \n'), write(Res).
 
 
 %------------------------------------variable definition helpers
@@ -90,6 +99,8 @@ getMatrixOfComplementedFields(Teachers, CompFields):-
         ), L)
     ), CompFields).
 
+
+
 getFailedHours(Teachers, FailedHours):-
     findall(D, (
         member(Avg-_Diff-_Field-HS1-HS2, Teachers),
@@ -110,11 +121,10 @@ mergeSubjectTs([[_, TT, TP]|T], Merged):-
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
 restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
-    % todo: optimze mahour
-    MaxHours is Avg * 2, % the maximum amount of hours for a teacher in a semester = 2 * avg (extreme cases)
+    MaxHours is Avg + abs(Diff), % the maximum amount of hours for a teacher in a semester = avg + abs(diff)
     domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
     Diff #= HS1 - HS2, % Restriction-1
-    Avg #=< (HS1 + HS2) / 2, % Restriction-2 (relaxed)
+    Avg #>= (HS1 + HS2) / 2, % Restriction-2 (relaxed)
     %recursive call
     restrictTeachers(T).
 
@@ -122,26 +132,39 @@ restrictSubjects([], _, _, 0).
 restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeachers, PreferenceFailedCount):-
     %recursive call
     restrictSubjects(R, CompFields, NTeachers, TempCount),
+    length(R, LenR),
+    format('(~d)\n', LenR),
     %assert typical standards HP > HT
     HP #> HT,
     % number of teachers needed for Theoretical (Total Hours/Division)
+    write('---1'),
     length(TT, NTeachers),
     sum(TT, #=, HT),
+    write('---2'),
     generateFdset(0, HT, DT, TFdset),
     domainFdset(TT, TFdset),
+    write('---3'),
     % number of teachers needed for Pratical (Total Hours/Division)
     length(TP, NTeachers),
+    write('---4'),
     sum(TP, #=, HP),
     generateFdset(0, HP, DP, PFdset),
+    write('---5'),
     domainFdset(TP, PFdset),
     %restrict the domain of the subjects to the total number of teachers
+    write('---6'),
     domain(TT, 0, HT),
+    write('---7'),
     domain(TP, 0, HP),
+    write('---8'),
     %restrict to only allow teachers of the field in the Theoretical lessons
     nth1(Field, CompFields, FieldComplements),
+    write('---9'),
     scalar_product(FieldComplements, TT, #= , 0), %Restriction-3,
-    scalar_product(FieldComplements, TP, #= , 0), % minimize this, Restriction-4
-    PreferenceFailedCount = TempCount.% + CurrentCount.
+    write('---10'),
+    scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
+    write('---11'),
+    PreferenceFailedCount #= TempCount + CurrentCount.
 
 
 %make sure the sum of the times for each subject, in both semesters, match that of the teachers
@@ -151,13 +174,13 @@ restrictSumBySemester(Subjects, Teachers):-
     %semester 1
     getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
-    getTeachersHoursSemester1(Teachers, LHS1), !,
+    getTeachersHoursSemester1(Teachers, LHS1), %!,
     restrictEqualLists(TimesS1, LHS1),
 
     %semester 2
     getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
-    getTeachersHoursSemester2(Teachers, LHS2), !,
+    getTeachersHoursSemester2(Teachers, LHS2), %!,
     restrictEqualLists(TimesS2, LHS2).
 
     % restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
