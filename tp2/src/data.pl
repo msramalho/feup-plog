@@ -4,7 +4,7 @@ fields(6). % count fields
 
 % subject(Semester, HT, HP, DT, DP, Field).
 subject(1,  2,  8, 2, 2,  1). % Plog
-subject(1,  2, 12, 2, 3,  2). % Rcom
+subject(1,  2,  8, 2, 2,  2). % Rcom
 subject(1,  2,  8, 2, 2,  5). % LTW
 subject(1,  2,  8, 1, 2,  4). % LAIG
 subject(1,  2, 10, 1, 2,  6). % ESOF
