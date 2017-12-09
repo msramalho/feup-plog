@@ -20,9 +20,9 @@
         "name": "Rcom",
         "semester": 1,
         "HT": 2,
-        "HP": 8,
+        "HP": 12,
         "DT": 2,
-        "DP": 2,
+        "DP": 3,
         "field": 2
     }, {
         "name": "LTW",
@@ -48,6 +48,38 @@
         "DT": 1,
         "DP": 2,
         "field": 6
+    }, {
+        "name": "PPIN",
+        "semester": 2,
+        "HT": 2,
+        "HP": 10,
+        "DT": 1,
+        "DP": 2,
+        "field": 6
+    }, {
+        "name": "SDIS",
+        "semester": 2,
+        "HT": 2,
+        "HP": 10,
+        "DT": 2,
+        "DP": 3,
+        "field": 2
+    }, {
+        "name": "LBAW",
+        "semester": 2,
+        "HT": 2,
+        "HP": 10,
+        "DT": 2,
+        "DP": 2,
+        "field": 5
+    }, {
+        "name": "COMP",
+        "semester": 2,
+        "HT": 2,
+        "HP": 10,
+        "DT": 2,
+        "DP": 2,
+        "field": 3
     }],
     "teacherTypes": [{
         "id": 1,
@@ -97,5 +129,25 @@
         "type": 3,
         "Diff": 5,
         "field": 4
+    }, {
+        "name": "Henrique Horácio",
+        "type": 3,
+        "Diff": 0,
+        "field": 3
+    }, {
+        "name": "Inácio Irlandês",
+        "type": 3,
+        "Diff": 0,
+        "field": 2
+    }, {
+        "name": "José Jesus",
+        "type": 3,
+        "Diff": 0,
+        "field": 5
+    }, {
+        "name": "Klingon Karma",
+        "type": 3,
+        "Diff": 0,
+        "field": 6
     }]
 }
