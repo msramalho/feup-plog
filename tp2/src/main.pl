@@ -11,13 +11,13 @@ test(Res, TimeOutRes):-
     time_out(setof(FailedHours-Teachers-Subjects, init(Subjects, Teachers, FailedHours), Res), 5000, TimeOutRes).
 
 %main function
-init(Subjects, Teachers, FailedHours):-
-    % clear,
+init(Subjects, Teachers):-
+    clear,
 % 1 - variable definition + 2 - domain specification
     defineTeachers(Teachers),
     defineSubjects(Subjects),
     % PreferenceFailedCount in 2..20,
-    % FailedHours in 0..20,
+    % FailedHours in 0..100,
     write('1\n'),
 
 % 3 - restrictions application
@@ -30,7 +30,7 @@ init(Subjects, Teachers, FailedHours):-
     write('4\n'),
     restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
     % write(PreferenceFailedCount), nl,
-    write('5\n'),
+    write('5\n'), !,
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
     getFailedHours(Teachers, FailedHours),
@@ -46,7 +46,7 @@ init(Subjects, Teachers, FailedHours):-
     write('\n...................................\n\n'),
     write(Vars),
     write('\n\n...................................\n'),
-    labeling([bysect], Vars).
+    labeling([], Vars).
     % labeling([minimize(FailedHours)], Vars).
     % time_out(labeling([minimize(FailedHours)], Vars), 5000, Res), write('Res is: \n'), write(Res).
 
@@ -58,12 +58,23 @@ defineTeachers(Teachers):-
     findall(Avg-Diff-Field-_HS1-_HS2, (teacher(Type, Diff, Field), teacherType(Type, Avg)), Teachers).
 
 %get a list with the TT and TP for all Subjects (of a Semester) in a List
-getSubjectsTimesBySemester([], _, []).
-getSubjectsTimesBySemester([[Semester-_Field-_HT-_HP-_DT-_DP, TT, TP]|R], Semester, NewTimes):-
-    getSubjectsTimesBySemester(R, Semester, Times),
+getSubjectsTimesBySemester([], _, [EmptyList], NTeachers):-
+    emptyList(EmptyList, NTeachers, 0).
+getSubjectsTimesBySemester([[Semester-_Field-_HT-_HP-_DT-_DP, TT, TP]|R], Semester, NewTimes, NTeachers):-
+    getSubjectsTimesBySemester(R, Semester, Times, NTeachers),
     append([TT, TP], Times, NewTimes).
 %skip if the semester does not match
-getSubjectsTimesBySemester([_|R], Semester, Times):-getSubjectsTimesBySemester(R, Semester, Times).
+getSubjectsTimesBySemester([_|R], Semester, Times, NTeachers):-getSubjectsTimesBySemester(R, Semester, Times, NTeachers).
+
+%get a list with all the HS1. findall would not work
+getTeachersHoursSemester1([], []).
+getTeachersHoursSemester1([_Avg-_Diff-_Field-HS1-_HS2|R], [HS1|LHS]):-
+    getTeachersHoursSemester1(R, LHS).
+%get a list with all the HS2. findall would not work
+getTeachersHoursSemester2([], []).
+getTeachersHoursSemester2([_Avg-_Diff-_Field-_HS1-HS2|R], [HS2|LHS]):-
+    getTeachersHoursSemester2(R, LHS).
+
 
 %get a matrix with NFields lines, where each line has NTeachers elements, where each cell is 1 or 0 (1 if the corresponding teacher DOES NOT teach this field) - this worked on the first attempt - self-five
 getMatrixOfComplementedFields(Teachers, CompFields):-
@@ -84,7 +95,7 @@ getFailedHours(Teachers, FailedHours):-
         member(Avg-_Diff-_Field-HS1-HS2, Teachers),
         D #= (Avg * 2) - (HS1 + HS2)
     ), FailedHoursList),
-    write(FailedHoursList),
+    % write(FailedHoursList),
     maximum(FailedHours, FailedHoursList).
     % sum(FailedHoursList, #=, FailedHours).
 
@@ -135,27 +146,31 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
 
 %make sure the sum of the times for each subject, in both semesters, match that of the teachers
 restrictSumBySemester(Subjects, Teachers):-
+    length(Teachers, NTeachers),
+
     %semester 1
-    getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
+    getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
-    %restrictTeacherSemester1(Teachers, TimesS1),%match the teacher's time with the corresponding cell
-    findall(HS1, member(_Avg-_Diff-_Field-HS1-_HS2, Teachers), LHS1), % TODO: this is not working, the sums don't add up xD
-    element(IndexS1, TimesS1, SumTeacherS1),
-    element(IndexS1, LHS1, SumTeacherS1),
+    getTeachersHoursSemester1(Teachers, LHS1), !,
+    restrictEqualLists(TimesS1, LHS1),
+
     %semester 2
-    getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
+    getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
-    restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
+    getTeachersHoursSemester2(Teachers, LHS2), !,
+    restrictEqualLists(TimesS2, LHS2).
+
+    % restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
 
 
-%make sure the sum of hours of a teacher in the first semester matches his/her HS1
+/* %make sure the sum of hours of a teacher in the first semester matches his/her HS1
 restrictTeacherSemester1(_, []):-!.
 restrictTeacherSemester1([], []).
 restrictTeacherSemester1([_Avg-_Diff-_Field-Sum-_HS2|T1], [Sum|T2]):-restrictTeacherSemester1(T1, T2).
 %make sure the sum of hours of a teacher in the first semester matches his/her HS2
 restrictTeacherSemester2(_, []):-!.
 restrictTeacherSemester2([], []).
-restrictTeacherSemester2([_Avg-_Diff-_Field-_HS1-Sum|T1], [Sum|T2]):-restrictTeacherSemester2(T1, T2).
+restrictTeacherSemester2([_Avg-_Diff-_Field-_HS1-Sum|T1], [Sum|T2]):-restrictTeacherSemester2(T1, T2). */
 
 
 %------------------------------------labeling helpers
@@ -182,7 +197,7 @@ Modeling:
 
     Teachers = [Avg-Diff-Field-HS1-HS2, ..]
         Avg - The average week hours a teacher from this type should teach
-        Diff - the preference the teacher has shown towards having more hours on the 1st semester (positive value), on the 2nd semester (negative value) or a balanced schedule between semesters (zero)
+        Diff - the preference the teacher has shown towards having more hours on the 1st semester (positive value), on the 2nd semester (negative value) or a balanced schedule between semesters (zero), Diff = HS1 - HS2
         Field - The field of specialization for this teacher
         HS1 - Number of hours this teacher is giving during the 1st semester
         HS2 - Number of hours this teacher is giving during the 2nd semester
