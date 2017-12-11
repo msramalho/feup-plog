@@ -7,7 +7,7 @@ import time
 import ntpath
 from sys import argv
 
-from generator import *
+from prologer import *
 
 #important variables:
 tmpFolder = "src/"#folder to use for the temporary usage of files, should not be inner folder, due to include referencing
