@@ -98,7 +98,6 @@ def printConfiguration(data):
         mergedSSX = pdSubjects[pdSubjects.semester == i].groupby(
             ["field"]).sum().reset_index().drop(['semester'], 1)
         # print(mergedSSX)
-        # print(mergedSSX)
         otherSemester = ("HS%d" %  (1 if i == 2 else 2))
         mergedTSX = mergedT.drop([otherSemester], 1)
         # print(mergedTSX)
