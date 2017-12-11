@@ -9,7 +9,7 @@ generateFdset(Min, Max, Step, Fdset):-
     generateList(Min, Max, Step, List),
     list_to_fdset(List, Fdset).
 %generate a list with a start, end and step
-generateList(Max, Max, _Step, [Max]).
+generateList(Max, Max, _Step, [Max]):-!.
 generateList(MoreThanMax, Max, _Step, []):-MoreThanMax > Max, !.
 generateList(Min, Max, Step, NewList):-
     NewMin is Min + Step,

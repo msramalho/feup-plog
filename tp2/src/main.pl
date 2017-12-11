@@ -27,11 +27,10 @@ init(Subjects, Teachers):-
     length(Teachers, NTeachers), %get the number of teachers
     write('3\n'),
     getMatrixOfComplementedFields(Teachers, CompFields),
-    write(CompFields),
     write('4\n'),
     restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
     % write(PreferenceFailedCount), nl,
-    write('5\n'), !,
+    write('5\n'),
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
     getFailedHours(Teachers, FailedHours),
@@ -56,7 +55,8 @@ init(Subjects, Teachers):-
 
     % labeling([], Vars).
     % labeling([minimize(FailedHours)], Vars).
-    time_out(labeling([], TVars), 5000, Res), write('Res is: \n'), write(Res).
+    % time_out(labeling([], Vars), 5000, Res), write('Res is: \n'), write(Res).
+    labeling([], Vars).
     % time_out(labeling([minimize(PreferenceFailedCount)], Vars), 6000, Res), write('Res is: \n'), write(Res).
 
 
@@ -73,7 +73,9 @@ getSubjectsTimesBySemester([[Semester-_Field-_HT-_HP-_DT-_DP, TT, TP]|R], Semest
     getSubjectsTimesBySemester(R, Semester, Times, NTeachers),
     append([TT, TP], Times, NewTimes).
 %skip if the semester does not match
-getSubjectsTimesBySemester([_|R], Semester, Times, NTeachers):-getSubjectsTimesBySemester(R, Semester, Times, NTeachers).
+getSubjectsTimesBySemester([[OtherSemester-_Field-_HT-_HP-_DT-_DP, _TT, _TP]|R], Semester, Times, NTeachers):-
+    OtherSemester #\= Semester,
+    getSubjectsTimesBySemester(R, Semester, Times, NTeachers).
 
 %get a list with all the HS1. findall would not work
 getTeachersHoursSemester1([], []).
@@ -157,7 +159,6 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
 %make sure the sum of the times for each subject, in both semesters, match that of the teachers
 restrictSumBySemester(Subjects, Teachers):-
     length(Teachers, NTeachers),
-
     %semester 1
     getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
