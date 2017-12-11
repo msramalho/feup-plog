@@ -14,6 +14,7 @@ except ImportError:
 def printConfiguration(data):
     if not pd:
         print("Cannot print configuration without installing pandas")
+        return
     print("Department: %s" % data["department"])
 
     # print teacher types in a table
