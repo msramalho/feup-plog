@@ -123,7 +123,7 @@ def convertToProlog(data, filename):
 	for s in data["subjects"]:
 		content += ("subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n" %
 					(s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
-	content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
+	# content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
 
 	# print teacher types
 	content += "\n% teacherType(Type, AverageWeekHours).\n"
@@ -132,15 +132,14 @@ def convertToProlog(data, filename):
 		i += 1
 		content += ("teacherType(%d, %2d). %% %s\n" %
 					(i, t["averageWeekHours"], t["name"]))
-	content += "\nteacherTypes(%d). %% count teacher types\n" % len(
-		data["teacherTypes"])
+	# content += "\nteacherTypes(%d). %% count teacher types\n" % len(data["teacherTypes"])
 
 	# print teacher information
 	content += "\n% teacher(Type, Diff, Field).\n"
 	for t in data["teachers"]:
 		content += ("teacher(%d, %2d, %s). %% %s\n" %
 					(t["type"], t["Diff"], t["field"], t["name"]))
-	content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
+	# content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
 	return content
 
 # write contents to a file, warns if it already exists
