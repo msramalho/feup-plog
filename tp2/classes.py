@@ -1,5 +1,8 @@
-import random
 import json
+import random
+from datetime import datetime
+
+random.seed(datetime.now()) # set random seed
 
 class Parent():
 	def toJson(self):
@@ -7,6 +10,7 @@ class Parent():
 
 
 class Subject(Parent):
+	count = 0 # internal id assignment
 	def __init__(self, semester=0, field=0, tHours=-1, pHours=-1, tDuration=-1, pDuration=-1):
 		self.semester = semester
 		self.field = field
@@ -17,6 +21,7 @@ class Subject(Parent):
 		# this values will not be changed (tHours and pHours, may)
 		self.tHoursOriginal = tHours
 		self.pHoursOriginal = pHours
+		Subject.count += 1
 
 	# We can also add our own functions. When our ball bounces,
 	def generateSubject(config, semester):
@@ -46,16 +51,30 @@ class Subject(Parent):
 		debts = []
 		fields = []
 		for teacher in teachers:
-			# maxDebt = int(abs(teacher.hs1 - teacher.hs2) - config.maxDiff) # formula
 			print("-"*20)
 			print(teacher.toJson())
 			debt = 0
-			if teacher.hs1 - teacher.hs2 > config.maxDiff: # debt is from hs2 to hs1
+			maxDebt = int(abs(teacher.hs1 - teacher.hs2) - config.maxDiff) # formula
+			if maxDebt > 0: # there is a debt
+				# the 1 is never 0, otherwise there would be no debt
+				rangeLeftSet = set(range(1, teacher.maxHours - teacher.hs1 - teacher.hs2 + 1))
+				current = teacher.hs1 if semester == 2 else teacher.hs2
+				rightMin = int(current - config.maxDiff/2)
+				rightMax = int(current + config.maxDiff/2)
+				rangeRightSet = set(range(rightMin, rightMax + 1))
+				intersection = list(rangeLeftSet.intersection(rangeRightSet))
+				#intersect both ranges and choose the outcome, always respecting maxDiff
+				print("Left: ", rangeLeftSet)
+				print("Right: ", rangeRightSet)
+				print("Intersection: ", intersection)
+				debt = random.choice(intersection)
+
+			''' if teacher.hs1 - teacher.hs2 > config.maxDiff: # debt is from hs2 to hs1
 				choice = random.choice(range(int(teacher.hs1 - config.maxDiff), int(teacher.hs1 + config.maxDiff)))
 				debt = choice - teacher.hs2 # calculate the debt
 			elif teacher.hs2 - teacher.hs1 > config.maxDiff: # debt is from hs1 to hs2
 				choice = random.choice(range(int(teacher.hs2 - config.maxDiff), int(teacher.hs2 + config.maxDiff)))
-				debt = choice - teacher.hs1 # calculate the debt
+				debt = choice - teacher.hs1 # calculate the debt '''
 
 			if debt > 0:
 				print("debt is %d" % (debt))
@@ -86,14 +105,27 @@ class Subject(Parent):
 		s.adjustDurations()
 		return s
 
+	def toJsonData(self):
+		return json.dumps({
+			"name" : ("Subject %5d" % Subject.count),
+			"semester" : self.semester,
+			"HT" : self.tHours,
+			"HP" : self.pHours,
+			"DT" : self.tDuration,
+			"PT" : self.pDuration,
+			"field" : self.field
+		})
 
 class Teacher(Parent):
+	count = 0
+	types = [14, 16, 18]
 	def __init__(self, field = 0, maxHours = -1, hs1 = 0, hs2 = 0, diff = 0):
 		self.field = field
 		self.maxHours = maxHours # maxHours is not changed
 		self.hs1 = hs1
 		self.hs2 = hs2
 		self.diff = diff
+		Teacher.count += 1
 
 	# receives a subject and adds its theoretical hours into the correct semester - always expected to be possible
 	def addTHours(self, subject):
@@ -119,13 +151,16 @@ class Teacher(Parent):
 		# module of a block time by the maximum hours available that respect maxDiff
 		blockTime = subject.pDuration
 		# calculate the maximum ammount of blocks the teacher can give, the if is to avoid X % 0 (exception)
-		maxAvailableTime = (self.maxHours/2 + config.maxDiff/2 - current)
-		if maxAvailableTime == 0:
-			maxBlocks = 0
-		else:
-			maxBlocks = blockTime % maxAvailableTime
+		# maxAvailableTime = ((self.maxHours - self.hs1 - self.hs2)/2 + config.maxDiff/2 - current)
+		# maxAvailableTime = ((self.maxHours - self.hs1 - self.hs2)/2 + config.maxDiff/2)
+		availableHours = (self.maxHours - self.hs1 - self.hs2)
+		maxAvailableTime  = int((config.maxDiff - self.hs1 + availableHours + self.hs2)/2)
+		# if maxAvailableTime <= 0:
+		# 	maxBlocks = 0
+		# else:
+		maxBlocks = maxAvailableTime // blockTime
 
-		maxBlocks = max(abs(subject.pDuration % subject.pHours), maxBlocks)
+	# maxBlocks = max(abs(subject.pDuration % subject.pHours), maxBlocks)
 		print("pDuration: %d, pHours: %d, module: %d" % (subject.pDuration, subject.pHours, subject.pDuration % subject.pHours))
 		print("maxBlocks is %d of %d" % (maxBlocks, subject.pDuration))
 
@@ -150,9 +185,19 @@ class Teacher(Parent):
 		if field is None:
 			field = random.randint(1, config.nFields)
 		t = Teacher(field) # create new teacher
-		t.maxHours = random.choice([14, 16, 18]) # teacher maxHours is a random from the possible seniority steps
+		t.maxHours = random.choice(Teacher.types) # teacher maxHours is a random from the possible seniority steps
 		return t
 
+	def toJsonData(self):
+		return json.dumps({
+			"name" : ("Teacher %5d" % Teacher.count),
+			"type" : Teacher.types.index(self.maxHours),
+			"diff" : self.tHours,
+			"HP" : self.pHours,
+			"DT" : self.tDuration,
+			"PT" : self.pDuration,
+			"field" : self.field
+		})
 
 class Config(Parent):
 	def __init__(self, rounds=3, maxDiff=4, nFields=5, randomizeEfficiency=False):
