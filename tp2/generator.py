@@ -43,7 +43,7 @@ def generate(config):
 
 	return subjects, teachers
 
-config = Config(rounds=1, maxDiff=4, nFields=5, randomizeEfficiency=False)
+config = Config(rounds=1, maxDiff=2, nFields=5, randomizeEfficiency=False)
 subjects, teachers = generate(config)
 for s in subjects:
 	print(s.toJson())

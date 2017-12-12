@@ -44,7 +44,7 @@ class Subject(Parent):
 
 	# receives a list of teachers, calculates their time debts to the maxDiff and returns a Subject that clears the debts
 	def generateDebtSubject(config, teachers, semester):
-		semester = 1 if semester == 2 else 1 #the new subject is in the next semester
+		semester = 1 if semester == 2 else 2 #the new subject is in the next semester
 		debts = []
 		fields = []
 		for teacher in teachers:
@@ -115,8 +115,9 @@ class Teacher(Parent):
 		# module of a block time by the maximum hours available that respect maxDiff
 		blockTime = subject.pDuration
 		maxBlocks = blockTime % (self.maxHours/2 + config.maxDiff/2 - current)
-		maxBlocks = max(subject.pDuration % subject.pHours, maxBlocks)
-		print("maxBlocks is %d" % maxBlocks)
+		maxBlocks = max(abs(subject.pDuration % subject.pHours), maxBlocks)
+		print("pDuration: %d, pHours: %d, module: %d" % (subject.pDuration, subject.pHours, subject.pDuration % subject.pHours))
+		print("maxBlocks is %d of %d" % (maxBlocks, subject.pDuration))
 
 		# randomize used blocks (may lead to greater number of teachers)
 		effectiveHours = blockTime * maxBlocks # maximum amount
