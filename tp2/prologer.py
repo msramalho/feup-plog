@@ -30,7 +30,7 @@ def printConfiguration(data):
 	print(pdFields)
 
 	# print teacher information in a table
-	pdTeachers = pd.DataFrame(data["teachers"], columns=["name", "type", "field", "Diff"])
+	pdTeachers = pd.DataFrame(data["teachers"], columns=["name", "type", "field", "diff"])
 	pdTeachers.index += 1
 	print("\nTeachers (%d):" % len(pdTeachers))
 	print(pdTeachers)
@@ -68,7 +68,7 @@ def printConfiguration(data):
 	mergedT = pd.merge(pdTeachers, pDTeacherTypes, how='left',
 					   left_on="type", right_index=True)
 	mergedT = mergedT.drop('name_y', 1)
-	avgDiff = mergedT["Diff"] / 2
+	avgDiff = mergedT["diff"] / 2
 	mergedT["HS1"] = mergedT["averageWeekHours"] + avgDiff
 	mergedT["HS2"] = mergedT["averageWeekHours"] - avgDiff
 	# print(mergedT)
@@ -88,7 +88,7 @@ def printConfiguration(data):
 
 	# check that the hours of teachers, in each semester, are enough for each field
 	# teachers table merged by field, HS1 and HS2 are the sum foreach field
-	mergedT = mergedT.drop(['averageWeekHours', 'Diff', 'type'], 1)
+	mergedT = mergedT.drop(['averageWeekHours', 'diff', 'type'], 1)
 	mergedT = mergedT.groupby(["field"]).sum().reset_index()
 	# subjects table has new column that is total number of hours for a sibject
 	pdSubjects["Total"] = pdSubjects["HT"] + pdSubjects["HP"]
@@ -135,10 +135,10 @@ def convertToProlog(data, filename):
 	# content += "\nteacherTypes(%d). %% count teacher types\n" % len(data["teacherTypes"])
 
 	# print teacher information
-	content += "\n% teacher(Type, Diff, Field).\n"
+	content += "\n% teacher(Type, diff, Field).\n"
 	for t in data["teachers"]:
 		content += ("teacher(%d, %2d, %s). %% %s\n" %
-					(t["type"], t["Diff"], t["field"], t["name"]))
+					(t["type"], t["diff"], t["field"], t["name"]))
 	# content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
 	return content
 
