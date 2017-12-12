@@ -1,4 +1,3 @@
-import random
 from classes import Config, Subject, Teacher
 
 def generate(config):
