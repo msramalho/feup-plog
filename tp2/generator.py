@@ -12,6 +12,7 @@ def generate(config):
 
 		# create the main subject that defines how this round will occur
 		roundSubject = Subject.generateSubject(config, semester)
+		print(roundSubject.toJson())
 		# create the main teacher for (at least) the theoretical of roundSubject
 		currentTeacher = Teacher.generateTeacher(config, roundSubject.field)
 		# add the theoretical hours to this teacher (clears the roundSubject.tHours)
@@ -25,6 +26,8 @@ def generate(config):
 			print("Old: %d" % roundSubject.pHours)
 			currentTeacher.addPHoursMax(config, roundSubject) #add as many hours as possible
 			print("New: %d" % roundSubject.pHours)
+			if roundSubject.pHours < 0:
+				raise Exception('roundSubject.pHours < 0')
 			if roundSubject.pHours == 0: # enough teachers found to fill the practical hours
 				break
 			currentTeacher = Teacher.generateTeacher(config) # generate as many extra teachers (any field) as necessary
@@ -43,12 +46,13 @@ def generate(config):
 
 	return subjects, teachers
 
-config = Config(rounds=1, maxDiff=2, nFields=5, randomizeEfficiency=False)
-subjects, teachers = generate(config)
-for s in subjects:
-	print(s.toJson())
-for t in teachers:
-	print(t.toJson())
+for i in range(1000):
+	config = Config(rounds=i, maxDiff=3, nFields=2, randomizeEfficiency=False)
+	subjects, teachers = generate(config)
+	for s in subjects:
+		print(s.toJson())
+	for t in teachers:
+		print(t.toJson())
 # config = Config()
 # s = Subject.generateSubject(config, 1)
 # print(s.toJson())

@@ -30,12 +30,10 @@ class Subject(Parent):
 				   (14, 2), (15, 3), (16, 2), (18, 2), (18, 3)]  # (total, unitDuration) [MORE REALISTIC]
 
 		# create the new subject
-		s = Subject(semester)
-		s.field = random.randint(1, config.nFields)
-		s.tHours, s.tDuration = random.choice(tuplesT)
-		s.pHours, s.pDuration = random.choice(tuplesP)
-
-		return s
+		field = random.randint(1, config.nFields)
+		tHours, tDuration = random.choice(tuplesT)
+		pHours, pDuration = random.choice(tuplesP)
+		return Subject(semester, field, tHours, pHours, tDuration, pDuration)
 
 	# if the current durations are unable to produce tHours or pHours
 	def adjustDurations(self):
@@ -48,19 +46,23 @@ class Subject(Parent):
 		debts = []
 		fields = []
 		for teacher in teachers:
-			maxDebt = int(abs(teacher.hs1 - teacher.hs2) - config.maxDiff) # formula
-			if maxDebt > 0: # there is a debt
-				# the 1 is never 0, otherwise there would be no debt
-				rangeLeftSet = set(range(1, maxDebt + 1))
-				rightMin = int(min(teacher.hs1, teacher.hs2) - config.maxDiff/2)
-				rightMax = int(max(teacher.hs1, teacher.hs2) + config.maxDiff/2)
-				rangeRightSet = set(range(rightMin, rightMax + 1))
+			# maxDebt = int(abs(teacher.hs1 - teacher.hs2) - config.maxDiff) # formula
+			print("-"*20)
+			print(teacher.toJson())
+			debt = 0
+			if teacher.hs1 - teacher.hs2 > config.maxDiff: # debt is from hs2 to hs1
+				choice = random.choice(range(int(teacher.hs1 - config.maxDiff), int(teacher.hs1 + config.maxDiff)))
+				debt = choice - teacher.hs2 # calculate the debt
+			elif teacher.hs2 - teacher.hs1 > config.maxDiff: # debt is from hs1 to hs2
+				choice = random.choice(range(int(teacher.hs2 - config.maxDiff), int(teacher.hs2 + config.maxDiff)))
+				debt = choice - teacher.hs1 # calculate the debt
 
-				#intersect both ranges and choose the outcome, always respecting maxDiff
-				debt = random.choice(list(rangeLeftSet.intersection(rangeRightSet)))
+			if debt > 0:
+				print("debt is %d" % (debt))
 				teacher.addPHours(debt, semester)
 				fields.append(teacher.field) #only append if the debt exists
 				debts.append(debt)
+			print("-"*20)
 
 		debt = sum(debts) # think of the scope as REST
 		if debt == 0: # no debt so there is no need for this subject
@@ -79,6 +81,8 @@ class Subject(Parent):
 		else:
 			s.tHours = minDebt
 			s.pHours = debt - minDebt
+		s.tHoursOriginal = s.tHours
+		s.pHoursOriginal = s.pHours
 		s.adjustDurations()
 		return s
 
@@ -114,7 +118,13 @@ class Teacher(Parent):
 		# use the formula to calculate the maximum amount of class blocks this teacher can give
 		# module of a block time by the maximum hours available that respect maxDiff
 		blockTime = subject.pDuration
-		maxBlocks = blockTime % (self.maxHours/2 + config.maxDiff/2 - current)
+		# calculate the maximum ammount of blocks the teacher can give, the if is to avoid X % 0 (exception)
+		maxAvailableTime = (self.maxHours/2 + config.maxDiff/2 - current)
+		if maxAvailableTime == 0:
+			maxBlocks = 0
+		else:
+			maxBlocks = blockTime % maxAvailableTime
+
 		maxBlocks = max(abs(subject.pDuration % subject.pHours), maxBlocks)
 		print("pDuration: %d, pHours: %d, module: %d" % (subject.pDuration, subject.pHours, subject.pDuration % subject.pHours))
 		print("maxBlocks is %d of %d" % (maxBlocks, subject.pDuration))
@@ -125,7 +135,11 @@ class Teacher(Parent):
 			effectiveHours = random.randrange(blockTime, effectiveHours + 1, blockTime)
 
 		# update the subject practical hours with the hours this teacher is teaching
-		subject.pHours -=  effectiveHours
+		print("   effectiveHours before %d" % effectiveHours)
+		if subject.pHours - effectiveHours < 0:
+			effectiveHours = subject.pHours
+		print("   effectiveHours after  %d" % effectiveHours)
+		subject.pHours -= effectiveHours
 		# update the teacher hours based on the semester
 		if subject.semester == 1: # semester 1
 			self.hs1 += effectiveHours
