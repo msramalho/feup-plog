@@ -22,26 +22,23 @@
     }],
     "teacherTypes": [{
         "id": 1,
-        "name": "Gownsman",
         "averageWeekHours": 7
     }, {
         "id": 2,
-        "name": "Associate",
         "averageWeekHours": 8
     }, {
         "id": 3,
-        "name": "Auxiliar",
         "averageWeekHours": 9
     }],
     "teachers": [{
         "name": "Álvaro Alves",
         "type": 1,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }, {
         "name": "Bernardo Belo",
         "type": 1,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }]
 }

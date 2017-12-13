@@ -83,71 +83,68 @@
     }],
     "teacherTypes": [{
         "id": 1,
-        "name": "Gownsman",
         "averageWeekHours": 7
     }, {
         "id": 2,
-        "name": "Associate",
         "averageWeekHours": 8
     }, {
         "id": 3,
-        "name": "Auxiliar",
         "averageWeekHours": 9
     }],
     "teachers": [{
         "name": "Álvaro Alves",
         "type": 1,
-        "Diff": 6,
+        "diff": 6,
         "field": 2
     }, {
         "name": "Bernardo Belo",
         "type": 2,
-        "Diff": 8,
+        "diff": 8,
         "field": 3
     }, {
         "name": "Carlos Celestino",
         "type": 2,
-        "Diff": 10,
+        "diff": 10,
         "field": 4
     }, {
         "name": "Daniel Damásio",
         "type": 3,
-        "Diff": 10,
+        "diff": 10,
         "field": 5
     }, {
         "name": "Eduardo Ernesto",
         "type": 3,
-        "Diff": 9,
+        "diff": 9,
         "field": 1
     }, {
         "name": "Francisco Fanhoso",
         "type": 3,
-        "Diff": 9,
+        "diff": 9,
         "field": 6
     }, {
         "name": "Gonçalo Garcia",
         "type": 3,
-        "Diff": 5,
+        "diff": 5,
         "field": 4
     }, {
         "name": "Henrique Horácio",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 3
     }, {
         "name": "Inácio Irlandês",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "José Jesus",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 5
     }, {
         "name": "Klingon Karma",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 6
     }]
 }
