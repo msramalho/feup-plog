@@ -55,8 +55,8 @@ init(Subjects, Teachers):-
 
     % labeling([], Vars).
     % labeling([minimize(FailedHours)], Vars).
-    % time_out(labeling([], Vars), 5000, Res), write('Res is: \n'), write(Res).
-    labeling([], Vars).
+    time_out(labeling([minimize(FailedHours)], Vars), 3000, Res), write('Res is: \n'), write(Res).
+    % labeling([], Vars).
     % time_out(labeling([minimize(PreferenceFailedCount)], Vars), 6000, Res), write('Res is: \n'), write(Res).
 
 
@@ -103,6 +103,12 @@ getMatrixOfComplementedFields(Teachers, CompFields):-
 
 
 
+getFailedHours([], 0).
+getFailedHours([Avg-_Diff-_Field-HS1-HS2|T], FailedHours):-
+    getFailedHours(T, TempFailedHours),
+    FailedHours #= TempFailedHours + (Avg * 2) - (HS1 + HS2).
+
+/*
 getFailedHours(Teachers, FailedHours):-
     findall(D, (
         member(Avg-_Diff-_Field-HS1-HS2, Teachers),
@@ -110,7 +116,7 @@ getFailedHours(Teachers, FailedHours):-
     ), FailedHoursList),
     % write(FailedHoursList),
     maximum(FailedHours, FailedHoursList).
-    % sum(FailedHoursList, #=, FailedHours).
+    % sum(FailedHoursList, #=, FailedHours). */
 
 %get a list of all the variables in TT and TP so that we can label them
 mergeSubjectTs([], []).
@@ -123,8 +129,11 @@ mergeSubjectTs([[_, TT, TP]|T], Merged):-
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
 restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
-    MaxHours is Avg + abs(Diff), % the maximum amount of hours for a teacher in a semester = avg + abs(diff)
-    domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
+    MaxHoursS1 is Avg + Diff, % the maximum amount of hours for a teacher in a semester = avg + abs(diff)
+    MinHoursS2 is Avg - Diff, % the maximum amount of hours for a teacher in a semester = avg + abs(diff)
+    % domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
+    HS1 in 0..MaxHoursS1,
+    HS2 in 0..MinHoursS2,
     Diff #= HS1 - HS2, % Restriction-1
     Avg #>= (HS1 + HS2) / 2, % Restriction-2 (relaxed)
     %recursive call
@@ -141,7 +150,7 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
     sum(TT, #=, HT),
     generateFdset(0, HT, DT, TFdset),
     domainFdset(TT, TFdset),
-    % number of teachers needed for Pratical (Total Hours/Division)
+    % number of teachers needed for Practical (Total Hours/Division)
     length(TP, NTeachers),
     sum(TP, #=, HP),
     generateFdset(0, HP, DP, PFdset),
@@ -199,11 +208,11 @@ Modeling:
         Semester - The semester where this Subject occurs
         Field - The field of stufy for this subject
         HT - Hours in Theoretical classes
-        HP - Hours in Pratical classes
+        HP - Hours in Practical classes
         DT - Duration of Theoretical classes
-        DP - Duration of Pratical classes
+        DP - Duration of Practical classes
         TT - LIST Aligned with Teachers - hours that teach Teacher gives in theoretical lessons
-        TP - LIST Aligned with Teachers - hours that teach Teacher gives in pratical lessons
+        TP - LIST Aligned with Teachers - hours that teach Teacher gives in practical lessons
         The id of the subject is its index in the Subjects list
 
     Teachers = [Avg-Diff-Field-HS1-HS2, ..]
@@ -218,7 +227,7 @@ Restrictions:
     1. A teacher chooses the acceptable Diff value for the difference in hours from the 1st to the 2nd semesters;
     2. According to their type, teachers will need to teach an average week teaching time over the two semesters that is approximate to the stipulated values.
     3. Theoretical Hours must be lectured by teachers that have the same field
-    4. Pratical lessons should be given by teachers of that area, prefearbly (minimize the number of teachers that teach something they "do not know")
+    4. Practical lessons should be given by teachers of that area, prefearbly (minimize the number of teachers that teach something they "do not know")
 
     . maximize the number of teachers with their preferences respected
 
