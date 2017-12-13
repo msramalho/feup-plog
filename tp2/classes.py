@@ -1,4 +1,5 @@
 import json
+import names
 import random
 from datetime import datetime
 
@@ -10,7 +11,6 @@ class Parent():
 
 
 class Subject(Parent):
-	count = 0 # internal id assignment
 	def __init__(self, semester=0, field=0, tHours=-1, pHours=-1, tDuration=-1, pDuration=-1):
 		self.semester = semester
 		self.field = field
@@ -21,7 +21,6 @@ class Subject(Parent):
 		# this values will not be changed (tHours and pHours, may)
 		self.tHoursOriginal = tHours
 		self.pHoursOriginal = pHours
-		Subject.count += 1
 
 	# We can also add our own functions. When our ball bounces,
 	def generateSubject(config, semester):
@@ -47,6 +46,7 @@ class Subject(Parent):
 
 	# receives a list of teachers, calculates their time debts to the maxDiff and returns a Subject that clears the debts
 	def generateDebtSubject(config, teachers, semester):
+		print("%sCalculating debts" % ("-"*20))
 		semester = 1 if semester == 2 else 2 #the new subject is in the next semester
 		debts = []
 		fields = []
@@ -103,21 +103,21 @@ class Subject(Parent):
 		s.tHoursOriginal = s.tHours
 		s.pHoursOriginal = s.pHours
 		s.adjustDurations()
+		print("new subject to fill debts is:\n", s.toJson())
 		return s
 
-	def toJsonData(self):
-		return json.dumps({
-			"name" : ("Subject %5d" % Subject.count),
+	def toJsonData(self, index):
+		return {
+			"name" : ("Subject_%d" % index),
 			"semester" : self.semester,
-			"HT" : self.tHours,
-			"HP" : self.pHours,
+			"HT" : self.tHoursOriginal,
+			"HP" : self.pHoursOriginal,
 			"DT" : self.tDuration,
-			"PT" : self.pDuration,
+			"DP" : self.pDuration,
 			"field" : self.field
-		})
+		}
 
 class Teacher(Parent):
-	count = 0
 	types = [14, 16, 18]
 	def __init__(self, field = 0, maxHours = -1, hs1 = 0, hs2 = 0, diff = 0):
 		self.field = field
@@ -125,14 +125,13 @@ class Teacher(Parent):
 		self.hs1 = hs1
 		self.hs2 = hs2
 		self.diff = diff
-		Teacher.count += 1
 
 	# receives a subject and adds its theoretical hours into the correct semester - always expected to be possible
 	def addTHours(self, subject):
 		if subject.semester == 1: # semester 1
 			self.hs1 += subject.tHours
 		else: # semester 2
-			self.hs2 += subject.pHours
+			self.hs2 += subject.tHours
 		# update the current values in the subject theoretical hours
 		subject.tHours = 0
 
@@ -145,32 +144,29 @@ class Teacher(Parent):
 
 	# receives a subject and adds as many of its practical hours into the correct semester as possible
 	def addPHoursMax(self, config, subject):
-		# get the current semester's value
-		current = self.hs1 if subject.semester == 1 else self.hs2
+		print("-----Filling Subject\n", subject.toJson())
 		# use the formula to calculate the maximum amount of class blocks this teacher can give
 		# module of a block time by the maximum hours available that respect maxDiff
-		blockTime = subject.pDuration
 		# calculate the maximum ammount of blocks the teacher can give, the if is to avoid X % 0 (exception)
-		# maxAvailableTime = ((self.maxHours - self.hs1 - self.hs2)/2 + config.maxDiff/2 - current)
-		# maxAvailableTime = ((self.maxHours - self.hs1 - self.hs2)/2 + config.maxDiff/2)
 		availableHours = (self.maxHours - self.hs1 - self.hs2)
-		maxAvailableTime  = int((config.maxDiff - self.hs1 + availableHours + self.hs2)/2)
-		# if maxAvailableTime <= 0:
-		# 	maxBlocks = 0
-		# else:
-		maxBlocks = maxAvailableTime // blockTime
+		maxAvailableTime = 0
+		if subject.semester == 1: # semester 1
+			maxAvailableTime  = int((config.maxDiff - self.hs1 + availableHours + self.hs2)/2)
+		else: # semester 2
+			maxAvailableTime  = int((config.maxDiff - self.hs2 + availableHours + self.hs1)/2)
 
-	# maxBlocks = max(abs(subject.pDuration % subject.pHours), maxBlocks)
-		print("pDuration: %d, pHours: %d, module: %d" % (subject.pDuration, subject.pHours, subject.pDuration % subject.pHours))
-		print("maxBlocks is %d of %d" % (maxBlocks, subject.pDuration))
+		print(self.toJson())
+		maxBlocks = maxAvailableTime // subject.pDuration
+		# print("Available time: %d -> maxBlocks = %d" % (maxAvailableTime, maxBlocks))
+		# print("pDuration: %d, pHours: %d, modulo: %d" % (subject.pDuration, subject.pHours, subject.pHours // subject.pDuration))
+		# print("maxBlocks is %d of %d (%d/%d hours)" % (maxBlocks, subject.pHours // subject.pDuration, maxBlocks * subject.pDuration, subject.pHours))
 
 		# randomize used blocks (may lead to greater number of teachers)
-		effectiveHours = blockTime * maxBlocks # maximum amount
+		effectiveHours = subject.pDuration * maxBlocks # maximum amount
 		if config.randomizeEfficiency: # produce random choice instead
-			effectiveHours = random.randrange(blockTime, effectiveHours + 1, blockTime)
+			effectiveHours = random.randrange(subject.pDuration, effectiveHours + 1, subject.pDuration)
 
 		# update the subject practical hours with the hours this teacher is teaching
-		print("   effectiveHours before %d" % effectiveHours)
 		if subject.pHours - effectiveHours < 0:
 			effectiveHours = subject.pHours
 		print("   effectiveHours after  %d" % effectiveHours)
@@ -180,6 +176,7 @@ class Teacher(Parent):
 			self.hs1 += effectiveHours
 		else: # semester 2
 			self.hs2 += effectiveHours
+		print(self.toJson())
 
 	def generateTeacher(config, field = None):
 		if field is None:
@@ -188,21 +185,18 @@ class Teacher(Parent):
 		t.maxHours = random.choice(Teacher.types) # teacher maxHours is a random from the possible seniority steps
 		return t
 
-	def toJsonData(self):
-		return json.dumps({
-			"name" : ("Teacher %5d" % Teacher.count),
-			"type" : Teacher.types.index(self.maxHours),
-			"diff" : self.tHours,
-			"HP" : self.pHours,
-			"DT" : self.tDuration,
-			"PT" : self.pDuration,
+	def toJsonData(self, index):
+		return {
+			"name" : ("Teacher_%d - %s" % (index, names.get_full_name())),
+			"type" : Teacher.types.index(self.maxHours) + 1,
+			"diff" : self.hs1 - self.hs2,
 			"field" : self.field
-		})
+		}
 
 class Config(Parent):
-	def __init__(self, rounds=3, maxDiff=4, nFields=5, randomizeEfficiency=False):
+	def __init__(self, rounds=3, maxDiff=4, nFields=5, randomizeEfficiency=False, department="DEI"):
 		self.rounds = rounds
 		self.maxDiff = maxDiff
 		self.nFields = nFields
-		self.semesterCounter = 0
 		self.randomizeEfficiency = randomizeEfficiency # if True this can lead to more teachers being spawned, since their time is not allocated by the maximum amount possible, but randomly between block time and max, @see addPHoursMax
+		self.department = department

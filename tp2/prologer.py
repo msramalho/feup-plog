@@ -18,7 +18,7 @@ def printConfiguration(data):
 	print("Department: %s" % data["department"])
 
 	# print teacher types in a table
-	pDTeacherTypes = pd.DataFrame(data["teacherTypes"], columns=["name", "averageWeekHours"])
+	pDTeacherTypes = pd.DataFrame(data["teacherTypes"], columns=["averageWeekHours"])
 	pDTeacherTypes.index += 1
 	print("\nTeacher types (%d):" % len(pDTeacherTypes))
 	print(pDTeacherTypes)
@@ -49,6 +49,7 @@ def printConfiguration(data):
 	hp = pdSubjects["HP"].sum()
 	print("\n%30s: %4dh" % ("Theoretical", ht))
 	print("%30s: %4dh" % ("Practical", hp))
+	print("%30s: %4dh" % ("Total", ht + hp))
 	# semester 1
 	s1 = pdSubjects.query("semester == 1")
 	ht1 = s1["HT"].sum()
@@ -67,7 +68,6 @@ def printConfiguration(data):
 	# teacher stats
 	mergedT = pd.merge(pdTeachers, pDTeacherTypes, how='left',
 					   left_on="type", right_index=True)
-	mergedT = mergedT.drop('name_y', 1)
 	avgDiff = mergedT["diff"] / 2
 	mergedT["HS1"] = mergedT["averageWeekHours"] + avgDiff
 	mergedT["HS2"] = mergedT["averageWeekHours"] - avgDiff
@@ -75,7 +75,7 @@ def printConfiguration(data):
 	hs1 = sum(mergedT["HS1"])
 	hs2 = sum(mergedT["HS2"])
 	print("\n%30s: %4dh" % ("Teacher", hs1 + hs2))
-	print("%30s: %4dh" % ("Teacher Semester 2", hs2))
+	print("%30s: %4dh" % ("Teacher Semester 1", hs1))
 	print("%30s: %4dh" % ("Teacher Semester 2", hs2))
 
 	print("\n%30s: %4dh" % ("Unused Teacher", (hs1 + hs2) - (hp + ht)))
@@ -103,9 +103,9 @@ def printConfiguration(data):
 		# print(mergedTSX)
 		merged = pd.merge(mergedSSX, mergedTSX, on="field")
 		# print(merged)
-		for index, row in merged.iterrows():
-			if row["Total"] > row["HS%d"%i]:
-				print("--[WARNING] SEMESTER %d - FIELD %d has more hours than teachers, which means that the solution will never be able to give only teachers of the field (Required - Available = %.2f)" % (i, row["field"], row["Total"] - row["HS%d"%i]))
+		# for index, row in merged.iterrows():
+		# 	if row["Total"] > row["HS%d"%i]:
+		# 		print("--[WARNING] SEMESTER %d - FIELD %d has more hours than teachers, which means that the solution will never be able to give only teachers of the field (Required - Available = %.2f)" % (i, row["field"], row["Total"] - row["HS%d"%i]))
 
 
 # convert the json data into prolog predicates, with proper comments and format
@@ -121,8 +121,7 @@ def convertToProlog(data, filename):
 	# print subject
 	content += "\n% subject(Semester, HT, HP, DT, DP, Field).\n"
 	for s in data["subjects"]:
-		content += ("subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n" %
-					(s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
+		content += ("subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
 	# content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
 
 	# print teacher types
@@ -130,15 +129,13 @@ def convertToProlog(data, filename):
 	i = 0
 	for t in data["teacherTypes"]:
 		i += 1
-		content += ("teacherType(%d, %2d). %% %s\n" %
-					(i, t["averageWeekHours"], t["name"]))
+		content += ("teacherType(%d, %2d).\n" % (i, t["averageWeekHours"]))
 	# content += "\nteacherTypes(%d). %% count teacher types\n" % len(data["teacherTypes"])
 
 	# print teacher information
 	content += "\n% teacher(Type, diff, Field).\n"
 	for t in data["teachers"]:
-		content += ("teacher(%d, %2d, %s). %% %s\n" %
-					(t["type"], t["diff"], t["field"], t["name"]))
+		content += ("teacher(%d, %2d, %s). %% %s\n" % (t["type"], t["diff"], t["field"], t["name"]))
 	# content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
 	return content
 
