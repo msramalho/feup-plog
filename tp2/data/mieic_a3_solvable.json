@@ -103,137 +103,137 @@
     "teachers": [{
         "name": "Henrique Daniel de Avelar Lopes Cardoso",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }, {
         "name": "Rui Carlos Camacho de Sousa Ferreira da Silva",
         "type": 2,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }, {
         "name": "Daniel Augusto Gama de Castro Silva",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }, {
         "name": "António Augusto de Sousa",
         "type": 2,
-        "Diff": 0,
+        "diff": 0,
         "field": 3
     }, {
         "name": "Alexandre Miguel Barbosa Valle de Carvalho",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 3
     }, {
         "name": "Jorge Manuel Gomes Barbosa",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 3
     }, {
         "name": "Rui Pedro Amaral Rodrigues",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 3
     }, {
         "name": "Ademar Manuel Teixeira de Aguiar",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 5
     }, {
         "name": "Tiago Boldt Pereira de Sousa",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 5
     }, {
         "name": "Nuno Honório Rodrigues Flores",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 5
     }, {
         "name": "Manuel Alberto Pereira Ricardo",
         "type": 2,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "João Manuel Couto das Neves",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "Maria Teresa Magalhães da Silva Pinto de Andrade",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "Sérgio Reis Cunha",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "André Monteiro de Oliveira Restivo",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 4
     }, {
         "name": "Filipe Alexandre Pais de Figueiredo Correia",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 4
     }, {
         "name": "João António Correia Lopes",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 4
     }, {
         "name": "João Manuel Paiva Cardoso",
         "type": 1,
-        "Diff": 0,
+        "diff": 0,
         "field": 7
     }, {
         "name": "Tiago Diogo Ribeiro de Carvalho",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 7
     }, {
         "name": "Ricardo Jorge Ferreira Nobre",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 7
     }, {
         "name": "Eugénio da Costa Oliveira",
         "type": 1,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }, {
         "name": "Ana Paula Cunha da Rocha",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 1
     }, {
         "name": "Manuel Firmino da Silva Torres",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 6
     }, {
         "name": "Fernanda Maria dos Santos Teixeira Torres",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 6
     }, {
         "name": "Pedro Alexandre Guimarães Lobo Ferreira Souto",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "Hugo José Sereno Lopes Ferreira",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 2
     }, {
         "name": "Sérgio Sobral Nunes",
         "type": 3,
-        "Diff": 0,
+        "diff": 0,
         "field": 4
     }]
 }
