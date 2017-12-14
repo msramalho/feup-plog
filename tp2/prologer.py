@@ -119,9 +119,9 @@ def convertToProlog(data, filename):
 	content += "\nfields(%d). %% count fields\n" % len(data["fields"])
 
 	# print subject
-	content += "\n% subject(Semester, HT, HP, DT, DP, Field).\n"
+	content += "\n% subject(Semester,  HT,  HP,  DT,  DP,  Field).\n"
 	for s in data["subjects"]:
-		content += ("subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
+		content += ("subject(%10d, %3d, %3d, %3d, %3d, %6s). %% %s\n" % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
 	# content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
 
 	# print teacher types
@@ -135,7 +135,7 @@ def convertToProlog(data, filename):
 	# print teacher information
 	content += "\n% teacher(Type, diff, Field).\n"
 	for t in data["teachers"]:
-		content += ("teacher(%d, %2d, %s). %% %s\n" % (t["type"], t["diff"], t["field"], t["name"]))
+		content += ("teacher(%6d, %4d, %5s). %% %s\n" % (t["type"], t["diff"], t["field"], t["name"]))
 	# content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
 	return content
 
