@@ -25,12 +25,12 @@ class Subject(Parent):
 	# We can also add our own functions. When our ball bounces,
 	def generateSubject(config, semester):
 		# list of tuples of possible hours-duration for theoretical classes
-		tuplesT = [(2, 1), (2, 2), (3, 1), (4, 1),
-				   (4, 2)]  # (total, unitDuration)
+		tuplesT = [(2, 1), (2, 2), (3, 1), (3, 3), (4, 1),
+				   (4, 2), (4, 4)]  # (total, unitDuration)
 
 		# list of tuples of possible hours-duration for practical classes
 		# tuplesT = [(3,1), (3, 3), (4,1), (4,2), (5,1), (6,1), (6,2), (6,3), (7,1), (8,1), (8,2), (9,1), (9,3), (10,1), (10,2), (11,1), (12,1), (12,2), (12,3), (13,1), (14,1), (14,2), (15,1), (15,3), (16,1), (16,2), (17,1), (18,1), (18,2), (18,3), (19,1), (20,1), (20,2)] # (total, unitDuration) [COMPLETE]
-		tuplesP = [(4, 1), (4, 2), (5, 1), (6, 1), (6, 2), (8, 2), (9, 3), (10, 2), (12, 2), (12, 3),
+		tuplesP = [(5, 1), (6, 1), (6, 2), (8, 2), (9, 3), (10, 2), (12, 2), (12, 3),
 				   (14, 2), (15, 3), (16, 2), (18, 2), (18, 3)]  # (total, unitDuration) [MORE REALISTIC]
 
 		# create the new subject
