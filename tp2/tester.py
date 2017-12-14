@@ -8,6 +8,7 @@ import ntpath
 from sys import argv
 
 from prologer import *
+from generator import *
 
 #important variables:
 tmpFolder = "src/"#folder to use for the temporary usage of files, should not be inner folder, due to include referencing
@@ -87,7 +88,13 @@ def outputResults(results):
 
 if __name__ == '__main__':
 	if len(argv) == 2:
-		if argv[1] == "default":#run the default file
+		if argv[1] == "gen":#run with a generator
+			config = Config(rounds=2, maxDiff=3, nFields=4, randomizeEfficiency=False)
+			subjects, teachers = generate(config)
+			dataToPrologJson(config, subjects, teachers, "data/auto_gen.json")
+			generatePrologForFile("data/auto_gen.json")
+			executeMainFileToShell("src/main.pl")
+		elif argv[1] == "default":#run the default file
 			executeMainFileToShell("src/main.pl")
 		else: #assume it is a datafile
 			worker(ntpath.basename(argv[1]))
