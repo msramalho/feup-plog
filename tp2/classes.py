@@ -59,8 +59,8 @@ class Subject(Parent):
 				# the 1 is never 0, otherwise there would be no debt
 				rangeLeftSet = set(range(1, teacher.maxHours - teacher.hs1 - teacher.hs2 + 1))
 				current = teacher.hs1 if semester == 2 else teacher.hs2
-				rightMin = int(current - config.maxDiff/2)
-				rightMax = int(current + config.maxDiff/2)
+				rightMin = int(current - config.maxDiff)
+				rightMax = int(current + config.maxDiff)
 				rangeRightSet = set(range(rightMin, rightMax + 1))
 				intersection = list(rangeLeftSet.intersection(rangeRightSet))
 				#intersect both ranges and choose the outcome, always respecting maxDiff
@@ -87,7 +87,6 @@ class Subject(Parent):
 		if debt == 0: # no debt so there is no need for this subject
 			return None
 		print("Debt is: %d" % debt)
-		minDebt = min(debts) # the minimum debt (for any field in fields)
 
 		s = Subject.generateSubject(config, semester) # generate the new subject for the next semester
 		s.field = random.choice(fields) # this means the theoretical hours are guaranteed to have minDebt hours
@@ -98,8 +97,9 @@ class Subject(Parent):
 			s.tHours = 1
 			s.pHours = 2
 		else:
-			s.tHours = minDebt
-			s.pHours = debt - minDebt
+			minDebt = min(debts) # the minimum debt (for any field in fields)
+			s.tHours = minDebt if len(debts) > 1 and debt > minDebt * 2 else 0 # make sure HT < HP
+			s.pHours = debt - s.tHours
 		s.tHoursOriginal = s.tHours
 		s.pHoursOriginal = s.pHours
 		s.adjustDurations()
@@ -119,12 +119,11 @@ class Subject(Parent):
 
 class Teacher(Parent):
 	types = [14, 16, 18]
-	def __init__(self, field = 0, maxHours = -1, hs1 = 0, hs2 = 0, diff = 0):
+	def __init__(self, field = 0, maxHours = -1, hs1 = 0, hs2 = 0):
 		self.field = field
 		self.maxHours = maxHours # maxHours is not changed
 		self.hs1 = hs1
 		self.hs2 = hs2
-		self.diff = diff
 
 	# receives a subject and adds its theoretical hours into the correct semester - always expected to be possible
 	def addTHours(self, subject):
@@ -150,10 +149,12 @@ class Teacher(Parent):
 		# calculate the maximum ammount of blocks the teacher can give, the if is to avoid X % 0 (exception)
 		availableHours = (self.maxHours - self.hs1 - self.hs2)
 		maxAvailableTime = 0
+		print("available hours: %d" % availableHours)
 		if subject.semester == 1: # semester 1
-			maxAvailableTime  = int((config.maxDiff - self.hs1 + availableHours + self.hs2)/2)
+			maxAvailableTime = int((config.maxDiff - self.hs1 + availableHours + self.hs2)/2)
 		else: # semester 2
-			maxAvailableTime  = int((config.maxDiff - self.hs2 + availableHours + self.hs1)/2)
+			maxAvailableTime = int((config.maxDiff - self.hs2 + availableHours + self.hs1)/2)
+		print("maxAvailableTime: %d" % maxAvailableTime)
 
 		print(self.toJson())
 		maxBlocks = maxAvailableTime // subject.pDuration

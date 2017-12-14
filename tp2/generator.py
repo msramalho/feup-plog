@@ -79,15 +79,16 @@ def removeAutoJson():
 		os.remove(f)
 
 removeAutoJson()
-for i in range(1, 2):
-	config = Config(rounds=1, maxDiff=3, nFields=3, randomizeEfficiency=False)
+for i in range(1, 5):
+	config = Config(rounds=i, maxDiff=3, nFields=3, randomizeEfficiency=False)
 	subjects, teachers = generate(config)
 	dataToPrologJson(config, subjects, teachers, "data/auto_%d.json" % i)
+	print("Final Teachers:")
+	for t in teachers:
+		print(t.toJson())
 
 	# for s in subjects:
 	# 	print(s.toJson())
-	# for t in teachers:
-	# 	print(t.toJson())
 # config = Config()
 # s = Subject.generateSubject(config, 1)
 # print(s.toJson())
