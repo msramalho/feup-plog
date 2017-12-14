@@ -129,13 +129,15 @@ mergeSubjectTs([[_, TT, TP]|T], Merged):-
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
 restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
-    MaxHoursS1 is Avg + Diff, % the maximum amount of hours for a teacher in a semester = avg + abs(diff)
-    MinHoursS2 is Avg - Diff, % the maximum amount of hours for a teacher in a semester = avg + abs(diff)
-    % domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
+    MaxHoursS1 is round(((2 * Avg)+Diff)/2), % the maximum amount of hours for the teacher in the 1st semester
+    MaxHoursS2 is round(((2 * Avg)-Diff)/2), % - Diff, % the maximum amount of hours for the teacher in the 2nd semester
+	MaxHours is Avg * 2, %in case diff exceeds the number of hours
+    domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
     HS1 in 0..MaxHoursS1,
-    HS2 in 0..MinHoursS2,
+    HS2 in 0..MaxHoursS2,
+	% HS1 #> 0 #\/ HS2 #> 0, # at least one must be greater than 0
     Diff #= HS1 - HS2, % Restriction-1
-    Avg #>= (HS1 + HS2) / 2, % Restriction-2 (relaxed)
+    2 * Avg #>= HS1 + HS2, % Restriction-2 (relaxed)
     %recursive call
     restrictTeachers(T).
 
