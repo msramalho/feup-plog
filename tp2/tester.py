@@ -89,7 +89,7 @@ def outputResults(results):
 if __name__ == '__main__':
 	if len(argv) == 2:
 		if argv[1] == "gen":#run with a generator
-			config = Config(rounds=2, maxDiff=3, nFields=4, randomizeEfficiency=False)
+			config = Config(rounds=3, maxDiff=0, nFields=1, randomizeEfficiency=False)
 			subjects, teachers = generate(config)
 			dataToPrologJson(config, subjects, teachers, "data/auto_gen.json")
 			generatePrologForFile("data/auto_gen.json")

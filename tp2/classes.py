@@ -25,8 +25,8 @@ class Subject(Parent):
 	# We can also add our own functions. When our ball bounces,
 	def generateSubject(config, semester):
 		# list of tuples of possible hours-duration for theoretical classes
-		tuplesT = [(2, 1), (2, 2), (3, 1), (3, 3), (4, 1),
-				   (4, 2), (4, 4)]  # (total, unitDuration)
+		tuplesT = [(2, 1), (2, 2), (3, 1), (4, 1),
+				   (4, 2)]  # (total, unitDuration)
 
 		# list of tuples of possible hours-duration for practical classes
 		# tuplesT = [(3,1), (3, 3), (4,1), (4,2), (5,1), (6,1), (6,2), (6,3), (7,1), (8,1), (8,2), (9,1), (9,3), (10,1), (10,2), (11,1), (12,1), (12,2), (12,3), (13,1), (14,1), (14,2), (15,1), (15,3), (16,1), (16,2), (17,1), (18,1), (18,2), (18,3), (19,1), (20,1), (20,2)] # (total, unitDuration) [COMPLETE]
@@ -98,7 +98,7 @@ class Subject(Parent):
 			s.pHours = 2
 		else:
 			minDebt = min(debts) # the minimum debt (for any field in fields)
-			s.tHours = minDebt if len(debts) > 1 and debt > minDebt * 2 else 0 # make sure HT < HP
+			s.tHours = minDebt if debt > minDebt * 2 else 0 # make sure HT < HP
 			s.pHours = debt - s.tHours
 		s.tHoursOriginal = s.tHours
 		s.pHoursOriginal = s.pHours
