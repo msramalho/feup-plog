@@ -55,7 +55,7 @@ init(Subjects, Teachers):-
 
     % labeling([], Vars).
     % labeling([minimize(FailedHours)], Vars).
-    time_out(labeling([minimize(FailedHours)], Vars), 3000, Res), write('Res is: \n'), write(Res).
+    time_out(labeling([minimize(FailedHours), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
     % labeling([], Vars).
     % time_out(labeling([minimize(PreferenceFailedCount)], Vars), 6000, Res), write('Res is: \n'), write(Res).
 
@@ -167,20 +167,30 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
     PreferenceFailedCount #= TempCount + CurrentCount.
 
 
-%make sure the sum of the times for each subject, in both semesters, match that of the teachers
+%make sure the sum of the times for each subject, in both semesters, matches that of the teachers
 restrictSumBySemester(Subjects, Teachers):-
     length(Teachers, NTeachers),
+	write('---1'),
     %semester 1
     getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
+	write('---2'),
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
-    getTeachersHoursSemester1(Teachers, LHS1), %!,
+	write('---3'),
+	write(Teachers),
+	write('---4'),
+	nl, write(TimesS1), nl,
     restrictEqualLists(TimesS1, LHS1),
+	write('---5'),
 
     %semester 2
     getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
+	write('---6'),
     scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
+	write('---7'),
     getTeachersHoursSemester2(Teachers, LHS2), %!,
-    restrictEqualLists(TimesS2, LHS2).
+	write('---8'),
+    restrictEqualLists(TimesS2, LHS2),
+	write('---9').
 
     % restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
 
