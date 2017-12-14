@@ -176,21 +176,17 @@ restrictSumBySemester(Subjects, Teachers):-
 	write('---2'),
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
 	write('---3'),
-	write(Teachers),
-	write('---4'),
-	nl, write(TimesS1), nl,
     restrictEqualLists(TimesS1, LHS1),
-	write('---5'),
-
+	write('---4'),
     %semester 2
     getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
-	write('---6'),
+	write('---5'),
     scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
-	write('---7'),
+	write('---6'),
     getTeachersHoursSemester2(Teachers, LHS2), %!,
-	write('---8'),
+	write('---7'),
     restrictEqualLists(TimesS2, LHS2),
-	write('---9').
+	write('---8').
 
     % restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
 
