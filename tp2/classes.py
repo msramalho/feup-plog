@@ -90,7 +90,7 @@ class Subject(Parent):
 
 		s = Subject.generateSubject(config, semester) # generate the new subject for the next semester
 		s.field = random.choice(fields) # this means the theoretical hours are guaranteed to have minDebt hours
-		if debt < 3: # normally HP > HT
+		''' if debt < 3: # normally HP > HT
 			s.tHours = 0
 			s.pHours = debt
 		elif debt == 3:
@@ -99,7 +99,9 @@ class Subject(Parent):
 		else:
 			minDebt = min(debts) # the minimum debt (for any field in fields)
 			s.tHours = minDebt if debt > minDebt * 2 else 0 # make sure HT < HP
-			s.pHours = debt - s.tHours
+			s.pHours = debt - s.tHours '''
+		s.tHours = 0
+		s.pHours = debt
 		s.tHoursOriginal = s.tHours
 		s.pHoursOriginal = s.pHours
 		s.adjustDurations()

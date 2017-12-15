@@ -5,7 +5,7 @@ from os.path import isfile, join
 from multiprocessing import Manager, Pool, cpu_count
 import time
 import ntpath
-from sys import argv
+from sys import argv, exit
 
 from prologer import *
 from generator import *
@@ -87,9 +87,10 @@ def outputResults(results):
 		print("\n  ", "\n   ".join(matched_lines))
 
 if __name__ == '__main__':
-	if len(argv) == 2:
+	if len(argv) >= 2:
 		if argv[1] == "gen":#run with a generator
-			config = Config(rounds=3, maxDiff=0, nFields=1, randomizeEfficiency=False)
+			rounds = int(argv[2]) if len(argv) >= 3 else 1
+			config = Config(rounds=rounds, maxDiff=0, nFields=1, randomizeEfficiency=False)
 			subjects, teachers = generate(config)
 			dataToPrologJson(config, subjects, teachers, "data/auto_gen.json")
 			generatePrologForFile("data/auto_gen.json")
