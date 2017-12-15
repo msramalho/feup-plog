@@ -10,6 +10,9 @@
 test(Res, TimeOutRes):-
     time_out(setof(FailedHours-Teachers-Subjects, init(Subjects, Teachers, FailedHours), Res), 5000, TimeOutRes).
 
+go:-
+	init(S, T), nl, write('--done--'), writeList(S), nl, nl, writeList(T), nl, nl.
+
 %main function
 init(Subjects, Teachers):-
     clear,
@@ -31,6 +34,7 @@ init(Subjects, Teachers):-
     restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
     % write(PreferenceFailedCount), nl,
     write('5\n'),
+	writeList(Teachers), nl, nl,
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
     getFailedHours(Teachers, FailedHours),
@@ -176,17 +180,19 @@ restrictSumBySemester(Subjects, Teachers):-
 	write('---2'),
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
 	write('---3'),
-    restrictEqualLists(TimesS1, LHS1),
+    getTeachersHoursSemester1(Teachers, LHS1), %!,
 	write('---4'),
+    restrictEqualLists(TimesS1, LHS1),
+	write('---5'),
     %semester 2
     getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
-	write('---5'),
-    scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
 	write('---6'),
-    getTeachersHoursSemester2(Teachers, LHS2), %!,
+    scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
 	write('---7'),
+    getTeachersHoursSemester2(Teachers, LHS2), %!,
+	write('---8'),
     restrictEqualLists(TimesS2, LHS2),
-	write('---8').
+	write('---9').
 
     % restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
 
@@ -208,7 +214,22 @@ getTeachersVariablesToLabel([_Avg-_Diff-_Field-HS1-HS2|T], TVars):-
     append(TempTVars, [HS1, HS2], TVars).
 
 
+/*
+	Current Restrictions:
+		Teachers
+			. teachers HS1 and HS2 domains
+			. Diff #= HS1 - HS2
+			. 2 * Avg #>= HS1 + HS2
+		Subjects
+			. domain for the TT and TP
+			. HP #> HT
+			. sum(TT, #=, HT)
+			. sum(TP, #=, HP)
+			. scalar_product(FieldComplements, TT, #= , 0), %Restriction-3,
+			. scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
 
+
+ */
 /*
 Everything is 1 indexed
 Modeling:
