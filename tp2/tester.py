@@ -96,8 +96,9 @@ if __name__ == '__main__':
 			rounds = int(argv[2]) if len(argv) >= 3 else 1
 			config = Config(rounds=rounds, maxDiff=0, nFields=1, randomizeEfficiency=False)
 			subjects, teachers = generate(config)
-			dataToPrologJson(config, subjects, teachers, "data/auto_gen.json")
-			generatePrologForFile("data/auto_gen.json", tabled = len(argv) >= 4 and argv[3] == "-t")
+			filename = "data/auto_gen_%d.json" % rounds
+			dataToPrologJson(config, subjects, teachers, filename)
+			generatePrologForFile(filename, tabled = len(argv) >= 4 and argv[3] == "-t")
 			executeMainFileToShell("src/main.pl")
 		elif argv[1] == "default":#run the default file
 			executeMainFileToShell("src/main.pl")
