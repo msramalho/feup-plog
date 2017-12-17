@@ -121,11 +121,11 @@ def convertToProlog(data, filename, tabled = False):
 	# print subject
 	content += "\n% subject(Semester,  HT,  HP,  DT,  DP,  Field).\n"
 	if tabled:
-		for s in data["subjects"]:
-			content += ("subject(%10d, %3d, %3d, %3d, %3d, %6s). %% %s\n" % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
+		subjectPrint = "subject(%10d, %3d, %3d, %3d, %3d, %6s). %% %s\n"
 	else:
-		for s in data["subjects"]:
-			content += ("subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n" % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
+		subjectPrint = "subject(%d, %2d, %2d, %d, %d, %2s). %% %s\n"
+	for s in data["subjects"]:
+		content += (subjectPrint % (s["semester"], s["HT"], s["HP"], s["DT"], s["DP"], s["field"], s["name"]))
 	# content += "\nsubjects(%d). %% count subjects\n" % len(data["subjects"])
 
 	# print teacher types
@@ -139,11 +139,11 @@ def convertToProlog(data, filename, tabled = False):
 	# print teacher information
 	content += "\n% teacher(Type, diff, Field).\n"
 	if tabled:
-		for t in data["teachers"]:
-			content += ("teacher(%6d, %4d, %5s). %% %s\n" % (t["type"], t["diff"], t["field"], t["name"]))
+		teacherPrint = "teacher(%6d, %4d, %5s). %% %2d - %2d %s\n"
 	else:
-		for t in data["teachers"]:
-			content += ("teacher(%d, %2d, %s). %% %s\n" % (t["type"], t["diff"], t["field"], t["name"]))
+		teacherPrint = "teacher(%d, %2d, %s). %% %2d - %2d %s\n"
+	for t in data["teachers"]:
+		content += (teacherPrint % (t["type"], t["diff"], t["field"], t["hs1"], t["hs2"], t["name"]))
 	# content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
 	return content
 

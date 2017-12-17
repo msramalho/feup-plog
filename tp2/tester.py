@@ -93,7 +93,7 @@ if __name__ == '__main__':
 			config = Config(rounds=rounds, maxDiff=0, nFields=1, randomizeEfficiency=False)
 			subjects, teachers = generate(config)
 			dataToPrologJson(config, subjects, teachers, "data/auto_gen.json")
-			generatePrologForFile("data/auto_gen.json")
+			generatePrologForFile("data/auto_gen.json", tabled = len(argv) >= 4 and argv[3] == "-t")
 			executeMainFileToShell("src/main.pl")
 		elif argv[1] == "default":#run the default file
 			executeMainFileToShell("src/main.pl")

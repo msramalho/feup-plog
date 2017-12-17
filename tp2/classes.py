@@ -102,9 +102,11 @@ class Subject(Parent):
 			s.pHours = debt - s.tHours '''
 		s.tHours = 0
 		s.pHours = debt
+		s.tDuration = 0
+		s.pDuration = 2 if debt % 2 == 0 else 1
 		s.tHoursOriginal = s.tHours
 		s.pHoursOriginal = s.pHours
-		s.adjustDurations()
+		# s.adjustDurations()
 		print("new subject to fill debts is:\n", s.toJson())
 		return s
 
@@ -193,7 +195,9 @@ class Teacher(Parent):
 			"name" : ("Teacher_%d - %s" % (index, names.get_full_name())),
 			"type" : Teacher.types.index(self.maxHours) + 1,
 			"diff" : self.hs1 - self.hs2,
-			"field" : self.field
+			"field" : self.field,
+			"hs1" : self.hs1,
+			"hs2" : self.hs2
 		}
 
 class Config(Parent):
