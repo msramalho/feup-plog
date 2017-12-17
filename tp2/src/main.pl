@@ -6,13 +6,6 @@
 :- include('data.pl').
 :- include('utils.pl').
 
-%run congruence tests on the supplied data
-test(Res, TimeOutRes):-
-    time_out(setof(FailedHours-Teachers-Subjects, init(Subjects, Teachers, FailedHours), Res), 5000, TimeOutRes).
-
-go:-
-	init(S, T), nl, write('--done--'), writeList(S), nl, nl, writeList(T), nl, nl.
-
 %main function
 init(Subjects, Teachers):-
     clear,
@@ -23,7 +16,7 @@ init(Subjects, Teachers):-
     % FailedHours in 0..100,
     write('1\n'),
 
-% 3 - restrictions application
+% 3 - restrictions application (+ 2 - some domain specification)
     %Teachers preference on the diference
     restrictTeachers(Teachers),
     write('2\n'),
@@ -34,35 +27,34 @@ init(Subjects, Teachers):-
     restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
     % write(PreferenceFailedCount), nl,
     write('5\n'),
-	writeList(Teachers), nl, nl,
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
-    getFailedHours(Teachers, FailedHours),
-    write('7\n'),
     %restriction to force enough teacher hours to exist
     % write(FailedHours), nl,
 
-    %generate heuristic to optimize
 
 % 4 - search for solutions
+    %generate heuristic to optimize
+	getHeuristicValue(Teachers, Subjects, PreferenceFailedCount, Heuristic),
+    write('7\n'),
     getTeachersVariablesToLabel(Teachers, TVars),
     write('8\n'),
-    mergeSubjectTs(Subjects, SVars),
+    getSubjectTsVariablesToLabel(Subjects, SVars),
     append(TVars, SVars, Vars),
     write('\n...................................\n'),
     write(Vars),
     write('\n...................................\n'),
 
-    % element(22, Vars, First),
-    % indomain(First),
-    % format('First is ~p\n', First).
-
     % labeling([ffc, bisect], Vars).
-    % labeling([minimize(FailedHours)], Vars).
-    labeling([minimize(FailedHours), ffc, bisect], Vars).
-    time_out(labeling([minimize(FailedHours), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
+    % labeling([minimize(Heuristic)], Vars).
+	resetWalltime,
+    % labeling([minimize(Heuristic), ffc, bisect], Vars),
+    labeling([ffc, bisect], Vars),
+	writeWalltime,
+	fd_statistics.
+    % time_out(labeling([minimize(Heuristic), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
     % labeling([], Vars).
-    % time_out(labeling([minimize(PreferenceFailedCount)], Vars), 6000, Res), write('Res is: \n'), write(Res).
+    % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
 
 
 %------------------------------------variable definition helpers
@@ -113,24 +105,6 @@ getFailedHours([Avg-_Diff-_Field-HS1-HS2|T], FailedHours):-
     getFailedHours(T, TempFailedHours),
     FailedHours #= TempFailedHours + (Avg * 2) - (HS1 + HS2).
 
-/*
-getFailedHours(Teachers, FailedHours):-
-    findall(D, (
-        member(Avg-_Diff-_Field-HS1-HS2, Teachers),
-        D #= (Avg * 2) - (HS1 + HS2)
-    ), FailedHoursList),
-    % write(FailedHoursList),
-    maximum(FailedHours, FailedHoursList).
-    % sum(FailedHoursList, #=, FailedHours). */
-
-%get a list of all the variables in TT and TP so that we can label them
-mergeSubjectTs([], []).
-mergeSubjectTs([[_, TT, TP]|T], Merged):-
-    mergeSubjectTs(T, TempMerged),
-    append([TT, TP, TempMerged], Merged).
-
-
-
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
 restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
@@ -140,7 +114,7 @@ restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
     domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
     HS1 in 0..MaxHoursS1,
     HS2 in 0..MaxHoursS2,
-	% HS1 #> 0 #\/ HS2 #> 0, # at least one must be greater than 0
+	HS1 #> 0 #\/ HS2 #> 0, % at least one must be greater than 0
     Diff #= HS1 - HS2, % Restriction-1
     2 * Avg #>= HS1 + HS2, % Restriction-2 (relaxed)
     %recursive call
@@ -175,45 +149,34 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
 %make sure the sum of the times for each subject, in both semesters, matches that of the teachers
 restrictSumBySemester(Subjects, Teachers):-
     length(Teachers, NTeachers),
-	write('---1'),
     %semester 1
     getSubjectsTimesBySemester(Subjects, 1, MatrixTimesS1, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
-	write('---2'),
     scalarSumMatrix(MatrixTimesS1, TimesS1),%sum every line in the matrix into TimesS
-	write('---3'),
     getTeachersHoursSemester1(Teachers, LHS1), %!,
-	write('---4'),
     restrictEqualLists(TimesS1, LHS1),
-	write('---5'),
     %semester 2
     getSubjectsTimesBySemester(Subjects, 2, MatrixTimesS2, NTeachers),%matrix like [TT1,TP1,TT2,TP2,TT3,...]
-	write('---6'),
     scalarSumMatrix(MatrixTimesS2, TimesS2),%sum every line in the matrix into TimesS
-	write('---7'),
     getTeachersHoursSemester2(Teachers, LHS2), %!,
-	write('---8'),
-    restrictEqualLists(TimesS2, LHS2),
-	write('---9').
-
-    % restrictTeacherSemester2(Teachers, TimesS2).%match the teacher's time with the corresponding cell
-
-
-/* %make sure the sum of hours of a teacher in the first semester matches his/her HS1
-restrictTeacherSemester1(_, []):-!.
-restrictTeacherSemester1([], []).
-restrictTeacherSemester1([_Avg-_Diff-_Field-Sum-_HS2|T1], [Sum|T2]):-restrictTeacherSemester1(T1, T2).
-%make sure the sum of hours of a teacher in the first semester matches his/her HS2
-restrictTeacherSemester2(_, []):-!.
-restrictTeacherSemester2([], []).
-restrictTeacherSemester2([_Avg-_Diff-_Field-_HS1-Sum|T1], [Sum|T2]):-restrictTeacherSemester2(T1, T2). */
-
+    restrictEqualLists(TimesS2, LHS2).
 
 %------------------------------------labeling helpers
+%get a list of all the variables HS1 and HS2 so that we can label them (teachers)
 getTeachersVariablesToLabel([], []).
 getTeachersVariablesToLabel([_Avg-_Diff-_Field-HS1-HS2|T], TVars):-
     getTeachersVariablesToLabel(T, TempTVars),
     append(TempTVars, [HS1, HS2], TVars).
 
+%get a list of all the variables in TT and TP so that we can label them (subjects)
+getSubjectTsVariablesToLabel([], []).
+getSubjectTsVariablesToLabel([[_, TT, TP]|T], Merged):-
+    getSubjectTsVariablesToLabel(T, TempMerged),
+    append([TT, TP, TempMerged], Merged).
+
+% calculate an heuristic for the current
+getHeuristicValue(Teachers, Subjects, PreferenceFailedCount, Heuristic):-
+    getFailedHours(Teachers, FailedHours),
+	Heuristic = PreferenceFailedCount.
 
 /*
 	Current Restrictions:
@@ -230,7 +193,7 @@ getTeachersVariablesToLabel([_Avg-_Diff-_Field-HS1-HS2|T], TVars):-
 			. scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
 
 
- */
+*/
 /*
 Everything is 1 indexed
 Modeling:

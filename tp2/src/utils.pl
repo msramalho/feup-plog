@@ -52,3 +52,12 @@ writeList([]).
 writeList([E|R]):-
     write(E), nl,
     writeList(R).
+
+% statistics measurement
+resetWalltime:-statistics(walltime, _).
+writeWalltime:-statistics(walltime, [_, W]), format('Walltime: ~d\n', W).
+
+/* resetRuntime(Start):-statistics(runtime, [Start|_]).
+writeRuntime(Start):-statistics(runtime, [End|_]),
+	Runtime is End - Start,
+	format('Runtime: ~3d\n', Runtime). */
