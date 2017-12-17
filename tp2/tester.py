@@ -20,7 +20,7 @@ def createPrologDataFromJson(jsonFile, filesToRemove):
 	outputFileName = jsonFile[:-4] + "pl" # mieic_a3_s1.pl
 	completeOutputFileName = tmpFolder + dataPrefix + outputFileName # src/mieic_a3_s1.pl
 	completeJsonFile = dataFolder + jsonFile
-	generatePrologForFile(completeJsonFile, ouput=completeOutputFileName) #generate the .pl file from the json
+	generatePrologForFile(completeJsonFile, output=completeOutputFileName) #generate the .pl file from the json
 	filesToRemove.append(completeOutputFileName)#add to the list of files to remove
 
 def createNewMainFile(jsonFile, filesToRemove, edit="src/main.pl"):
@@ -38,7 +38,7 @@ def executeMainFile(newMain):
 	start = time.time()#time measurement start
 
 	cmd = "echo init(Subjects, Teachers). | sicstus --nologo --noinfo -l %s" % newMain
-	process = sp.Popen(cmd, shell=True, stdout=sp.PIPE)
+	process = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
 	processOutput = processToStdout(process)
 
 	diff = (time.time() - start) * 1000000 # microseconds, time measurement end
@@ -52,8 +52,9 @@ def executeMainFileToShell(newMain):
 # it is done this way so that later we can parse the stdout in python
 def processToStdout(process):
 	out, err = process.communicate()
-	ouput = out.decode("utf-8")
-	return ouput
+	output = out.decode("utf-8")
+	error = err.decode("utf-8", errors='ignore')
+	return output + error
 
 def getValidFileName(original):
 	return "".join([c for c in original if c.isalpha() or c.isdigit() or c in ['.', '/', '_', '-']]).rstrip()
@@ -74,17 +75,20 @@ def worker(jsonFile):
 	filesToRemove = []
 	createPrologDataFromJson(jsonFile, filesToRemove)
 	newMain = createNewMainFile(jsonFile, filesToRemove)
-	result =  executeMainFile(newMain)
+	result = executeMainFile(newMain)
 	removeTmpFiles(filesToRemove)
 	return (jsonFile, result)
 
 def outputResults(results):
-	for (f, (ouput, time)) in results:
+	for (f, (output, time)) in results:
 		print("-" * 50)
 		print("%s lasted for %10f microseconds" % (f, time))
-		#get the output time from prolog
-		matched_lines = [line for line in ouput.split('\n') if "prologTime" in line]
-		print("\n  ", "\n   ".join(matched_lines))
+		result = {}
+		#get the output variables from prolog
+		outputVariables = ["Resumptions: ", "Entailments: ", "Prunings: ", "Backtracks: ", "Constraints created: ", "Runtime: ", "Walltime: "]
+		for outVar in outputVariables:
+			result[outVar] = [line.strip("\r").strip(outVar) for line in output.split('\n') if outVar in line]
+		print(json.dumps(result))
 
 if __name__ == '__main__':
 	if len(argv) >= 2:

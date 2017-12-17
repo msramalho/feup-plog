@@ -139,11 +139,13 @@ def convertToProlog(data, filename, tabled = False):
 	# print teacher information
 	content += "\n% teacher(Type, diff, Field).\n"
 	if tabled:
-		teacherPrint = "teacher(%6d, %4d, %5s). %% %2d - %2d %s\n"
+		teacherPrint = "teacher(%6d, %4d, %5s). %% %2s - %2s %s\n"
 	else:
-		teacherPrint = "teacher(%d, %2d, %s). %% %2d - %2d %s\n"
+		teacherPrint = "teacher(%d, %2d, %s). %% %2s - %2s %s\n"
 	for t in data["teachers"]:
-		content += (teacherPrint % (t["type"], t["diff"], t["field"], t["hs1"], t["hs2"], t["name"]))
+		hs1 = t["hs1"] if "hs1" in t else "_"
+		hs2 = t["hs2"] if "hs2" in t else "_"
+		content += (teacherPrint % (t["type"], t["diff"], t["field"], hs1, hs2, t["name"]))
 	# content += "\nteachers(%d). %% count teachers" % len(data["teachers"])
 	return content
 
@@ -157,12 +159,12 @@ def writeFileWarnDuplicate(filename, contents):
 		f.write(contents)
 
 
-def generatePrologForFile(filename, print=False, ouput="src/data.pl", tabled = False):
+def generatePrologForFile(filename, print=False, output="src/data.pl", tabled = False):
 	with open(filename, 'r', encoding="utf-8") as jsonFile:
 		data = json.loads(jsonFile.read())
 		if print:
 			printConfiguration(data)
-		dataFile = open(ouput, 'w', encoding="utf-8")
+		dataFile = open(output, 'w', encoding="utf-8")
 		prologCode = convertToProlog(data, filename, tabled)
 		dataFile.write(prologCode)
 		dataFile.close()
