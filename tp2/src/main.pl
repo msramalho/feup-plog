@@ -57,8 +57,9 @@ init(Subjects, Teachers):-
     % indomain(First),
     % format('First is ~p\n', First).
 
-    % labeling([], Vars).
+    % labeling([ffc, bisect], Vars).
     % labeling([minimize(FailedHours)], Vars).
+    labeling([minimize(FailedHours), ffc, bisect], Vars).
     time_out(labeling([minimize(FailedHours), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
     % labeling([], Vars).
     % time_out(labeling([minimize(PreferenceFailedCount)], Vars), 6000, Res), write('Res is: \n'), write(Res).
