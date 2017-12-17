@@ -17,8 +17,8 @@ python generator.py data/mieic_a3_s1.json
 ```
 And this will replace the current `data.pl` file with the new data.
 #### Notes on generator.py
- * It implements a function `generatePrologForFile(filename, print = False, ouput = "src/data.pl")`, that can be called and that can print an easy-to-ready tabular output from the `.json` file, if the parameter `print` is set to `True`;
- * A custom path to output the PROLOG data file can also be passed in the `ouput parameter`;
+ * It implements a function `generatePrologForFile(filename, print = False, output = "src/data.pl")`, that can be called and that can print an easy-to-ready tabular output from the `.json` file, if the parameter `print` is set to `True`;
+ * A custom path to output the PROLOG data file can also be passed in the `output parameter`;
  * So this can be used to update the contents of `data.pl` and later be invoked by using [tester](https://github.com/msramalho/feup-plog#testerpy) like so: `python tester.py default` (See [notes on tester.py](`python tester.py default`))
  * It runs some basic tests on the `.json` data so as to ascertain wether the configuration can be excluded due to immediate problems, such as a universe where there are more hours to teach than the available teachers can teach.
  
