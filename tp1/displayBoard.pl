@@ -101,7 +101,7 @@ displayPlayerStats(Player):-
     evaluateBoard(Player, Score),
     write('\n    Score: '), write(Score).
 
-%clears the screen and ouputs the board and the game state
+%clears the screen and outputs the board and the game state
 displayBoard:-
     clear,
 	write('      0    1    2    3    4    5    6    7    8\n\n'),
