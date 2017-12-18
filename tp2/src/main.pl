@@ -6,7 +6,7 @@
 :- include('data.pl').
 :- include('utils.pl').
 
-%main function
+% main function
 init(Subjects, Teachers):-
     clear,
 % 1 - variable definition + 2 - domain specification
@@ -17,7 +17,7 @@ init(Subjects, Teachers):-
     write('1\n'),
 
 % 3 - restrictions application (+ 2 - some domain specification)
-    %Teachers preference on the diference
+    % Teachers preference on the diference
     restrictTeachers(Teachers),
     write('2\n'),
     length(Teachers, NTeachers), %get the number of teachers
@@ -29,32 +29,29 @@ init(Subjects, Teachers):-
     write('5\n'),
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
-    %restriction to force enough teacher hours to exist
+    % restriction to force enough teacher hours to exist
     % write(FailedHours), nl,
 
-
 % 4 - search for solutions
-    %generate heuristic to optimize
+    % generate heuristic to optimize
 	getHeuristicValue(Teachers, Subjects, PreferenceFailedCount, Heuristic),
     write('7\n'),
-    getTeachersVariablesToLabel(Teachers, TVars),
-    write('8\n'),
-    getSubjectTsVariablesToLabel(Subjects, SVars),
-    append(TVars, SVars, Vars),
+    getVarsToLabel(Teachers, Subjects, Vars),
     write('\n...................................\n'),
     write(Vars),
     write('\n...................................\n'),
 
+	% labeling
+	resetWalltime,
+    % labeling([], Vars).
     % labeling([ffc, bisect], Vars).
     % labeling([minimize(Heuristic)], Vars).
-	resetWalltime,
     % labeling([minimize(Heuristic), ffc, bisect], Vars),
+    % time_out(labeling([minimize(Heuristic), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
+    % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
     labeling([ffc, bisect], Vars),
 	writeWalltime,
 	fd_statistics.
-    % time_out(labeling([minimize(Heuristic), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
-    % labeling([], Vars).
-    % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
 
 
 %------------------------------------variable definition helpers
@@ -161,6 +158,12 @@ restrictSumBySemester(Subjects, Teachers):-
     restrictEqualLists(TimesS2, LHS2).
 
 %------------------------------------labeling helpers
+%get a list of all the variables to label from Teachers and Subjects
+getVarsToLabel(Teachers, Subjects, Vars):-
+	getTeachersVariablesToLabel(Teachers, TVars),
+    getSubjectTsVariablesToLabel(Subjects, SVars),
+    append(TVars, SVars, Vars),
+
 %get a list of all the variables HS1 and HS2 so that we can label them (teachers)
 getTeachersVariablesToLabel([], []).
 getTeachersVariablesToLabel([_Avg-_Diff-_Field-HS1-HS2|T], TVars):-
