@@ -12,31 +12,29 @@ init(Subjects, Teachers):-
 % 1 - variable definition + 2 - domain specification
     defineTeachers(Teachers),
     defineSubjects(Subjects),
-    % PreferenceFailedCount in 2..20,
+    % CountPracticalUndesiredTeacher in 2..20,
     % FailedHours in 0..100,
     write('1\n'),
 
 % 3 - restrictions application (+ 2 - some domain specification)
-    % Teachers preference on the diference
     restrictTeachers(Teachers),
     write('2\n'),
     length(Teachers, NTeachers), %get the number of teachers
     write('3\n'),
     getMatrixOfComplementedFields(Teachers, CompFields),
     write('4\n'),
-    restrictSubjects(Subjects, CompFields, NTeachers, PreferenceFailedCount),
-    % write(PreferenceFailedCount), nl,
+    restrictSubjects(Subjects, CompFields, NTeachers, CountPracticalUndesiredTeacher),
     write('5\n'),
     restrictSumBySemester(Subjects, Teachers),
     write('6\n'),
     % restriction to force enough teacher hours to exist
-    % write(FailedHours), nl,
 
 % 4 - search for solutions
     % generate heuristic to optimize
-	getHeuristicValue(Teachers, Subjects, PreferenceFailedCount, Heuristic),
+	getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, FailedHours, Heuristic),
     write('7\n'),
     getVarsToLabel(Teachers, Subjects, Vars),
+    write('8\n'),
     write('\n...................................\n'),
     write(Vars),
     write('\n...................................\n'),
@@ -47,11 +45,12 @@ init(Subjects, Teachers):-
     % labeling([ffc, bisect], Vars).
     % labeling([minimize(Heuristic)], Vars).
     % labeling([minimize(Heuristic), ffc, bisect], Vars),
-    % time_out(labeling([minimize(Heuristic), ffc, bisect], Vars), 10000, Res), write('Res is: \n'), write(Res).
+    % labeling([minimize(Heuristic), ffc, bisect, time_out(60000, Res)], Vars), write('Res is: \n'), write(Res),
     % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
-    labeling([ffc, bisect], Vars),
+    % labeling([ffc, bisect], Vars),
 	writeWalltime,
-	fd_statistics.
+	fd_statistics,
+	printResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, FailedHours).
 
 
 %------------------------------------variable definition helpers
@@ -118,7 +117,7 @@ restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
     restrictTeachers(T).
 
 restrictSubjects([], _, _, 0).
-restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeachers, PreferenceFailedCount):-
+restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeachers, CountPracticalUndesiredTeacher):-
     %recursive call
     restrictSubjects(R, CompFields, NTeachers, TempCount),
     %assert typical standards HP > HT
@@ -140,7 +139,7 @@ restrictSubjects([[_Semester-Field-HT-HP-DT-DP, TT, TP]|R], CompFields, NTeacher
     nth1(Field, CompFields, FieldComplements),
     scalar_product(FieldComplements, TT, #= , 0), %Restriction-3,
     scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
-    PreferenceFailedCount #= TempCount + CurrentCount.
+    CountPracticalUndesiredTeacher #= TempCount + CurrentCount.
 
 
 %make sure the sum of the times for each subject, in both semesters, matches that of the teachers
@@ -160,9 +159,10 @@ restrictSumBySemester(Subjects, Teachers):-
 %------------------------------------labeling helpers
 %get a list of all the variables to label from Teachers and Subjects
 getVarsToLabel(Teachers, Subjects, Vars):-
+	writeList(Teachers), nl,
 	getTeachersVariablesToLabel(Teachers, TVars),
     getSubjectTsVariablesToLabel(Subjects, SVars),
-    append(TVars, SVars, Vars),
+    append(TVars, SVars, Vars).
 
 %get a list of all the variables HS1 and HS2 so that we can label them (teachers)
 getTeachersVariablesToLabel([], []).
@@ -177,10 +177,16 @@ getSubjectTsVariablesToLabel([[_, TT, TP]|T], Merged):-
     append([TT, TP, TempMerged], Merged).
 
 % calculate an heuristic for the current
-getHeuristicValue(Teachers, Subjects, PreferenceFailedCount, Heuristic):-
+getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, FailedHours, Heuristic):-
     getFailedHours(Teachers, FailedHours),
-	Heuristic = PreferenceFailedCount.
+	Heuristic = FailedHours.
 
+%------------------------------------printing result
+printResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, FailedHours):-
+	write('\n-------------------------------------------DONE\n'),
+	write('Teachers:\n'), writeList(Teachers),
+	write('Subjects:\n'), writeList(Subjects),
+	format('Heuristic: ~p, CountPracticalUndesiredTeacher: ~p, FailedHours: ~d\n', [Heuristic, CountPracticalUndesiredTeacher, FailedHours]).
 /*
 	Current Restrictions:
 		Teachers
