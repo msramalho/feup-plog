@@ -33,7 +33,7 @@ init(Subjects, Teachers):-
 
 % 4 - search for solutions
     % generate heuristic to optimize
-	getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, FailedHours, Heuristic),
+	getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, RatioFailedHours, Heuristic),
     write('7\n'),
     getVarsToLabel(Teachers, Subjects, Vars),
     write('8\n'),
@@ -51,7 +51,7 @@ init(Subjects, Teachers):-
     % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
     % labeling([ffc, bisect], Vars),
 	writeWalltime,
-	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, FailedHours),
+	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours),
 	fd_statistics, nl.
 
 
@@ -97,13 +97,12 @@ getMatrixOfComplementedFields(Teachers, CompFields):-
     ), CompFields).
 
 
-
 getFailedHoursError([], 0).
 getFailedHoursError([Avg-_Diff-_Field-HS1-HS2|T], FailedHours):-
     getFailedHoursError(T, TempFailedHours),
-	% since Avg * 2 is always even - Error / (Avg * 2) is alyays X.0 or X.5, so multiplying by 10 eliminates 100% of the division error.
-	Error #= ((Avg * 2) - (HS1 + HS2)) * 10,
-    FailedHours #= TempFailedHours + Error / (Avg * 2).
+	% since Avg * 2 is always even - Error / (Avg * 2) is alyays X.0 or X.5, so multiplying by at least 10 eliminates 100% of this division error.
+	Error #= (((Avg * 2) - (HS1 + HS2)) * 1000) / (Avg * 2), % (error * 1000) - the multiplication must come first due to decimal places
+    FailedHours #= TempFailedHours + Error * Error. % squared error (error * 1000 * 1000)
 
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
@@ -179,13 +178,28 @@ getSubjectTsVariablesToLabel([[_, TT, TP]|T], Merged):-
     getSubjectTsVariablesToLabel(T, TempMerged),
     append([TT, TP, TempMerged], Merged).
 
+% get the number of practical lessons
+getCountPracticalLessons([], 0).
+getCountPracticalLessons([[_Semester-_Field-_HT-HP-_DT-DP, _, _]|T], Count):-
+	getCountPracticalLessons(T, TempCount),
+	% count(0, TP, #\=, PartialCount), % this is not what we want
+	Count #= TempCount + HP / DP.
+
+
 % calculate an heuristic for the current
-getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, FailedHours, Heuristic):-
-	% part 1 of otimization - minimize the
-	% findall(Hours, (teacher(Type, _, _), teacherType(Type, Half), Hours is Half * 2), ListHours), % get the amount of hours the teachers can give
-	% sumlist(ListHours, TotalHours),
+getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, RatioFailedHours, Heuristic):-
+	% part 1 of optimization - minimize the average difference between the expected teacher hours and the real value
+	% FailedHoursError is the sum of the quadratic errors - a ratio (0..1) - multiplied by 1 000 000
     getFailedHoursError(Teachers, FailedHours),
-	Heuristic = CountPracticalUndesiredTeacher.
+	length(Teachers, NTeachers),
+	RatioFailedHours #= FailedHours / NTeachers, % the final average error * 1.000.000
+
+	% part 2 of optimization - minimize the number of teachers that give practical from other fields
+	getCountPracticalLessons(Subjects, CountPracticalLessons),
+	RatioPractical #= CountPracticalUndesiredTeacher / CountPracticalLessons * 1000000,
+
+	% minimization weight:
+	Heuristic #= ((RatioFailedHours * 8) / 10) + ((RatioPractical * 2) / 10).
 
 /*
 	Current Restrictions:

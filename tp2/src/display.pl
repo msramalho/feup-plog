@@ -1,13 +1,17 @@
 %------------------------------------printing results
-writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, FailedHours):-
+writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours):-
 	write('\n-------------------------------------------DONE\n'),
 	% write('Teachers:\n'), writeList(Teachers),
 	writeTeachersResult(Teachers),
 	% write('Subjects:\n'), writeList(Subjects),
 	writeSubjectsResult(Subjects),
-	format('Heuristic: ~p', [Heuristic]), nl,
-	format('CountPracticalUndesiredTeacher: ~p', [CountPracticalUndesiredTeacher]), nl,
-	format('FailedHours: ~p', [FailedHours]), nl,
+	% due to the FD in clpfd
+	HeuristicPercent is Heuristic / 10000,
+	FailedHoursPercent is RatioFailedHours / 10000,
+	write('For the next 3 values "0" represents a perfect score for the given area:'), nl,
+	format('Heuristic: ~2f%', [HeuristicPercent]), nl,
+	format('Failed Hours: ~2f%', [FailedHoursPercent]), nl,
+	format('#Practical Teacher From Other Field: ~p', [CountPracticalUndesiredTeacher]), nl,
 	nl, nl.
 
 % pretty teachers results (table)
