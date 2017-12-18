@@ -5,10 +5,6 @@ writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, Faile
 	writeTeachersResult(Teachers),
 	% write('Subjects:\n'), writeList(Subjects),
 	writeSubjectsResult(Subjects),
-	length(Teachers, NTeachers),
-	length(Subjects, NSubjects),
-	format('Teachers: ~p', [NTeachers]), nl,
-	format('nSubjects: ~p', [NSubjects]), nl,
 	format('Heuristic: ~p', [Heuristic]), nl,
 	format('CountPracticalUndesiredTeacher: ~p', [CountPracticalUndesiredTeacher]), nl,
 	format('FailedHours: ~p', [FailedHours]), nl,
@@ -16,6 +12,8 @@ writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, Faile
 
 % pretty teachers results (table)
 writeTeachersResult(Teachers):-
+	length(Teachers, NTeachers),
+	format('#Teachers: ~p', [NTeachers]), nl,
 	format('Teachers Distribution', []), nl,
 	format('~` t~4|* ID  FIELD AVG  DIFF  HS1  HS2 *\n', []),
 	writeTeachersResult(Teachers, 1), nl.
@@ -28,6 +26,8 @@ writeTeachersResult([Avg-Diff-Field-HS1-HS2|T], Counter):-
 
 % pretty subjects results (table)
 writeSubjectsResult(Subjects):-
+	length(Subjects, NSubjects),
+	format('#Subjects: ~p', [NSubjects]), nl,
 	format('Subjects Distribution', []), nl,
 	format('~` t~4|* ID  Field  Semester  HT  DT  HP  DP   Theoretical(Tid-Hours)      Practical(Tid-Hours)     *\n', []),
 	writeSubjectsResult(Subjects, 1), nl.
