@@ -5,6 +5,7 @@
 
 :- include('data.pl').
 :- include('utils.pl').
+:- include('display.pl').
 
 % main function
 init(Subjects, Teachers):-
@@ -179,40 +180,6 @@ getSubjectTsVariablesToLabel([[_, TT, TP]|T], Merged):-
 getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, FailedHours, Heuristic):-
     getFailedHours(Teachers, FailedHours),
 	Heuristic = FailedHours.
-
-%------------------------------------printing results
-writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, FailedHours):-
-	write('\n-------------------------------------------DONE\n'),
-	% write('Teachers:\n'), writeList(Teachers),
-	writeTeachersResult(Teachers),
-	% write('Subjects:\n'), writeList(Subjects),
-	writeSubjectsResult(Subjects),
-	format('Heuristic: ~p, CountPracticalUndesiredTeacher: ~p, FailedHours: ~d\n', [Heuristic, CountPracticalUndesiredTeacher, FailedHours]).
-
-% pretty teachers results (table)
-writeTeachersResult(Teachers):-
-	format('Teachers Distribution', []), nl,
-	format('~` t~4|* ID  FIELD AVG  DIFF  HS1  HS2 *\n', []),
-	writeTeachersResult(Teachers, 1), nl.
-writeTeachersResult([], _).
-writeTeachersResult([Avg-Diff-Field-HS1-HS2|T], Counter):-
-	format('~` t~4|*~t~d~t~6+~t~d~t~5+~t~d~t~6+~t~d~t~6+~t~p~t~4+~t~p~t~5+*~38|~n', [Counter, Field, Avg, Diff, HS1, HS2]),
-	% format('*~t~d~t~30+*~31|~n', [Counter]), % example of simple centering
-	NewCounter is Counter + 1,
-	writeTeachersResult(T, NewCounter).
-
-% pretty subjects results (table)
-writeSubjectsResult(Subjects):-
-	format('Subjects Distribution', []), nl,
-	format('~` t~4|* ID  Field  Semester  HT  DT  HP  DP       T(Tid-Hours)           P(Tid-Hours)         *\n', []),
-	writeSubjectsResult(Subjects, 1), nl.
-writeSubjectsResult([], _).
-writeSubjectsResult([[Semester-Field-HT-HP-DT-DP, TT, TP]|S], Counter):-
-	findall(TIndex-THours, (nth1(TIndex, TT, THours), THours \= 0), Tteachers),
-	findall(PIndex-PHours, (nth1(PIndex, TP, PHours), PHours \= 0), Pteachers),
-	format('~` t~4|*~t~d~t~6+~t~d~t~6+~t~d~t~12+~t~p~t~1+~t~p~t~5+~t~p~t~5+~t~p~t~3+~t~p~t~20+~t~p~t~30+*~91|~n', [Counter, Field, Semester, HT, DT, HP, DP, Tteachers, Pteachers]),
-	NewCounter is Counter + 1,
-	writeSubjectsResult(S, NewCounter).
 
 
 
