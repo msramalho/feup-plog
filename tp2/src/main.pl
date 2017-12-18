@@ -7,8 +7,9 @@
 :- include('utils.pl').
 :- include('display.pl').
 
-% main function
-init:-init(S, T).
+% main functions
+init(Subjects, Teachers, true):-setDebug, init(Subjects, Teachers).
+init(Subjects, Teachers, false):-clearDebug, init(Subjects, Teachers).
 init(Subjects, Teachers):-
     clear,
 % 1 - variable definition + 2 - domain specification
@@ -16,43 +17,43 @@ init(Subjects, Teachers):-
     defineSubjects(Subjects),
     % CountPracticalUndesiredTeacher in 2..20,
     % FailedHours in 0..100,
-    write('1\n'),
+    debug('1\n'),
 
 % 3 - restrictions application (+ 2 - some domain specification)
     restrictTeachers(Teachers),
-    write('2\n'),
+    debug('2\n'),
     length(Teachers, NTeachers), %get the number of teachers
-    write('3\n'),
+    debug('3\n'),
     getMatrixOfComplementedFields(Teachers, CompFields),
-    write('4\n'),
+    debug('4\n'),
     restrictSubjects(Subjects, CompFields, NTeachers, CountPracticalUndesiredTeacher),
-    write('5\n'),
+    debug('5\n'),
     restrictSumBySemester(Subjects, Teachers),
-    write('6\n'),
+    debug('6\n'),
     % restriction to force enough teacher hours to exist
 
 % 4 - search for solutions
     % generate heuristic to optimize
 	getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, RatioFailedHours, Heuristic),
-    write('7\n'),
+    debug('7\n'),
     getVarsToLabel(Teachers, Subjects, Vars),
-    write('8\n'),
-    write('\n...................................\n'),
-    write(Vars),
-    write('\n...................................\n'),
-
+    debug('8\n'),
+    debug('\n...................................\n'),
+    debug(Vars),
+    debug('\n...................................\n'),
+	write('labeling...'), nl,
 	% labeling
 	resetWalltime,
     % labeling([], Vars).
-    labeling([ffc, bisect], Vars),
+    % labeling([ffc, bisect], Vars),
     % labeling([minimize(Heuristic)], Vars).
     % labeling([minimize(Heuristic), ffc, bisect], Vars),
-    % labeling([minimize(Heuristic), ffc, bisect, time_out(60000, Res)], Vars), write('Res is: \n'), write(Res),
+    labeling([minimize(Heuristic), ffc, bisect, time_out(60000, Res)], Vars), write('Res is: \n'), write(Res),
     % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
     % labeling([ffc, bisect], Vars),
-	writeWalltime,
+	debugWalltime,
 	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours),
-	fd_statistics, nl.
+	debugStatistics, nl.
 
 
 %------------------------------------variable definition helpers

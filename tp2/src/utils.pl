@@ -4,6 +4,20 @@
 clear:-write('\33\[2J').
 
 
+
+% DEBUG MODE FUNCTIONS wether this is in debug mode or not
+:- volatile debugMode/1.
+:- dynamic debugMode/1.
+:- assert(debugMode(false)).
+setDebug:-retract(debugMode(_)),assert(debugMode(true)).
+clearDebug:-retract(debugMode(_)),assert(debugMode(false)).
+% only write message if debug mode is on
+debug(Message):-debugMode(true), write(Message).
+debug(_).
+% only write list if debug mode is on
+debugList(List):-debugMode(true), writeList(List).
+debugList(_).
+
 %generate an fdset with a start, end and step
 generateFdset(Min, Max, Step, Fdset):-
     generateList(Min, Max, Step, List),
@@ -55,8 +69,10 @@ writeList([E|R]):-
 
 % statistics measurement
 resetWalltime:-statistics(walltime, _).
-writeWalltime:-statistics(walltime, [_, W]), format('Walltime: ~d\n', W).
-
+debugWalltime:-debugMode(true), statistics(walltime, [_, W]), format('Walltime: ~d\n', W).
+debugWalltime.
+debugStatistics:-debugMode(true), fd_statistics.
+debugStatistics.
 /* resetRuntime(Start):-statistics(runtime, [Start|_]).
 writeRuntime(Start):-statistics(runtime, [End|_]),
 	Runtime is End - Start,

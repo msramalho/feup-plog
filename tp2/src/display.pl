@@ -1,9 +1,10 @@
 %------------------------------------printing results
 writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours):-
 	write('\n-------------------------------------------DONE\n'),
-	% write('Teachers:\n'), writeList(Teachers),
+	debug('Teachers:\n'), debugList(Teachers),
+	debug('Subjects:\n'), debugList(Subjects),
+
 	writeTeachersResult(Teachers),
-	% write('Subjects:\n'), writeList(Subjects),
 	writeSubjectsResult(Subjects),
 	% due to the FD in clpfd
 	HeuristicPercent is Heuristic / 10000,
