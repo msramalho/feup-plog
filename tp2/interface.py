@@ -29,13 +29,13 @@ groupFiles.add_argument('-cf','--csv-file', metavar="", help='The name of the cs
 
 # behaviour customization
 groupCustom = parser.add_argument_group('behaviour customization')
-groupCustom.add_argument('-t','--tabled', help='Makes the output form JSON to Prolog be tabled for easy reading', default=True, action='store_true')
+groupCustom.add_argument('-t','--tabled', help='Makes the output form JSON to Prolog be tabled for easy reading', default=False, action='store_true')
 groupCustom.add_argument('-r','--randomize', help='randomize the number of effective hours, instead of using all available (for the generator)', default=False, action='store_true')
 groupCustom.add_argument('-d','--debug', help='Run the prolog code in debug mode (only for executing)', default=False, action='store_true')
 
 # parse the arguments
 args = vars(parser.parse_args())
-
+args["prolog_file"] = "src/" + args["prolog_file"]
 
 #---------------------------------------Logic
 subjects, teachers = [], []
@@ -51,5 +51,10 @@ if args["parse"]:
 
 # execute
 if args["execute"]:
-	processOutput, diff = createNewMainFile(args["json_file"], filesToRemove, "src/%s_main.pl" % args["json_file"])
+	filesToRemove = []
+	newMain = createNewMainFile(args["json_file"], filesToRemove)
+	print(newMain)
+	output, diff = executeMainFile(newMain)
 	removeTmpFiles(filesToRemove)
+	print(output)
+
