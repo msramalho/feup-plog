@@ -12,7 +12,7 @@ clear:-write('\33\[2J').
 setDebug:-retract(debugMode(_)),assert(debugMode(true)).
 clearDebug:-retract(debugMode(_)),assert(debugMode(false)).
 % only write message if debug mode is on
-debug(Message):-debugMode(true), write(Message).
+debug(Message):-debugMode(true), write(Message), !.
 debug(_).
 % only write list if debug mode is on
 debugList(List):-debugMode(true), writeList(List).
