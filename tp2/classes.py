@@ -168,7 +168,7 @@ class Teacher(Parent):
 
 		# randomize used blocks (may lead to greater number of teachers)
 		effectiveHours = subject.pDuration * maxBlocks # maximum amount
-		if config.randomizeEfficiency: # produce random choice instead
+		if config.randomizeEfficient: # produce random choice instead
 			effectiveHours = random.randrange(subject.pDuration, effectiveHours + 1, subject.pDuration)
 
 		# update the subject practical hours with the hours this teacher is teaching
@@ -201,9 +201,9 @@ class Teacher(Parent):
 		}
 
 class Config(Parent):
-	def __init__(self, rounds=3, maxDiff=4, nFields=5, randomizeEfficiency=False, department="DEI"):
+	def __init__(self, rounds=3, maxDiff=4, nFields=5, randomizeEfficient=False, department="DEI"):
 		self.rounds = rounds
 		self.maxDiff = maxDiff
 		self.nFields = nFields
-		self.randomizeEfficiency = randomizeEfficiency # if True this can lead to more teachers being spawned, since their time is not allocated by the maximum amount possible, but randomly between block time and max, @see addPHoursMax
+		self.randomizeEfficient = randomizeEfficient # if True this can lead to more teachers being spawned, since their time is not allocated by the maximum amount possible, but randomly between block time and max, @see addPHoursMax
 		self.department = department

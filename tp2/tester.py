@@ -42,7 +42,7 @@ def executeMainFile(newMain):
 	processOutput = processToStdout(process)
 
 	diff = (time.time() - start) * 1000000 # microseconds, time measurement end
-	return (processOutput, diff)#return tuple with output, time in microseconds
+	return (processOutput, diff) # return tuple with output, time in microseconds
 
 def executeMainFileToShell(newMain):
 	cmd = "echo init(Subjects, Teachers). | sicstus --nologo --noinfo -l %s" % newMain
@@ -94,7 +94,7 @@ if __name__ == '__main__':
 	if len(argv) >= 2:
 		if argv[1] == "gen":#run with a generator
 			rounds = int(argv[2]) if len(argv) >= 3 else 1
-			config = Config(rounds=rounds, maxDiff=0, nFields=1, randomizeEfficiency=False)
+			config = Config(rounds=rounds, maxDiff=0, nFields=1, randomizeEfficient=False)
 			subjects, teachers = generate(config)
 			filename = "data/auto_gen_%d.json" % rounds
 			dataToPrologJson(config, subjects, teachers, filename)

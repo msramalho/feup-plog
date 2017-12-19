@@ -51,7 +51,7 @@ def dataToPrologJson(config, subjects, teachers, filename):
 			"rounds" : config.rounds,
 			"maxDiff" : config.maxDiff,
 			"nFields" : config.nFields,
-			"randomizeEfficiency" : config.randomizeEfficiency
+			"randomizeEfficient" : config.randomizeEfficient
 		},
 		"fields" : [],
 		"subjects" : [],
@@ -80,16 +80,9 @@ def removeAutoJson():
 
 ''' removeAutoJson()
 for i in range(1, 5):
-	config = Config(rounds=i, maxDiff=3, nFields=3, randomizeEfficiency=False)
+	config = Config(rounds=i, maxDiff=3, nFields=3, randomizeEfficient=False)
 	subjects, teachers = generate(config)
 	dataToPrologJson(config, subjects, teachers, "data/auto_%d.json" % i)
 	print("Final Teachers:")
 	for t in teachers:
 		print(t.toJson()) '''
-
-	# for s in subjects:
-	# 	print(s.toJson())
-# config = Config()
-# s = Subject.generateSubject(config, 1)
-# print(s.toJson())
-
