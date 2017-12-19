@@ -18,10 +18,11 @@ writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, Ratio
 % pretty teachers results (table)
 writeTeachersResult(Teachers):-
 	length(Teachers, NTeachers),
-	format('#Teachers: ~p', [NTeachers]), nl,
-	format('Teachers Distribution', []), nl,
+	format('\nTeachers Distribution (~p)', [NTeachers]), nl,
+	format('~` t~4|~`*t~37|\n', []),
 	format('~` t~4|* ID  FIELD AVG  DIFF  HS1  HS2 *\n', []),
-	writeTeachersResult(Teachers, 1), nl.
+	writeTeachersResult(Teachers, 1),
+	format('~` t~4|~`*t~37|\n', []).
 writeTeachersResult([], _).
 writeTeachersResult([Avg-Diff-Field-HS1-HS2|T], Counter):-
 	format('~` t~4|*~t~d~t~6+~t~d~t~5+~t~d~t~6+~t~d~t~6+~t~p~t~4+~t~p~t~5+*~38|~n', [Counter, Field, Avg, Diff, HS1, HS2]),
@@ -32,10 +33,12 @@ writeTeachersResult([Avg-Diff-Field-HS1-HS2|T], Counter):-
 % pretty subjects results (table)
 writeSubjectsResult(Subjects):-
 	length(Subjects, NSubjects),
-	format('#Subjects: ~p', [NSubjects]), nl,
-	format('Subjects Distribution', []), nl,
+	format('\nSubjects Distribution (~p)', [NSubjects]), nl,
+	format('~` t~4|~`*t~98|\n', []),
 	format('~` t~4|* ID  Field  Semester  HT  DT  HP  DP   Theoretical(Tid-Hours)      Practical(Tid-Hours)     *\n', []),
-	writeSubjectsResult(Subjects, 1), nl.
+	writeSubjectsResult(Subjects, 1),
+	format('~` t~4|~`*t~98|\n', []).
+
 writeSubjectsResult([], _).
 writeSubjectsResult([[Semester-Field-HT-HP-DT-DP, TT, TP]|S], Counter):-
 	findall(TIndex-THours, (nth1(TIndex, TT, THours), THours \= 0), Tteachers),
