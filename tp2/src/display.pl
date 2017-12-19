@@ -1,8 +1,10 @@
 %------------------------------------printing results
 writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours):-
 	write('\n-------------------------------------------DONE\n'),
-	debug('Teachers:\n'), debugList(Teachers),
-	debug('Subjects:\n'), debugList(Subjects),
+	length(Teachers, NTeachers),
+	debug('Teachers: '), debug(NTeachers), debug('\n'), debugList(Teachers),
+	length(Subjects, NSubjects),
+	debug('Subjects: '), debug(NTeachers), debug('\n'), debugList(Subjects),
 
 	writeTeachersResult(Teachers),
 	writeSubjectsResult(Subjects),
