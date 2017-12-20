@@ -48,7 +48,7 @@ init(Subjects, Teachers):-
     % labeling([ffc, bisect], Vars),
     % labeling([minimize(Heuristic)], Vars).
     % labeling([minimize(Heuristic), ffc, bisect], Vars),
-    labeling([minimize(Heuristic), ffc, bisect, time_out(5000, Res)], Vars), nl,
+    labeling([minimize(Heuristic), ffc, bisect, time_out(5000, _Res)], Vars), nl,
     % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
     % labeling([ffc, bisect], Vars),
 	debugWalltime,
