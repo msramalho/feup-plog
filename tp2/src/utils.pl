@@ -69,9 +69,9 @@ writeList([E|R]):-
 
 % statistics measurement
 resetWalltime:-statistics(walltime, _).
-debugWalltime:-debugMode(true), statistics(walltime, [_, W]), format('Walltime: ~d\n', W).
+debugWalltime:-debugMode(true), statistics(walltime, [_, W]), format('Walltime: ~d\n', W), !.
 debugWalltime.
-debugStatistics:-debugMode(true), fd_statistics.
+debugStatistics:-debugMode(true), fd_statistics, !.
 debugStatistics.
 /* resetRuntime(Start):-statistics(runtime, [Start|_]).
 writeRuntime(Start):-statistics(runtime, [End|_]),
