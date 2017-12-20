@@ -64,7 +64,8 @@ def removeTmpFiles(filesToRemove):
 		try:
 			remove(f)
 		except OSError:
-			print("----[WARNING]: Unable to remove temporay file: %s" % f)
+			pass
+			# print("----[WARNING]: Unable to remove temporay file: %s" % f)
 
 #create the tmp folder if it does not exist
 if not os.path.exists(tmpFolder):
