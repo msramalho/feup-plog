@@ -40,7 +40,7 @@ groupCustom.add_argument('-re','--randomize', help='randomize the number of effe
 args = vars(parser.parse_args())
 
 def disableStdOut():
-	sys.stdout = open('stdout_file', 'a')
+	sys.stdout = open('logs.txt', 'a')
 def enableStdout():
 	sys.stdout.close
 	sys.stdout = sys.__stdout__
@@ -77,11 +77,9 @@ if __name__ == "__main__": # required for the multiprocessing
 
 	# hardcoded tests # todo if needed: use pool instead of single process
 	if args["hardcoded_test"]:
-		args["remove"] = True
 		if not args["csv_file"]:
 			print("hardcoded tests require csv_file")
 			exit()
-		filesToRemove = []
 		# repetitions, nrounds, maxDiff, nFields
 		tests = [
 			[10, 1, 0, 1], # simplest
@@ -100,6 +98,7 @@ if __name__ == "__main__": # required for the multiprocessing
 				#create unique filenames
 				jsonFile = "data/hardcoded_test%d_%d_%d_%d.json" % tuple(test)
 				plFile = "src/hardcoded_test%d_%d_%d_%d.pl" % tuple(test)
+				filesToRemove = [jsonFile, plFile]
 				# generation to json
 				dataToPrologJson(c, s, t, jsonFile)
 				# json to prolog
@@ -108,7 +107,7 @@ if __name__ == "__main__": # required for the multiprocessing
 				newMain = createNewMainFile(plFile, filesToRemove)
 				output, _ = executeMainFile(newMain, debug=True)
 				outputToCsv(args["csv_file"], (output, None))
-				generatedFilesToRemove.extend([jsonFile, plFile, newMain])
+				removeTmpFiles(filesToRemove)
 				enableStdout()
 			print("done")
 		pass
