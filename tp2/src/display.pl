@@ -4,7 +4,7 @@ writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, Ratio
 	length(Teachers, NTeachers),
 	debug('Teachers: '), debug(NTeachers), debug('\n'), debugList(Teachers),
 	length(Subjects, NSubjects),
-	debug('Subjects: '), debug(NTeachers), debug('\n'), debugList(Subjects),
+	debug('Subjects: '), debug(NSubjects), debug('\n'), debugList(Subjects),
 	fields(Nfields),
 	debug('Fields: '), debug(Nfields), debug('\n'),
 
