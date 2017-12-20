@@ -13,3 +13,4 @@ classes/plr_class.pl
 exams/moodle_modle_test/all.pl
 *.pyc
 tp2/data/auto*
+logs.txt
