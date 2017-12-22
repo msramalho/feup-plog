@@ -117,6 +117,21 @@ if __name__ == "__main__": # required for the multiprocessing
 			[10, 7, 0, 2],
 			[10, 7, 4, 2],
 
+			[10, 8, 0, 1],
+			[10, 8, 4, 1],
+			[10, 8, 0, 2],
+			[10, 8, 4, 2],
+
+			[10, 9, 0, 1],
+			[10, 9, 4, 1],
+			[10, 9, 0, 2],
+			[10, 9, 4, 2],
+
+			[10, 10, 0, 1],
+			[10, 10, 4, 1],
+			[10, 10, 0, 2],
+			[10, 10, 4, 2],
+
 		]
 		csvHeader(args["csv_file"]) # create csv file
 		for countTest, test in enumerate(tests): # for each test
