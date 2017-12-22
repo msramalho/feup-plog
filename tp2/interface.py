@@ -135,7 +135,9 @@ if __name__ == "__main__": # required for the multiprocessing
 			[10, 10, 4, 2],
 
 		]
-		csvHeader(args["csv_file"]) # create csv file
+		labelingOptions = ["ff_up", "ffc_up", "ff_down", "ffc_down"]
+		for lbl in labelingOptions:
+			csvHeader(lbl + args["csv_file"]) # create csv file
 		for countTest, test in enumerate(tests): # for each test
 			print("Test %d/%d (%d repetitions)" % (countTest, len(tests), test[0]), end='', flush=True)
 			for i in range(test[0]): # for each repetition in test
@@ -154,7 +156,6 @@ if __name__ == "__main__": # required for the multiprocessing
 				generatePrologForFile(jsonFile, output=plFile)
 
 				#generate and run a mainfile for every intended labeling option:
-				labelingOptions = ["ff_up", "ffc_up", "ff_down", "ffc_down"]
 				for lbl in labelingOptions:
 					# generate main file for lbl
 					newMain = createNewMainFile(plFile, filesToRemove, edit="src/main_%s.pl" % lbl)
