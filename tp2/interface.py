@@ -135,7 +135,7 @@ if __name__ == "__main__": # required for the multiprocessing
 			[10, 10, 4, 2],
 
 		]
-		labelingOptions = ["ff_up", "ffc_up", "ff_down", "ffc_down"]
+		labelingOptions = ["ff_up", "ffc_up", "ff_down", "ffc_down", "default"]
 		for lbl in labelingOptions:
 			csvHeader(lbl + args["csv_file"]) # create csv file
 		for countTest, test in enumerate(tests): # for each test
