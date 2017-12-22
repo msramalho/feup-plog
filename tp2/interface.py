@@ -1,5 +1,6 @@
 import argparse
 import os, sys
+import time
 
 from prologer import *
 from generator import *
@@ -46,6 +47,7 @@ def enableStdout():
 	sys.stdout = sys.__stdout__
 
 #---------------------------------------Logic
+t0 = time.clock() # timing the program
 subjects, teachers = [], []
 generatedFilesToRemove = []
 # generate
@@ -167,3 +169,7 @@ if __name__ == "__main__": # required for the multiprocessing
 # remove generated files
 if args["remove"]:
 	removeTmpFiles(generatedFilesToRemove)
+
+
+totalTime = time.clock() - t0 # timing the program
+print("Total time: %f s, %f min" % (totalTime, totalTime/60))
