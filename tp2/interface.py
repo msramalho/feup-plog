@@ -135,10 +135,14 @@ if __name__ == "__main__": # required for the multiprocessing
 				dataToPrologJson(c, s, t, jsonFile)
 				# json to prolog
 				generatePrologForFile(jsonFile, output=plFile)
-				# generate main file
-				newMain = createNewMainFile(plFile, filesToRemove)
-				output, _ = executeMainFile(newMain, debug=True)
-				outputToCsv(args["csv_file"], (output, None))
+
+				#generate and run a mainfile for every intended labeling option:
+				labelingOptions = ["ff_up", "ffc_up", "ff_down", "ffc_down"]
+				for lbl in labelingOptions:
+					# generate main file for lbl
+					newMain = createNewMainFile(plFile, filesToRemove, edit="src/main_%s.pl" % lbl)
+					output, _ = executeMainFile(newMain, debug=True)
+					outputToCsv(lbl + args["csv_file"], (output, None))
 				removeTmpFiles(filesToRemove)
 				enableStdout()
 			print("done")
