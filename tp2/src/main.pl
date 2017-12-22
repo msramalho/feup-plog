@@ -8,9 +8,12 @@
 :- include('display.pl').
 
 % main functions
+init(Subjects, Teachers):-init(Teachers, Subjects, 15000).
+init(Subjects, Teachers, true, Timeout):-setDebug, init(Teachers, Subjects, Timeout).
+init(Subjects, Teachers, false, Timeout):-clearDebug, init(Teachers, Subjects, Timeout).
 init(Subjects, Teachers, true):-setDebug, init(Subjects, Teachers).
 init(Subjects, Teachers, false):-clearDebug, init(Subjects, Teachers).
-init(Subjects, Teachers):-
+init(Subjects, Teachers, Timeout):-
     clear,
 % 1 - variable definition + 2 - domain specification
     defineTeachers(Teachers),
@@ -51,11 +54,12 @@ init(Subjects, Teachers):-
     % labeling([minimize(Heuristic), ffc, bisect, time_out(15000, _Res)], Vars), nl,
     % labeling([minimize(Heuristic), ffc, step, down, time_out(15000, _Timeout)], Vars), nl,
     % labeling([minimize(Heuristic), ffc, enum, down, time_out(15000, _Timeout)], Vars), nl,
-    labeling([minimize(Heuristic), ffc, bisect, down, time_out(15000, Timeout)], Vars), nl,
+    labeling([minimize(Heuristic), ffc, bisect, down, time_out(Timeout, TimeoutFlag)], Vars), nl,
+    % labeling([minimize(Heuristic), ffc, bisect, down], Vars), nl,
     % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
     % labeling([ffc, bisect], Vars),
 	debugWalltime,
-	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours, Timeout),
+	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours, TimeoutFlag),
 	debugStatistics, nl.
 
 
