@@ -48,11 +48,14 @@ init(Subjects, Teachers):-
     % labeling([ffc, bisect], Vars),
     % labeling([minimize(Heuristic)], Vars).
     % labeling([minimize(Heuristic), ffc, bisect], Vars),
-    labeling([minimize(Heuristic), ffc, bisect, time_out(5000, _Res)], Vars), nl,
+    % labeling([minimize(Heuristic), ffc, bisect, time_out(15000, _Res)], Vars), nl,
+    % labeling([minimize(Heuristic), ffc, step, down, time_out(15000, _Timeout)], Vars), nl,
+    % labeling([minimize(Heuristic), ffc, enum, down, time_out(15000, _Timeout)], Vars), nl,
+    labeling([minimize(Heuristic), ffc, bisect, down, time_out(15000, Timeout)], Vars), nl,
     % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
     % labeling([ffc, bisect], Vars),
 	debugWalltime,
-	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours),
+	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours, Timeout),
 	debugStatistics, nl.
 
 
@@ -102,8 +105,8 @@ getFailedHoursError([], 0).
 getFailedHoursError([Avg-_Diff-_Field-HS1-HS2|T], FailedHours):-
     getFailedHoursError(T, TempFailedHours),
 	% since Avg * 2 is always even - Error / (Avg * 2) is alyays X.0 or X.5, so multiplying by at least 10 eliminates 100% of this division error.
-	Error #= (((Avg * 2) - (HS1 + HS2)) * 1000) / (Avg * 2), % (error * 1000) - the multiplication must come first due to decimal places
-    FailedHours #= TempFailedHours + Error * Error. % squared error (error * 1000 * 1000)
+	Error #= (((Avg * 2) - (HS1 + HS2)) * 1000000) / (Avg * 2), % (error * 1000) - the multiplication must come first due to decimal places
+    FailedHours #= TempFailedHours + Error. % * Error. % squared error (error * 1000 * 1000)
 
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
@@ -111,7 +114,7 @@ restrictTeachers([Avg-Diff-_Field-HS1-HS2|T]):-
     MaxHoursS1 is round(((2 * Avg)+Diff)/2), % the maximum amount of hours for the teacher in the 1st semester
     MaxHoursS2 is round(((2 * Avg)-Diff)/2), % - Diff, % the maximum amount of hours for the teacher in the 2nd semester
 	MaxHours is Avg * 2, %in case diff exceeds the number of hours
-    domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester
+    domain([HS1, HS2], 0, MaxHours), % set the domain for the hours in each semester, in case the specific maxhours somehow go beyond it
     HS1 in 0..MaxHoursS1,
     HS2 in 0..MaxHoursS2,
 	HS1 #> 0 #\/ HS2 #> 0, % at least one must be greater than 0
@@ -197,7 +200,7 @@ getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, RatioFaile
 
 	% part 2 of optimization - minimize the number of teachers that give practical from other fields
 	getCountPracticalLessons(Subjects, CountPracticalLessons),
-	RatioPractical #= CountPracticalUndesiredTeacher / CountPracticalLessons * 1000000,
+	RatioPractical #= (CountPracticalUndesiredTeacher * 1000000) / CountPracticalLessons,
 
 	% minimization weight:
 	Heuristic #= ((RatioFailedHours * 8) / 10) + ((RatioPractical * 2) / 10).

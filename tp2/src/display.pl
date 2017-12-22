@@ -1,6 +1,7 @@
 %------------------------------------printing results
-writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours):-
+writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours, Timeout):-
 	write('\n-------------------------------------------DONE\n'),
+	writeTimeout(Timeout),
 	length(Teachers, NTeachers),
 	debug('Teachers: '), debug(NTeachers), debug('\n'), debugList(Teachers),
 	length(Subjects, NSubjects),
@@ -51,3 +52,6 @@ writeSubjectsResult([[Semester-Field-HT-HP-DT-DP, TT, TP]|S], Counter):-
 	NewCounter is Counter + 1,
 	writeSubjectsResult(S, NewCounter).
 
+% write timeout
+writeTimeout(time_out):-write('Timeout: 1\n').
+writeTimeout(_).
