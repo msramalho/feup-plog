@@ -15,7 +15,7 @@ from generator import *
 tmpFolder = "src/"#folder to use for the temporary usage of files, should not be inner folder, due to include referencing
 mainPrefix = "main_"#append to generated data prolog files
 dataFolder = "data/"#source folder to look for json files
-outputVariables = ["Teachers: ", "Subjects: ", "Fields: ", "Heuristic: ", "Failed Hours: ", "#Practical Teacher From Other Field: ", "Resumptions: ", "Entailments: ", "Prunings: ", "Backtracks: ", "Constraints created: ", "Walltime: "]
+outputVariables = ["Teachers: ", "Subjects: ", "Fields: ", "Heuristic: ", "Failed Hours: ", "#Practical Teacher From Other Field: ", "Resumptions: ", "Entailments: ", "Prunings: ", "Backtracks: ", "Constraints created: ", "Walltime: ", "Timeout: "]
 
 def createPrologDataFromJson(jsonFile, filesToRemove):
 	outputFileName = jsonFile[:-4] + "pl" # mieic_a3_s1.pl
