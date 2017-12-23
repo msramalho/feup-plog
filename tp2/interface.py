@@ -12,11 +12,11 @@ parser = argparse.ArgumentParser(description="Python generator, parser, executer
 
 # actions
 groupActions = parser.add_argument_group('actions')
-groupActions.add_argument('-g','--generate', help='Generate a JSON file (-jf)', default=False, action='store_true')
+groupActions.add_argument('-g','--generate', help='Generate a JSON file (-jf) with a solvale problem', default=False, action='store_true')
 groupActions.add_argument('-p','--parse', help='Parse from a JSON file into a Prolog file(-jf to -pf)', default=False, action='store_true')
 groupActions.add_argument('-e','--execute', help='Execute the main.pl file with a custom Prolog data file (-pf, -cf)', default=False, action='store_true')
 groupActions.add_argument('-tt','--test', help='Run all the json files inside data/', default=False, action='store_true')
-groupActions.add_argument('-ht','--hardcoded-test', help='Run the hardcoded tests', default=False, action='store_true')
+groupActions.add_argument('-ht','--hardcode-test', help='Run the hardcoded tests', default=False, action='store_true')
 
 # generation arguments
 groupGenArgs = parser.add_argument_group('generation arguments')
@@ -35,7 +35,7 @@ groupCustom = parser.add_argument_group('behaviour customization')
 groupCustom.add_argument('-r','--remove', help='Remove the generated files', default=False, action='store_true')
 groupCustom.add_argument('-d','--debug', help='Run the prolog code in debug mode (only for executing)', default=False, action='store_true')
 groupCustom.add_argument('-t','--tabled', help='Makes the output form JSON to Prolog be tabled for easy reading', default=False, action='store_true')
-groupCustom.add_argument('-re','--randomize', help='randomize the number of effective hours, instead of using all available (for the generator)', default=False, action='store_true')
+groupCustom.add_argument('-ra','--randomize', help='randomize the number of effective hours, instead of using all available (for the generator)', default=False, action='store_true')
 
 # parse the arguments
 args = vars(parser.parse_args())
@@ -78,7 +78,7 @@ if __name__ == "__main__": # required for the multiprocessing
 		runAll(args["csv_file"])
 
 	# hardcoded tests # todo if needed: use pool instead of single process
-	if args["hardcoded_test"]:
+	if args["hardcode_test"]:
 		if not args["csv_file"]:
 			print("hardcoded tests require csv_file")
 			exit()
