@@ -8,32 +8,47 @@ Logic Programmin in PROLOG
 ## TP2- Teacher's Working Hours Distribution - Restrictions over a Finite Domain
 We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus restrictions engine for Finite Domains (`:- use_module(library(clpfd)).`). 
 
-## generator.py
-**However**, we went a step further and created a Python script ([generator.py](https://github.com/msramalho/feup-plog/blob/master/tp2/generator.py)) that is able to convert a given `dataFile.json` ([example](https://github.com/msramalho/feup-plog/blob/master/tp2/data/mieic_a3_s1.json)) into the format used in the [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) file, which gives us flexibility when we want to test different problem specifications agains our restrictions algorithm.
+## interface.py
+This file essentially does everything else. It generates json versions of problems with solution, converts them to Prolog to feed our open-mouthed slow-eater solver, and executes them. It is also able to output the results to a .csv file for later interpretation.
+To see everything it can do, call `python interface.py -h`:
+```
+usage: interface.py [-h] [-g] [-p] [-e] [-tt] [-ht] [-nr] [-nf] [-md] [-jf]
+                    [-pf] [-cf] [-r] [-d] [-t] [-ra]
 
-To convert a `.json` file into a `data.pl`, we simply run:
-```
-python generator.py data/mieic_a3_s1.json
-```
-And this will replace the current `data.pl` file with the new data.
-#### Notes on generator.py
- * It implements a function `generatePrologForFile(filename, print = False, output = "src/data.pl")`, that can be called and that can print an easy-to-ready tabular output from the `.json` file, if the parameter `print` is set to `True`;
- * A custom path to output the PROLOG data file can also be passed in the `output parameter`;
- * So this can be used to update the contents of `data.pl` and later be invoked by using [tester](https://github.com/msramalho/feup-plog#testerpy) like so: `python tester.py default` (See [notes on tester.py](`python tester.py default`))
- * It runs some basic tests on the `.json` data so as to ascertain wether the configuration can be excluded due to immediate problems, such as a universe where there are more hours to teach than the available teachers can teach.
- 
- ---
- 
- ## tester.py
- 
-**Aditionally**, we decided one step was not enough, so we took another. We created yet another Python script ([tester.py](https://github.com/msramalho/feup-plog/blob/master/tp2/tester.py)) that is able to use [multiprocessing](https://docs.python.org/3.6/library/multiprocessing.html) so as to read all the `.json` files in a folder, namely `data/`, and to use the `generator.py` tools to create multiple `data_customName.pl` data files, for each one of those, **and then** run them by invoking the `sicstus` command. Thus giving us a tailored way of testing our program in a speedy way. It does it's best to distribute process amongs different CPU cores, since a sicstus PROLOG program is only run on a single core.
+Python generator, parser, executer and analyser for problems concerning the
+teacher hours assignment
 
-To test all the `.json` files in the `data/` folder, we simply run:
-```
-python tester.py
-```
-And watch the magic happening.
+optional arguments:
+  -h, --help            show this help message and exit
 
-#### Notes on tester.py
- * This script performs an output, after running all the data files, and displays the duration that process took. Since we also wanted time measurement form inside the PROLOG code, `tester.py` is able to catch sicstus prints in the format `\nprologTime%` (where `\n` is a newline and `%` is anything after `prologTime`) and display them. They can also be used for further statistical analysis done on the PROLOG code performance.
- * Instead of all the hastle involved in using sictus to test the program we also implemented an option to test the default `main.pl` file with the `data.pl` file, this can be achieved by running `python tester.py default`
+actions:
+  -g, --generate        Generate a JSON file (-jf) with a solvale problem
+  -p, --parse           Parse from a JSON file into a Prolog file(-jf to -pf)
+  -e, --execute         Execute the main.pl file with a custom Prolog data file (-pf, -cf)
+  -tt, --test           Run all the json files inside data/
+  -ht, --hardcode-test  Run the hardcoded tests
+
+generation arguments:
+  -nr , --number-rounds Number of rounds for the generator (default is 1)
+  -nf , --number-fields Number of fields for the generator (default is 1)
+  -md , --max-diff      Max Diff value for the generator (default is 0)
+
+custom filenames:
+  -jf , --json-file     The name of the json file to be used (generation, parsing)
+  -pf , --prolog-file   The name of the prolog file to be used (parsing, execution)
+  -cf , --csv-file      The name of the csv file to save the results (not specified = no output)
+
+behaviour customization:
+  -r, --remove          Remove the generated files
+  -d, --debug           Run the prolog code in debug mode (only for executing)
+  -t, --tabled          Makes the output form JSON to Prolog be tabled for easy reading
+  -ra, --randomize      randomize the number of effective hours, instead of using all available (for the generator)
+```
+
+Some example of cool commands are:
+
+ - `python interface.py -g -jf data/example.json` (generates a problem with the default values in JSON)
+ - `python interface.py -g -jf data/example.json -nr 10` (same but using 10 rounds instead of 1, much harder for the solver)
+ - `python interface.py -p -jf data/example.json -pf src/data_example.pl` (converts JSON to the predicates used by the solver) if -pf is not specified, src/data.pl is used
+ - `python interface.py -e -pf src/data_exemple.pl -d -cf temp.csv` (executs the solver with the given data file, in debuf mode(-d) and writes the results (backtracks, heurisric, walltime, ...) to temp.csv and also on the console)
+ - `python interface.py -pge -jf data/everything.json -pf src/data_exemple.pl -cf temp.csv -d -nr 10 -nf 5 -md 4` (generates, parses and executes a new problem with 10 rounds, 5 fields of expertise and a maxDiff of 4)
