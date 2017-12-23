@@ -18,8 +18,6 @@ init(Subjects, Teachers, Timeout):-
 % 1 - variable definition + 2 - domain specification
     defineTeachers(Teachers),
     defineSubjects(Subjects),
-    % CountPracticalUndesiredTeacher in 2..20,
-    % FailedHours in 0..100,
     debug('1\n'),
 
 % 3 - restrictions application (+ 2 - some domain specification)
@@ -33,7 +31,6 @@ init(Subjects, Teachers, Timeout):-
     debug('5\n'),
     restrictSumBySemester(Subjects, Teachers),
     debug('6\n'),
-    % restriction to force enough teacher hours to exist
 
 % 4 - search for solutions
     % generate heuristic to optimize
@@ -50,14 +47,7 @@ init(Subjects, Teachers, Timeout):-
     % labeling([], Vars).
     % labeling([ffc, bisect], Vars),
     % labeling([minimize(Heuristic)], Vars).
-    % labeling([minimize(Heuristic), ffc, bisect], Vars),
-    % labeling([minimize(Heuristic), ffc, bisect, time_out(15000, _Res)], Vars), nl,
-    % labeling([minimize(Heuristic), ffc, step, down, time_out(15000, _Timeout)], Vars), nl,
-    % labeling([minimize(Heuristic), ffc, enum, down, time_out(15000, _Timeout)], Vars), nl,
     labeling([minimize(Heuristic), ffc, bisect, down, time_out(Timeout, TimeoutFlag)], Vars), nl,
-    % labeling([minimize(Heuristic), ffc, bisect, down], Vars), nl,
-    % time_out(labeling([minimize(Heuristic)], Vars), 6000, Res), write('Res is: \n'), write(Res).
-    % labeling([ffc, bisect], Vars),
 	debugWalltime,
 	writeResult(Teachers, Subjects, Heuristic, CountPracticalUndesiredTeacher, RatioFailedHours, TimeoutFlag),
 	debugStatistics, nl.
@@ -108,9 +98,8 @@ getMatrixOfComplementedFields(Teachers, CompFields):-
 getFailedHoursError([], 0).
 getFailedHoursError([Avg-_Diff-_Field-HS1-HS2|T], FailedHours):-
     getFailedHoursError(T, TempFailedHours),
-	% since Avg * 2 is always even - Error / (Avg * 2) is alyays X.0 or X.5, so multiplying by at least 10 eliminates 100% of this division error.
-	Error #= (((Avg * 2) - (HS1 + HS2)) * 1000000) / (Avg * 2), % (error * 1000) - the multiplication must come first due to decimal places
-    FailedHours #= TempFailedHours + Error. % * Error. % squared error (error * 1000 * 1000)
+	Error #= (((Avg * 2) - (HS1 + HS2)) * 1000000) / (Avg * 2), % (error * 1000000) - the multiplication must come first due to decimal places
+    FailedHours #= TempFailedHours + Error.
 
 %------------------------------------restrictions on lists helpers
 restrictTeachers([]).
@@ -197,7 +186,6 @@ getCountPracticalLessons([[_Semester-_Field-_HT-HP-_DT-DP, _, _]|T], Count):-
 % calculate an heuristic for the current
 getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, RatioFailedHours, Heuristic):-
 	% part 1 of optimization - minimize the average difference between the expected teacher hours and the real value
-	% FailedHoursError is the sum of the quadratic errors - a ratio (0..1) - multiplied by 1 000 000
     getFailedHoursError(Teachers, FailedHours),
 	length(Teachers, NTeachers),
 	RatioFailedHours #= FailedHours / NTeachers, % the final average error * 1.000.000
@@ -210,20 +198,6 @@ getHeuristicValue(Teachers, Subjects, CountPracticalUndesiredTeacher, RatioFaile
 	Heuristic #= ((RatioFailedHours * 8) / 10) + ((RatioPractical * 2) / 10).
 
 /*
-	Current Restrictions:
-		Teachers
-			. teachers HS1 and HS2 domains
-			. Diff #= HS1 - HS2
-			. 2 * Avg #>= HS1 + HS2
-		Subjects
-			. domain for the TT and TP
-			. HP #> HT
-			. sum(TT, #=, HT)
-			. sum(TP, #=, HP)
-			. scalar_product(FieldComplements, TT, #= , 0), %Restriction-3,
-			. scalar_product(FieldComplements, TP, #= , CurrentCount), % minimize this, Restriction-4
-
-Everything is 1 indexed
 Modeling:
     Subjects = [[Semester-Field-HT-HP-DT-DP, TT, TP], ...]
         Semester - The semester where this Subject occurs
@@ -243,16 +217,4 @@ Modeling:
         HS1 - Number of hours this teacher is giving during the 1st semester
         HS2 - Number of hours this teacher is giving during the 2nd semester
         The id of the subject is its index in the Subjects list
-
-Restrictions:
-    1. A teacher chooses the acceptable Diff value for the difference in hours from the 1st to the 2nd semesters;
-    2. According to their type, teachers will need to teach an average week teaching time over the two semesters that is approximate to the stipulated values (optimize).
-    3. Theoretical Hours must be lectured by teachers that have the same field
-    4. Practical lessons should be given by teachers of that area, prefearbly (minimize the number of teachers that teach something they "do not know")
-
-
-
-TODO:
-    . Tabela de opções de labeling usadas para o relatório
-    . gráfico de evolução do tempo com o aumento da complexidade
  */
