@@ -1,12 +1,12 @@
 # feup-plog
 Logic Programmin in PROLOG
-## TP1 - LYNGK Board Game
-
+## TP1 - LYNGK Board Game - [Report](https://github.com/msramalho/feup-plog/blob/master/tp1/report.pdf)
+<p align="center"><img src="https://github.com/msramalho/feup-plog/blob/master/tp1/lyngk.png" width="40%" ></p>
 
 <hr/>
 
-## TP2- Teacher's Working Hours Distribution - Restrictions over a Finite Domain
-We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus restrictions engine for Finite Domains (`:- use_module(library(clpfd)).`). 
+## TP2- Teacher Hour Allocation - Constraints (Finite Domain) [paper](https://github.com/msramalho/feup-plog/blob/master/tp2/paper.pdf)
+We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus constraint engine for Finite Domains (`:- use_module(library(clpfd)).`). 
 
 ## interface.py
 This file essentially does everything else. It generates json versions of problems with solution, converts them to Prolog to feed our open-mouthed slow-eater solver, and executes them. It is also able to output the results to a .csv file for later interpretation.
