@@ -14,3 +14,4 @@ exams/moodle_modle_test/all.pl
 *.pyc
 tp2/data/auto*
 logs.txt
+tp2/README.txt
