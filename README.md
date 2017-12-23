@@ -12,11 +12,9 @@ We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blo
 This file essentially does everything else. It generates json versions of problems with solution, converts them to Prolog to feed our open-mouthed slow-eater solver, and executes them. It is also able to output the results to a .csv file for later interpretation.
 To see everything it can do, call `python interface.py -h`:
 ```
-usage: interface.py [-h] [-g] [-p] [-e] [-tt] [-ht] [-nr] [-nf] [-md] [-jf]
-                    [-pf] [-cf] [-r] [-d] [-t] [-ra]
+usage: interface.py [-h] [-g] [-p] [-e] [-tt] [-ht] [-nr] [-nf] [-md] [-jf] [-pf] [-cf] [-r] [-d] [-t] [-ra]
 
-Python generator, parser, executer and analyser for problems concerning the
-teacher hours assignment
+Python generator, parser, executer and analyser for problems concerning the teacher hours assignment
 
 optional arguments:
   -h, --help            show this help message and exit
