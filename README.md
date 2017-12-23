@@ -1,5 +1,6 @@
 # feup-plog
 Logic Programmin in PROLOG
+Check the [solved classes exercises](https://github.com/msramalho/feup-plog/tree/master/classes) and [solved exams and tests](https://github.com/msramalho/feup-plog/tree/master/exams)
 ## TP1 - LYNGK Board Game - [Report](https://github.com/msramalho/feup-plog/blob/master/tp1/report.pdf)
 <p align="center"><img src="https://github.com/msramalho/feup-plog/blob/master/tp1/lyngk.png" width="40%" ></p>
 
