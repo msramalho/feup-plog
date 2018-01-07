@@ -1,4 +1,5 @@
 exams/ignore*
+exams/All*
 exams/mt_16_17_r/test.txt
 classes/aula1_daniel
 classes/aula2
@@ -15,3 +16,4 @@ exams/moodle_modle_test/all.pl
 tp2/data/auto*
 logs.txt
 tp2/README.txt
+classes/plr/plop_11.pl
