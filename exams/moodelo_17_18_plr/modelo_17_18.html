@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="pt" xml:lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Mini-Teste 2 Modelo</title>
+	
+<meta name="keywords" content="moodle, Mini-Teste 2 Modelo">
+</head>
+
+
+<body id="page-mod-quiz-review" class="format-topics  path-mod path-mod-quiz safari dir-ltr lang-pt yui-skin-sam yui3-skin-sam moodle-up-pt pagelayout-incourse course-638 context-57225 cmid-12987 category-247 has-region-side-pre used-region-side-pre has-region-side-post empty-region-side-post side-pre-only jsenabled"><div id="fullscreenfloat" title="Alternar para o modo de ecrã completo (Ctrl + Alt + b)." class="fullscreen"></div>
+
+<div id="page" class="container-fluid clearfix">
+
+    <div id="page-content" class="row-fluid">
+        <div id="region-bs-main-and-pre" class="span9">
+            <div class="row-fluid" id="yui_3_17_2_1_1515360482395_144">
+                <section id="region-main" class="span8 pull-right"><div id="fullscreenpadding"><div id="fullscreen" title="Alternar para o modo de ecrã completo (Ctrl + Alt + b)." class="fullscreen"></div></div>
+                    <span class="notifications" id="user-notifications"></span><div role="main"><span id="maincontent"></span><form><div><div id="q1" class="que essay manualgraded complete"><div class="info"><h3 class="no">Pergunta <span class="qno">1</span></h3><div class="state">Respondida</div><div class="grade">Pontuação 2,500</div><div class="questionflag editable" aria-atomic="true" aria-relevant="text" aria-live="assertive" id="yui_3_17_2_1_1515360482395_20"><input type="hidden" name="q85498:1_:flagged" value="0"><input type="hidden" value="qaid=846679&amp;qubaid=85498&amp;qid=49456&amp;slot=1&amp;checksum=5a8a6c34aca5e9eafa9fcfcb82700583&amp;sesskey=jcoqZySMXC&amp;newstate=" class="questionflagpostdata">
+<input type="hidden" class="questionflagvalue" id="q85498:1_:flaggedcheckbox" name="q85498:1_:flagged" value="0"><input type="image" class="questionflagimage" src="./Mini-Teste 2 Modelo_files/unflagged" title="Assinalar esta pergunta para referência futura" alt="Não destacada"><span class="questionflagtext" title="Assinalar esta pergunta para referência futura">Destacar pergunta</span></div></div><div class="content"><div class="formulation clearfix"><h4 class="accesshide">Enunciado da pergunta</h4><input type="hidden" name="q85498:1_:sequencecheck" value="4"><div class="qtext"><p>Explique o que faz o seguinte programa em Prolog e comente quanto à sua eficiência:<br></p>
+
+<pre>:- use_module(library(lists)).
+
+p1(L1,L2) :-
+    gen(L1,L2),
+    test(L2).
+
+gen([],[]).
+gen(L1,[X|L2]) :-
+    select(X,L1,L3),
+    gen(L3,L2).
+
+test([_,_]).
+test([X1,X2,X3|Xs]) :-
+    (X1 &lt; X2, X2 &lt; X3; X1 &gt; X2, X2 &gt; X3),
+    test([X2,X3|Xs]).
+</pre></div><div class="ablock"><div class="answer"><textarea readonly="readonly" class="qtype_essay_plain qtype_essay_response" rows="10" cols="60">O predicado test recebe uma lista, que tenha no mínimo dois elementos (caso tenha dois sucede independemente dos seus valores), e que sucede (para 3 ou mais elementos) se cada conjunto de 3 elementos estiver ordenado entre si (por ordem crescente ou decrescente) o que se traduz em a lista recebida estar toda ordenada ou por ordem crescente , ou por ordem decrescente.
+O predicado gen gera todas as permutações da lista que recebe como primeiro parâmetro e devolve cada permutação em L2 (permutações subsequentes são obtidas por backtrack). O seu caso base é permutar uma lista vazia noutra lista vazia
+O predicado p1 recebe duas listas, sendo que passa a primeira como primeiro argumento de gen, o que produz uma permutação de L1 em L2. Posto isto passa essa mesma lista para o predicado test que sucede se a lista estiver ordenada (ordem crescente ou decrescente), o predicado p1 só sucede quando a próxima permutação de L1 for encontrada que esteja ordenada por ordem crescente ou decrescente.
+Como nota adicional, se todos os elementos de L1 forem diferentes, p1 sucede duas vezes (há apenas duas ordens possíveis) e se houver pelo menos um elemento repetido em L1, p1 não sucede, porque a clásusla de ordenação não considera elementos iguais ordenados.
+A eficiência é bastante reduzida dada a tática de força bruta que implica explorar todo o domínio de possibilidades para cada variável, esta geração e teste poderia ser substituída por uma técnica que apenas realizasse os testes necessários, depois de restringir o espaço de pesquisa ao máximo, ou seja, uma tática de "constraint and generate" seria muito mais eficaz para este problema.</textarea></div><div class="attachments"></div></div></div></div></div><div id="q2" class="que multichoice deferredfeedback complete"><div class="info"><h3 class="no">Pergunta <span class="qno">2</span></h3><div class="state">Respondida</div><div class="grade">Pontuação 2,500</div><div class="questionflag editable" aria-atomic="true" aria-relevant="text" aria-live="assertive" id="yui_3_17_2_1_1515360482395_29"><input type="hidden" name="q85498:2_:flagged" value="0"><input type="hidden" value="qaid=846680&amp;qubaid=85498&amp;qid=49457&amp;slot=2&amp;checksum=28602b6671ad7388506c28aedca947e9&amp;sesskey=jcoqZySMXC&amp;newstate=" class="questionflagpostdata">
+<input type="hidden" class="questionflagvalue" id="q85498:2_:flaggedcheckbox" name="q85498:2_:flagged" value="0"><input type="image" class="questionflagimage" src="./Mini-Teste 2 Modelo_files/unflagged" title="Assinalar esta pergunta para referência futura" alt="Não destacada"><span class="questionflagtext" title="Assinalar esta pergunta para referência futura">Destacar pergunta</span></div></div><div class="content"><div class="formulation clearfix"><h4 class="accesshide">Enunciado da pergunta</h4><input type="hidden" name="q85498:2_:sequencecheck" value="3"><div class="qtext"><p>O Asdrúbal resolveu implementar uma versão equivalente usando programação em lógica com restrições (PLR):<br></p>
+
+<pre>:- use_module(library(clpfd)).
+
+p2(L1,L2) :-
+    length(L1,N),
+    length(L2,N),
+    %
+    pos(L1,L2,Is),
+    all_distinct(Is),
+    %
+    labeling([],Is),
+    test(L2).
+
+pos([],_,[]).
+pos([X|Xs],L2,[I|Is]) :-
+    nth1(I,L2,X),
+    pos(Xs,L2,Is).
+</pre>
+
+<p>Contudo, após estudar melhor descobriu que o seu programa não era uma implementação correta em PLR. Escolha a opção que melhor traduz essa constatação:</p></div><div class="ablock"><div class="prompt">Selecione uma opção de resposta:</div><div class="answer"><div class="r0"><input type="radio" name="q85498:2_answer" disabled="disabled" value="0" id="q85498:2_answer0"><label for="q85498:2_answer0">a. Não é possível etiquetar <i>Is</i>, pois estas variáveis não têm domínio definido.</label> </div>
+<div class="r1"><input type="radio" name="q85498:2_answer" disabled="disabled" value="1" id="q85498:2_answer1"><label for="q85498:2_answer1">b. As variáveis de domínio estão a ser instanciadas antes da fase de pesquisa.</label> </div>
+<div class="r0"><input type="radio" name="q85498:2_answer" disabled="disabled" value="2" id="q85498:2_answer2"><label for="q85498:2_answer2">c. [Não Responder]</label> </div>
+<div class="r1"><input type="radio" name="q85498:2_answer" disabled="disabled" value="3" id="q85498:2_answer3" checked="checked"><label for="q85498:2_answer3">d. As variáveis de domínio estão a ser instanciadas antes da fase de pesquisa e nem todas as restrições foram colocadas antes da fase da pesquisa.</label> </div>
+<div class="r0"><input type="radio" name="q85498:2_answer" disabled="disabled" value="4" id="q85498:2_answer4"><label for="q85498:2_answer4">e. Não é possível etiquetar <i>Is</i>, pois estas variáveis não têm domínio definido, e nem todas as restrições foram colocadas antes da fase da pesquisa.</label> </div>
+<div class="r1"><input type="radio" name="q85498:2_answer" disabled="disabled" value="5" id="q85498:2_answer5"><label for="q85498:2_answer5">f. Nem todas as restrições foram colocadas antes da fase da pesquisa.</label> </div>
+</div></div></div></div></div><div id="q3" class="que essay manualgraded complete"><div class="info"><h3 class="no">Pergunta <span class="qno">3</span></h3><div class="state">Respondida</div><div class="grade">Pontuação 3,000</div><div class="questionflag editable" aria-atomic="true" aria-relevant="text" aria-live="assertive" id="yui_3_17_2_1_1515360482395_38"><input type="hidden" name="q85498:3_:flagged" value="0"><input type="hidden" value="qaid=846681&amp;qubaid=85498&amp;qid=49460&amp;slot=3&amp;checksum=9dfe65310648e122f1e014cca6057cf3&amp;sesskey=jcoqZySMXC&amp;newstate=" class="questionflagpostdata">
+<input type="hidden" class="questionflagvalue" id="q85498:3_:flaggedcheckbox" name="q85498:3_:flagged" value="0"><input type="image" class="questionflagimage" src="./Mini-Teste 2 Modelo_files/unflagged" title="Assinalar esta pergunta para referência futura" alt="Não destacada"><span class="questionflagtext" title="Assinalar esta pergunta para referência futura">Destacar pergunta</span></div></div><div class="content"><div class="formulation clearfix"><h4 class="accesshide">Enunciado da pergunta</h4><input type="hidden" name="q85498:3_:sequencecheck" value="3"><div class="qtext"><p>Corrija o programa, de modo a obter uma implementação correta em PLR.</p></div><div class="ablock"><div class="answer"><textarea readonly="readonly" class="qtype_essay_plain qtype_essay_response" rows="15" cols="60">%Nota quanto à pergunta 2, escolhi a d) considerando as condições "&gt;" e "&lt;" como restrições apesar de não serem restrições da biblioteca clpfd.
+
+% codigo completo:
+:- use_module(library(clpfd)).
+:- use_module(library(lists)).
+
+clear:-write('\33\[2J').
+p3(L1,L2) :-
+    length(L1,N),
+    length(L2,N),
+    %
+	same_length(L1,Is),
+    pos(L1,L2,Is),
+    all_distinct(Is),
+    %
+    test(L2),
+    labeling([],Is).
+
+pos([],_,[]).
+pos([X|Xs],L2,[I|Is]):-
+    element(I,L2,X),
+    pos(Xs,L2,Is).
+	
+test([_,_]).
+test([X1,X2,X3|Xs]):-
+    (X1 #&lt; X2 #/\ X2 #&lt; X3 #\/ X1 #&gt; X2 #/\ X2 #&gt; X3),
+    test([X2,X3|Xs]).</textarea></div><div class="attachments"></div></div></div></div></div><div id="q4" class="que essay manualgraded complete"><div class="info"><h3 class="no">Pergunta <span class="qno">4</span></h3><div class="state">Respondida</div><div class="grade">Pontuação 6,000</div><div class="questionflag editable" aria-atomic="true" aria-relevant="text" aria-live="assertive" id="yui_3_17_2_1_1515360482395_47"><input type="hidden" name="q85498:4_:flagged" value="0"><input type="hidden" value="qaid=846682&amp;qubaid=85498&amp;qid=49461&amp;slot=4&amp;checksum=3c8663c17e50280282174b49e92e8bd7&amp;sesskey=jcoqZySMXC&amp;newstate=" class="questionflagpostdata">
+<input type="hidden" class="questionflagvalue" id="q85498:4_:flaggedcheckbox" name="q85498:4_:flagged" value="0"><input type="image" class="questionflagimage" src="./Mini-Teste 2 Modelo_files/unflagged" title="Assinalar esta pergunta para referência futura" alt="Não destacada"><span class="questionflagtext" title="Assinalar esta pergunta para referência futura">Destacar pergunta</span></div></div><div class="content"><div class="formulation clearfix"><h4 class="accesshide">Enunciado da pergunta</h4><input type="hidden" name="q85498:4_:sequencecheck" value="3"><div class="qtext"><p>O Franquelim gosta de reciclar. Descobriu que tem na sua posse um determinado número de embalagens de iogurte vazias. Tem também um livro que mostra como realizar diversos objetos com tais embalagens, onde para cada objeto consta um custo estimado do material adicional que é preciso comprar (entre cola, tinta, etc.) e o número de embalagens de iogurte que leva. O Franquelim tem um orçamento limitado para comprar esses materiais, pretende realizar 3 objetos diferentes e utilizar o máximo possível de embalagens de iogurte de que dispõe. Usando programação em lógica com restrições, construa um programa que determine que objetos é que o Franquelim deve fazer. O predicado <b><i>build(+Budget,+NPacks,+ObjectCosts,+ObjectPacks,-Objects,-UsedPacks)</i></b> recebe o orçamento disponível (<i>Budget</i>), o número de embalagens de iogurte disponíveis (<i>NPacks</i>), os custos de material (<i>ObjectCosts</i>) e embalagens (<i>ObjectPacks</i>) necessários por cada objeto; devolve em <i>Objects</i> os objetos a construir (índices das listas <i>ObjectCosts/ObjectPacks</i>) e em <i>UsedPacks</i> o número de embalagens utilizadas.<br></p>
+<pre>| ?- build(60,30,[20,50,10,20,15],[6,4,12,20,6],Objects,UsedPacks).
+Objects = [1,3,5],
+UsedPacks = 24
+
+| ?- build(120,30,[20,50,10,20,15],[6,4,12,20,6],Objects,UsedPacks).
+Objects = [1,2,4],
+UsedPacks = 30
+</pre></div><div class="ablock"><div class="answer"><textarea readonly="readonly" class="qtype_essay_plain qtype_essay_response" rows="15" cols="60">% nota a label down é só para forçar o exemplo a corresponder à minha primeira/melhor solução
+:-use_module(library(clpfd)).
+:-use_module(library(lists)).
+
+clear:-write('\33\[2J').
+
+build(Budget, NPacks, ObjectCosts, ObjectPacks, ObjectsIndexes, UsedPacks):-
+	% variables
+	same_length(ObjectCosts, Objects),
+	
+	% domain
+	domain(Objects, 0, 1),
+	
+	% constraints
+	count(1, Objects, #=, 3),
+	scalar_product(ObjectCosts, Objects, #=, Cost),
+	Cost in 0.. Budget,
+	scalar_product(ObjectPacks, Objects, #=, UsedPacks),
+	UsedPacks in 0.. NPacks,
+	
+	% labeling
+	labeling([maximize(UsedPacks),down], Objects),
+	findall(Index, nth1(Index, Objects, 1), ObjectsIndexes).</textarea></div><div class="attachments"></div></div></div></div></div><div id="q5" class="que essay manualgraded complete"><div class="info"><h3 class="no">Pergunta <span class="qno">5</span></h3><div class="state">Respondida</div><div class="grade">Pontuação 6,000</div><div class="questionflag editable" aria-atomic="true" aria-relevant="text" aria-live="assertive" id="yui_3_17_2_1_1515360482395_56"><input type="hidden" name="q85498:5_:flagged" value="0"><input type="hidden" value="qaid=846683&amp;qubaid=85498&amp;qid=49468&amp;slot=5&amp;checksum=62bb2c795991a0fe28d4024d83a446dd&amp;sesskey=jcoqZySMXC&amp;newstate=" class="questionflagpostdata">
+<input type="hidden" class="questionflagvalue" id="q85498:5_:flaggedcheckbox" name="q85498:5_:flagged" value="0"><input type="image" class="questionflagimage" src="./Mini-Teste 2 Modelo_files/unflagged" title="Assinalar esta pergunta para referência futura" alt="Não destacada"><span class="questionflagtext" title="Assinalar esta pergunta para referência futura">Destacar pergunta</span></div></div><div class="content"><div class="formulation clearfix"><h4 class="accesshide">Enunciado da pergunta</h4><input type="hidden" name="q85498:5_:sequencecheck" value="5"><div class="qtext"><p>O Herberto tem um conjunto de presentes para embrulhar. Tem igualmente diversos rolos de papel de embrulho, já abertos, com diferentes padrões mas de largura fixa. Para ser embrulhado, cada presente precisa de um determinado comprimento de papel. Construa um programa, usando programação em lógica com restrições, que determine com que rolo de papel é que cada presente deve ser embrulhado. O predicado <b><i>wrap(+Presents,+PaperRolls,-SelectedPaperRolls)</i></b> recebe a lista de presentes <i>Presents</i> com a quantidade de papel que cada um gasta, e a lista de rolos <i>PaperRolls</i> com a quantidade de papel disponível em cada rolo; devolve em <i>SelectedPaperRolls</i> os rolos de papel a utilizar em cada presente.<br></p>
+<pre>| ?- wrap([12,50,14,8,10,90,24], [100,45,70], S).
+S = [2,3,3,2,1,1,2] ? ;
+S = [3,3,2,3,1,1,2] ? ;
+no
+</pre></div><div class="ablock"><div class="answer"><textarea readonly="readonly" class="qtype_essay_plain qtype_essay_response" rows="15" cols="60">:-use_module(library(clpfd)).
+:-use_module(library(lists)).
+
+wrap(Presents, PaperRolls, SelectedPaperRolls):-
+	% variables
+	same_length(SelectedPaperRolls, Presents),
+	
+	% domain
+	length(PaperRolls, NRolls),
+	domain(SelectedPaperRolls, 1, NRolls),
+	
+	% constraints
+	cumlist(getMachine, PaperRolls, Machines, 1, _),
+	cumlist(getTask, SelectedPaperRolls, Presents, Tasks, 1, _),
+	cumulatives(Tasks, Machines, [bound(upper)]),
+	
+	% labeling
+	labeling([ffc], SelectedPaperRolls).
+
+getMachine(PaperRoll, machine(Index, PaperRoll), Index, NewIndex):- NewIndex #= Index + 1.
+
+getTask(PaperRoll, Present, task(0, 1, 1, Present,PaperRoll), Index, NewIndex):-NewIndex #= Index + 1.</textarea></div><div class="attachments"></div></div></div></div></div><input type="hidden" name="sesskey" value="jcoqZySMXC"><div class="submitbtns"></div></div></form><div class="submitbtns">
+</div></div>                </section>
+                           </div>
+        </div>
+        <aside id="block-region-side-post" class="span3 block-region" data-blockregion="side-post" data-droptarget="1"></aside>    </div>
+</div>
+
+
+</body></html>
