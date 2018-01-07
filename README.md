@@ -41,7 +41,7 @@ behaviour customization:
   -r, --remove          Remove the generated files
   -d, --debug           Run the prolog code in debug mode (only for executing)
   -t, --tabled          Makes the output form JSON to Prolog be tabled for easy reading
-  -ra, --randomize      randomize the number of effective hours, instead of using all available (for the generator)
+  -ra, --randomize      randomize the number of effective hours, instead of using all available (for generator)
 ```
 
 Some example of cool commands are:
