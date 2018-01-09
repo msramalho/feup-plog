@@ -60,8 +60,7 @@ optimal_gym_pairs(MenHeights, WomenHeights, Delta, Pairs):-
 	scanlist(sumLine, Matrix, 0, CountPairs),
 	append(Matrix, Vars),
 	labeling([maximize(CountPairs),down], Vars),
-	translate(Matrix, PairsZeros),
-	exclude(zeroZero, PairsZeros, Pairs).
+	findall(H-M, (nth1(H, Matrix, Line), nth1(M, Line, 1)), Pairs).
 	
 heightRules(MenHeights, WomenHeights, Delta, Line, Hi, NextHi):-
 	NextHi #= Hi + 1,
@@ -79,21 +78,6 @@ domainAndConstrain(Line):-
 	Match in 0..1. %single match
 
 sumLine(Line, Prev, Sum):- sum(Line, #=, Acc), Sum #= Prev + Acc.
-	
-translate(Matrix, Pairs):-
-	scanlist(translateLine, Pairs, Matrix, 1, _).
-
-translateLine(Pair, Line, Hi, NextHi):-
-	NextHi is Hi + 1,
-	length(Line, N),
-	numlist(1, N, Indexes),
-	scanlist(getPair(Hi), Line, Indexes, 0-0, Pair).
-
-getPair(Hi, 1, Mi, _, Hi-Mi).
-getPair(_, 0, _, P, P).
-
-zeroZero(0-0).
-
 
 
 
