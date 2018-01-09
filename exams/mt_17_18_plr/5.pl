@@ -3,7 +3,7 @@
 :-use_module(library(between)).
 clear:-write('\33\[2J').
 
-% emparelhar homens e mluheres, respeitar o delta de diferença máxima de altura, maximizar pares, 
+% emparelhar homens e mulheres, respeitar o delta de diferença máxima de altura, maximizar pares, 
 % homem é sempre mais alto que mulher
 
 % | ?- gym_pairs([75, 85, 68, 70], [65, 76, 60, 80], 10, Pairs).                                            
