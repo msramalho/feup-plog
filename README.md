@@ -1,12 +1,23 @@
 # feup-plog
-Logic Programmin in PROLOG
-Check the [solved classes exercises](https://github.com/msramalho/feup-plog/tree/master/classes) and [solved exams and tests](https://github.com/msramalho/feup-plog/tree/master/exams)
-## TP1 - LYNGK Board Game - [Report](https://github.com/msramalho/feup-plog/blob/master/tp1/report.pdf)
+
+Univeristy Subject - Logic Programming (Programação em Lógica)
+
+[Faculty of Engeneering of University of Porto](https://sigarra.up.pt/feup/en/WEB_PAGE.INICIAL)
+
+2017/2018
+
+With the colaboration of [Daniel Silva](https://github.com/Dannyps)
+
+Logic Programming in PROLOG
+
+### Check the [solved Class Exercises](https://github.com/msramalho/feup-plog/tree/master/classes) and [solved Exams and Tests](https://github.com/msramalho/feup-plog/tree/master/exams)
+
+## [TP1](https://github.com/msramalho/feup-plog/tree/master/tp1) - LYNGK Board Game - [Report](https://github.com/msramalho/feup-plog/blob/master/tp1/report.pdf)
 <p align="center"><img src="https://github.com/msramalho/feup-plog/blob/master/tp1/lyngk.png" width="40%" ></p>
 
 <hr/>
 
-## TP2- Teacher Hour Allocation - Constraints (Finite Domain) [paper](https://github.com/msramalho/feup-plog/blob/master/tp2/paper.pdf)
+## [TP2](https://github.com/msramalho/feup-plog/tree/master/tp2)- Teacher Hour Allocation - Constraints (Finite Domain) - [Paper](https://github.com/msramalho/feup-plog/blob/master/tp2/paper.pdf)
 We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus constraint engine for Finite Domains (`:- use_module(library(clpfd)).`). 
 
 ## interface.py
@@ -51,3 +62,5 @@ Some example of cool commands are:
  - `python interface.py -p -jf data/example.json -pf src/data_example.pl` (converts JSON to the predicates used by the solver) if -pf is not specified, src/data.pl is used
  - `python interface.py -e -pf src/data_exemple.pl -d -cf temp.csv` (executs the solver with the given data file, in debuf mode(-d) and writes the results (backtracks, heurisric, walltime, ...) to temp.csv and also on the console)
  - `python interface.py -pge -jf data/everything.json -pf src/data_exemple.pl -cf temp.csv -d -nr 10 -nf 5 -md 4` (generates, parses and executes a new problem with 10 rounds, 5 fields of expertise and a maxDiff of 4)
+
+
