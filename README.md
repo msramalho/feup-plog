@@ -21,7 +21,7 @@ Logic Programming in PROLOG
 We developed a PROLOG file ([main.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/main.pl)) that can be run to find a solution for the problem specified in [data.pl](https://github.com/msramalho/feup-plog/blob/master/tp2/src/data.pl) using sicstus constraint engine for Finite Domains (`:- use_module(library(clpfd)).`). 
 
 ## interface.py
-This file essentially does everything else. It generates json versions of problems with solution, converts them to Prolog to feed our open-mouthed slow-eater solver, and executes them. It is also able to output the results to a .csv file for later interpretation.
+This file, essentially, does everything. It generates json versions of problems with solution, converts them to Prolog to feed our open-mouthed slow-eater solver, and executes them. It is also able to output the results to a *.csv* file for later interpretation.
 To see everything it can do, call `python interface.py -h`:
 ```
 usage: interface.py [-h] [-g] [-p] [-e] [-tt] [-ht] [-nr] [-nf] [-md] [-jf] [-pf] [-cf] [-r] [-d] [-t] [-ra]
